@@ -17,7 +17,6 @@ function Building:ctor(cfg)
 	self.type = 1
 	self.isScheduled = false
 	self.id = cfg.id
-	self.shouldDispatch = false
 
 	local image = self:bedImage()
 	self.bed = cc.Sprite:create(image)
@@ -60,23 +59,25 @@ function Building:setOwner(owner)
 	self:updateAppearance()
 end
 
-function Building:setHighLight()
+function Building:select()
 	-- local sp = self.icon
 
 	-- local program = cc.GLProgramCache:getInstance():getGLProgram("ShaderPositionTextureHightLight")
 	-- sp:setGLProgram(program)
 	self.icon:setHighLight()
-	self.shouldDispatch = true
+	self:setScale(1.3)
+	self.selected = true
 
 end
 
-function Building:setNormalLight()
+function Building:unselect()
 	-- local sp = self.icon
 
 	-- local program = cc.GLProgramCache:getInstance():getGLProgram("ShaderPositionTextureColor_noMVP")
 	-- sp:setGLProgram(program)
 	self.icon:setNormalLight()
-	self.shouldDispatch = false
+	self:setScale(1)
+	self.selected = false
 
 end
 
@@ -152,6 +153,11 @@ function Building:reachPos()
 	local bs = self.bed:getContentSize()
 	py = py + bs.height/2
 	return cc.p(px, py)
+end
+
+function Building:dispatchPos()
+	local px, py = self:getPosition()
+	return cc.pSub(cc.p(px, py), cc.p(0, 10))
 end
 
 function Building:acceptRadius()

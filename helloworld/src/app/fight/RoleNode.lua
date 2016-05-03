@@ -41,7 +41,7 @@ function RoleNode:actStand()
 
 	self.status = kRoleStand
 	local path = self.baseName.."_0.plist"
-	self.role:playAnimate(path, kRoleActTag, true)
+	self.role:playAnimate(path, kRoleActTag, true, 1.0/30)
 	local frame = self.role:getSpriteFrame()
 	local rect = frame:getRect()
 	local size = cc.size(rect.width, rect.height)
@@ -59,7 +59,7 @@ function RoleNode:actMove()
 
 	self.status = kRoleMove
 	local path = self.baseName.."_1.plist"
-	self.role:playAnimate(path, kRoleActTag, true)
+	self.role:playAnimate(path, kRoleActTag, true, 1.0/30)
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 
@@ -70,7 +70,7 @@ function RoleNode:actWin()
 	
 	self.status = kRoleWin
 	local path = self.baseName.."_3.plist"
-	self.role:playAnimate(path, kRoleActTag, true)
+	self.role:playAnimate(path, kRoleActTag, true, 1.0/30)
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 

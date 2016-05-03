@@ -67,21 +67,25 @@ function General:setStandPos(pos)
 	self:setPosition(pos)
 end
 
-function General:setHighLight()
+function General:select()
 	-- local sp = self.role
 
 	-- local program = cc.GLProgramCache:getInstance():getGLProgram("ShaderPositionTextureHightLight")
 	-- sp:setGLProgram(program)
 	self.role:setHighLight()
+	self:setScale(1.3)
+	self.selected = true
 
 end
 
-function General:setNormalLight()
+function General:unselect()
 	-- local sp = self.role
 
 	-- local program = cc.GLProgramCache:getInstance():getGLProgram("ShaderPositionTextureColor_noMVP")
 	-- sp:setGLProgram(program)
 	self.role:setNormalLight()
+	self:setScale(1)
+	self.selected = false
 
 end
 

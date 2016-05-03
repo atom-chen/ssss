@@ -8,22 +8,25 @@ local kSelfOwner = 2
 function FightLayer:ctor(mapInfo, size)
 
 	self:onTouch(function(event) return self:touchesEvent(event) end, false, true)
-	self.activeList = {}
 	self.buildList = {}
 	self.generalList = {}
 	self.soldierList = {}
 	self.attackList = {}
 	self.mapSize = size
 
-	self.currentTarget = nil
-	self.currentType = -1
-
 	self.mapInfo = mapInfo
 
+	self:createActionNode()
 	self:createBuildings(mapInfo.buildings)
-
 	self:createGenerals(mapInfo.generals)
 
+end
+
+function FightLayer:createActionNode()
+	local cls = require("app.fight.ActionNode")
+	if cls then
+		self.actionNode = cls:create()
+	end
 end
 
 function FightLayer:createBuildings(buildings)
@@ -34,7 +37,7 @@ function FightLayer:createBuildings(buildings)
 		local pos = cc.p(v.pos.x, self.mapSize.height-v.pos.y-build.bed:getContentSize().height/2)
 		build:setPosition(pos)
 		local z = self:buildZOrder(build:reachPos())
-		print("pos.y", pos.y, "z-", z)
+		-- print("pos.y", pos.y, "z-", z)
 		self:addChild(build, z)
 		self.buildList[build.id] = build
 	end
@@ -69,111 +72,6 @@ function FightLayer:createGeneral(cfg, owner, id)
 	else
 		print("load app.fight.General failed!")
 	end
-end
-
-function FightLayer:getItemForPos(pos)
-	local childs = self:getChildren()
-	-- print("item pos ,x-", pos.x, "y-", pos.y)
-	for _, v in pairs(childs) do
-		-- print("childen v-", v, "class-", v.__cname)
-		if v.isTouchEnabled and v:isTouchEnabled() and v:isVisible() then
-
-			local p = v:convertToWorldSpace(cc.p(0, 0))
-			local s = v:getRealContentSize()
-			local box = cc.rect(p.x, p.y, s.width, s.height)
-			-- print("box-x", box.x ,"y-", box.y, "w-", box.width, "h-", box.height)
-			-- if v.type == 2 then
-				 -- print("general---")
-			-- end
-			if cc.rectContainsPoint(box, pos) then
-				return v
-			end
-		end
-	end
-
-end
-
-
-function FightLayer:addBuilding(pos, owner)
-
-end
-
-function FightLayer:addActiveObj1(pos, owner)
-	local build = self:getItemForPos(pos)
-
-	if not build then
-		return false
-	end
-
-	if build.owner == owner then
-		build:setHighLight()
-	elseif owner == -1 then
-
-	end
-
-	if owner == -1 then
-		if build.owner ~= kSelfOwner then
-			if self.currentTarget then
-				self.currentTarget:setNormalLight()
-			end
-			self.currentTarget = build
-		elseif build.type == last.type then
-			self.activeList[build.id] = build
-		else
-			return false
-		end
-		build:setHighLight()
-		return true
-	elseif build.owner == owner then
-		self.activeList[build.id] = build
-		build:setHighLight()
-		return true
-	end
-
-	return false
-
-end
-
-function FightLayer:addActiveObj(pos, owner)
-	local build = self:getItemForPos(pos)
-	local c = #self.activeList
-	local last = self.activeList[c]
-
-	if not build then
-		return false
-	end
-
-	for _, v in pairs(self.activeList) do
-		if v == build then
-			return false
-		end
-	end
-
-	local first = self.activeList[1]
-	if first and first.owner == build.owner and first.type ~= build.type then
-		return false
-	end
-
-	if owner == -1 or build.owner == owner then
-
-		if last and last.owner ~= 2 then
-			if build.owner ~= 2 then
-				last:setNormalLight()
-				self.activeList[c] = build
-			else
-				self.activeList[c + 1] = last
-				self.activeList[c] = build
-			end
-		else
-			self.activeList[#self.activeList + 1] = build
-		end
-
-		build:setHighLight()
-		-- print("add true")
-		return true
-	end
-	-- print("add false")
-	return false
 end
 
 function FightLayer:updateMoveList(list, dt)
@@ -240,127 +138,116 @@ function FightLayer:startFight()
 	scheduler:scheduleScriptFunc(function(dt) self:updateEvent(dt) end, 0.01, false)
 end
 
-function FightLayer:dispatchTroops1()
+function FightLayer:dispatchTroops(list)
+	local target = list:getTroopsTarget()
 
-	if self.currentTarget then
-		self.currentTarget:setNormalLight()
-	end
+	target:unselect()
 
-	-- print("count--", #self.activeList)
-	for _, v in pairs(self.activeList) do
-		-- print("nnnn")
-		v:setNormalLight()
-
-		local soldier = v:createSoldier(self.currentTarget)
-		if soldier then
-			local vx, vy = v:getPosition()
-			local pos = cc.pSub(cc.p(vx, vy), cc.p(0, 10))
-			soldier:setAnchorPoint(cc.p(0.5, 0.5))
-			soldier:setStandPos(pos)
-			self:addChild(soldier)
-			self.soldierList[#self.soldierList + 1] = soldier
-		end
-
-	end
-
-end
-
-function FightLayer:dispatchTroops()
-	local target = self.activeList[#self.activeList]
-	target:setNormalLight()
-	
-	if #self.activeList == 1 then
-		return
-	end
-
-	local first = self.activeList[1]
 	local dispatch = true
-	if first.owner == target.owner and target.type == 2 then
+	if list.owner == target.owner and list.type ~= target.type then
 		dispatch = false
 	end
 
-	self.activeList[#self.activeList] = nil
-	-- print("count--", #self.activeList)
-	for _, v in pairs(self.activeList) do
-		-- print("nnnn")
-		v:setNormalLight()
+	for _, v in pairs(list.list) do
+		v:unselect()
 		if dispatch then
 			local soldier = v:createSoldier(target)
 			if soldier then
-				local vx, vy = v:getPosition()
-				local pos = cc.pSub(cc.p(vx, vy), cc.p(0, 10))
-				soldier:setAnchorPoint(cc.p(0.5, 0.5))
+				local pos = v:dispatchPos()
 				soldier:setStandPos(pos)
-				self:addChild(soldier)
+				local z = self:buildZOrder(pos)
+				self:addChild(soldier, z)
 				self.soldierList[#self.soldierList + 1] = soldier
 			end
 		end
 	end
 end
 
-function FightLayer:dispatchGeneral(pos)
-
-	if self.currentTarget then
-		self.currentTarget:setNormalLight()
+function FightLayer:dispatchGeneral(list, pos)
+	local target = list.target
+	if target then
+		target:unselect()
 	end
 
-	for _, v in pairs(self.activeList) do
-		v:setNormalLight()
-		if not self.currentTarget then
+	for _, v in pairs(list.list) do
+		v:unselect()
+		if not target then
 			v:setTargetPos(self:convertToNodeSpace(pos))
 		else
-			v:setTarget(self.currentTarget)
+			v:setTarget(target)
 		end
 	end
 end
 
-function FightLayer:buildZOrder(pos)
-	return math.floor(self.mapSize.height-pos.y)
-end
+function FightLayer:handleAction(pos)
 
-function FightLayer:handleFight1(pos)
+	local list = self.actionNode:currentActionList()
 
-	local last = self.activeList[#self.activeList]
-	if not last then
-		return 
-	end
-
-	if last.type == 1 then
-		self:dispatchTroops1()
-	elseif last.type == 2 then
-		self:dispatchGeneral(pos)
-	end
-
-	self.activeList = {}
-	self.currentTarget = nil
-
-end
-
-function FightLayer:handleFight(pos)
-
-	if #self.activeList then
-		local first = self.activeList[1]
-		if first.type == 1 then
-			self:dispatchTroops()
+	if #list.list then
+		if list.type == 1 then
+			self:dispatchTroops(list)
 		else
-			self:dispatchGeneral(pos)
+			self:dispatchGeneral(list, pos)
 		end
 
-		self.activeList = {}
+		self.actionNode:actionDone()
+	end
+
+end
+
+function FightLayer:addActionNode(pos, owner)
+	local node = self:getItemForPos(pos)
+
+	if not node or node.selected then
+		return false
+	end
+
+	if owner ~= -1 then
+		if node.owner ~= owner then
+			return false
+		else
+			self.actionNode:addActionList(node.type, owner)
+		end
+	end
+
+	self.actionNode:addNode(node)
+
+	return true
+
+end
+
+function FightLayer:getItemForPos(pos)
+	local childs = self:getChildren()
+	-- print("item pos ,x-", pos.x, "y-", pos.y)
+	for _, v in pairs(childs) do
+		-- print("childen v-", v, "class-", v.__cname)
+		if v.isTouchEnabled and v:isTouchEnabled() and v:isVisible() then
+
+			local p = v:convertToWorldSpace(cc.p(0, 0))
+			local s = v:getRealContentSize()
+			local box = cc.rect(p.x, p.y, s.width, s.height)
+			-- print("box-x", box.x ,"y-", box.y, "w-", box.width, "h-", box.height)
+			-- if v.type == 2 then
+				 -- print("general---")
+			-- end
+			if cc.rectContainsPoint(box, pos) then
+				return v
+			end
+		end
 	end
 
 end
 
 function FightLayer:handleTouchBegan(event)
-	return self:addActiveObj(cc.p(event.x, event.y), 2)
+	return self:addActionNode(cc.p(event.x, event.y), 2)
 end
 
 function FightLayer:handleTouchMoved(event)
-	self:addActiveObj(cc.p(event.x, event.y), -1)
+	self:addActionNode(cc.p(event.x, event.y), -1)
 end
 
 function FightLayer:handleTouchEnded(event)
-	self:handleFight(cc.p(event.x, event.y))
+	self:handleAction(cc.p(event.x, event.y))
 end
 
 function FightLayer:touchesEvent(event)
@@ -373,5 +260,8 @@ function FightLayer:touchesEvent(event)
 	end
 end
 
+function FightLayer:buildZOrder(pos)
+	return math.floor(self.mapSize.height-pos.y)
+end
 
 return FightLayer
