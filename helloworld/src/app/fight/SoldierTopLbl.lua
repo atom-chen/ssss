@@ -2,16 +2,18 @@ local SoldierTopLbl = class("SoldierTopLbl", cc.Node)
 
 local typeCfg = cc.exports.soldierType
 
-function SoldierTopLbl:ctor(type)
+function SoldierTopLbl:ctor(type, owner)
 	self.cfg = typeCfg[type]
 	if not self.cfg then
 		print("load soldier type failed! type id: ", type)
 	end
+	self.owner = owner
 
-	local image = self:typeImage()
+	local image = self:typeImage(owner)
 	local sp = cc.Sprite:create(image)
 	sp:setAnchorPoint(cc.p(0, 0.5))
 	self:addChild(sp)
+	self.icon = sp
 
 	local lblbg = cc.Sprite:create("bg/b1_2.png")
 	lblbg:setAnchorPoint(cc.p(0, 0.5))
@@ -32,12 +34,21 @@ function SoldierTopLbl:ctor(type)
 	lblbg:addChild(numLbl)
 	self.numLbl = numLbl
 
-	-- print("topLblsizex--", size.width, "y--", size.height)
-
 end
 
-function SoldierTopLbl:typeImage()
-	return "icon/"..self.cfg.icon..".png"
+function SoldierTopLbl:typeImage(owner)
+	return "icon/"..self.cfg.icon..string.format("_%d%d", owner, self.cfg.id)..".png"
+end
+
+function SoldierTopLbl:setOwner(owner)
+	if self.owner == owner then
+		return 
+	end
+	
+	self.owner = owner
+	local image = self:typeImage(owner)
+	self.icon:setTexture(image)
+
 end
 
 function SoldierTopLbl:setSoldierNum(num)

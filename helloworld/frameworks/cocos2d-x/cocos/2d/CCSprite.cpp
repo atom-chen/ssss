@@ -1163,7 +1163,7 @@ void Sprite::setNormalLight()
 
 void Sprite::playAnimate(const std::string& filename, int tag, bool forever, float delay)
 {
-    CCLOG("playAnimate: %s", filename.c_str());
+//    CCLOG("playAnimate: %s", filename.c_str());
     
     Animation *anim = Animation::createWithFile(filename);
     anim->setDelayPerUnit(delay);

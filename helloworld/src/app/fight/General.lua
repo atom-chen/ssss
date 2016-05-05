@@ -4,7 +4,10 @@ local General = class("General", cc.Node)
 
 local kFightStatusNotReach = 0
 local kFightStatusReach = 1
-
+local kRolwDie = 4
+local kNormalAttack = 1
+local kSkill1 = 2
+local kSkill2 = 3
 local kRoleMove = 1
 
 function General:ctor(cfg, owner, id)
@@ -12,6 +15,7 @@ function General:ctor(cfg, owner, id)
 	self.owner = owner
 	self.type = 2
 	self.id = id
+	self.isDead = false
 
 	local image = self:roleImage()
 	self.role = self:createRoleNode(image)
@@ -20,10 +24,27 @@ function General:ctor(cfg, owner, id)
 	self:addChild(self.role)
 	self.role:face(owner == 2)
 
-	self:setContentSize(self.role:getContentSize())
+	local size = self.role:getContentSize()
+	self:setContentSize(size)
+	self.acceptR = size.width / 2
 
 	self:createFightNode()
+
+	self:createLabelEffect()
 	
+end
+
+function General:createLabelEffect()
+	local cls = require("app.fight.LabelEffect")
+	if cls then
+		local effect = cls:create()
+		effect:setAnchorPoint(cc.p(0.5, 0))
+		effect:setPosition(self.role:topCenter())
+		self.role:addChild(effect)
+		self.labelEffect = effect
+	else
+		print("load app.fight.Soldier failed")
+	end
 end
 
 function General:createRoleNode(name)
@@ -52,6 +73,10 @@ end
 
 function General:isTouchEnabled()
 	return true
+end
+
+function General:isInvalid()
+	return self.role.status == kRoleDie
 end
 
 function General:setTarget(target)
@@ -93,9 +118,17 @@ function General:checkReachTarget(pos)
 
 end
 
+function General:isRemoteDamage()
+	return self.fightNode:isRemoteDamage()
+end
+
 function General:reachPos()
 	local px, py = self:getPosition()
 	return cc.p(px, py+20)
+end
+
+function General:acceptRadius()
+	return self.acceptR
 end
 
 function General:updateMove(dt)
@@ -112,18 +145,22 @@ function General:updateMove(dt)
 end
 
 function General:updateAttack(dt)
+	if self.role.status == kRoleDie then
+		return 
+	end
+
 	local status, rate, face = self.fightNode:checkAttack(dt)
 
 	if status == kFightStatusReach then
-		if self.fightNode:isTargetPos() or self.fightNode:theSameStamp(self.owner) then
+		-- print("isinvalid", self.fightNode:isTargetInvalid())
+		if self.fightNode:isTargetInvalid() or self.fightNode:theSameOwner(self.owner) then
 			self.fightNode:setTargetPos(nil)
 			self.role:actStand()
 		else
 			self.role:face(face)
-			self.role:actAttack(
-				function()  
-					self.fightNode:handleFight(self)
-					self.role:actStand()
+			self:actAttack(function()  
+				self:handleFight()
+				self.role:actStand()
 				end, rate)
 		end
 	end
@@ -132,6 +169,85 @@ function General:updateAttack(dt)
 
 end
 
+function General:attackRatio()
+	math.randomseed(os.time())
+	return math.random(75, 125)/100.0
+end
+
+function General:actAttack(callback, rate)
+	local atype = self.fightNode:currentAction()
+	if atype == kNormalAttack then
+		self.role:actAttack(callback, rate)
+	elseif atype == kSkill1 then
+		self.role:actSkill1(callback, rate)
+	elseif atype == kSkill2 then
+		self.role:actSkill2(callback, rate)
+	end
+
+end
+
+function General:handleDamage(damage)
+
+	local alive, num = self.fightNode:handleHurt(damage)
+
+	self:showNumEffect(num)
+
+	return alive
+end
+
+function General:showNumEffect(num)
+	self.labelEffect:showEffect(num)
+end
+
+function General:handleFight()
+	self.fightNode:handleFight(self, self:attackRatio())
+end
+
+function General:handleBeAttacked(ntype, damage, dtype)
+	local real = self.fightNode:getRealDamage(ntype, damage, dtype)
+	print("general handle be attacked")
+	local alive = self:handleDamage(real)
+
+	if not alive then
+		self.role:actDie(
+				function()
+					self.isDead = true
+				end)
+	end
+end
+
+function General:handleAttackBack(ntype, damage, dtype)
+	print("general handle attack back")
+	self:handleBeAttacked(ntype, damage, dtype)
+
+end
+
+-- function General:checkAttackBack(node)
+-- 	local remote = node:isRemoteDamage()
+
+-- 	if not remote then
+-- 		self.fightNode:handleAttackBack(self.type, node, self:attackRatio())
+-- 	end
+-- end
+
+function General:handleBeAttackedBySoldier(node, damage, dtype)
+	print("general attacked by soldier")
+	self:handleBeAttacked(node.type, damage, dtype)
+
+	-- self.fightNode:checkAttackBack(node, self.type, self:attackRatio())
+
+	self.fightNode:checkAutoFight(node)
+
+end
+
+function General:handleBeAttackedByGeneral(general, damage, dtype)
+	self:handleBeAttacked(general.type, damage, dtype)
+
+	-- self.fightNode:checkAttackBack(general, self.type, self:attackRatio())
+
+	self.fightNode:checkAutoFight(general)
+
+end
 
 
 

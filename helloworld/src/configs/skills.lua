@@ -1,5 +1,24 @@
 cc.exports.skills = {
-	{id=1, name="物理普通攻击", useRange=1, damageRange=0, damageCount=1},
-
+	{id=1, name="普通攻击", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="",flyEffect=""},
+	{id=2, name="法术攻击", useRange=1, damageRange=0, damageCount=1,damageType=2,effectType=1,value=1,SkillEffect="",flyEffect=""},
+	{id=3, name="刘备技能1", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=2,SkillEffect="",flyEffect=""},
+	{id=4, name="刘备技能2", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=2,SkillEffect="",flyEffect=""},
+	{id=5, name="关羽技能1", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=2.5,SkillEffect="",flyEffect=""},
+	{id=6, name="关羽技能2", useRange=1, damageRange=50, damageCount=1,damageType=1,effectType=2,value=3,SkillEffect="",flyEffect=""},
+	{id=7, name="张飞技能1", useRange=1, damageRange=100, damageCount=1,damageType=1,effectType=2,value=2,SkillEffect="",flyEffect=""},
+	{id=8, name="张飞技能2", useRange=1, damageRange=200, damageCount=1,damageType=1,effectType=2,value=1,SkillEffect="",flyEffect=""},
+	{id=9, name="赵云技能1", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="",flyEffect=""},
+	{id=10, name="赵云技能2", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="",flyEffect=""},
+	{id=11, name="马超技能1", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="",flyEffect=""},
+	{id=12, name="马超技能2", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="",flyEffect=""},
+	{id=13, name="黄忠技能1", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="",flyEffect=""},
+	{id=14, name="黄忠技能2", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="",flyEffect=""},
+	{id=15, name="建筑普通攻击", useRange=1, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="", flyEffect=""},
+	{id=16, name="箭塔（小）攻击", useRange=300, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="", flyEffect="wj9001"},
+	{id=17, name="箭塔（中）攻击", useRange=400, damageRange=0, damageCount=1,damageType=1,effectType=1,value=1.5,SkillEffect="", flyEffect="wj9001"},
+	{id=18, name="箭塔（大）攻击", useRange=500, damageRange=0, damageCount=1,damageType=1,effectType=1,value=2.5,SkillEffect="", flyEffect="wj9001"},
+	{id=19, name="投石（小）攻击", useRange=300, damageRange=50, damageCount=1,damageType=1,effectType=1,value=1,SkillEffect="wj9002_1", flyEffect="wj9002_2"},
+	{id=20, name="投石（中）攻击", useRange=400, damageRange=50, damageCount=1,damageType=1,effectType=1,value=1.5,SkillEffect="wj9002_1", flyEffect="wj9002_2"},
+	{id=21, name="投石（大）攻击", useRange=500, damageRange=50, damageCount=1,damageType=1,effectType=1,value=2.5,SkillEffect="wj9002_1", flyEffect="wj9002_2"},
 
 }

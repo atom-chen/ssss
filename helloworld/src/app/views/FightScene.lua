@@ -3,10 +3,13 @@
 local FightScene = class("FightScene", cc.Scene)
 
 local maps = cc.exports.maps
+local kFightScene = 1
 
 function FightScene:ctor(mapId)
 	self.touchDistance = -1
 	self.points = {}
+
+	self.sceneType = kFightScene
 
 	local layer = cc.Layer:create()
 
@@ -36,6 +39,8 @@ function FightScene:ctor(mapId)
 	self.bg:addChild(fightLayer)
 	self.fightLayer = fightLayer
 
+	fightLayer:createGenerals({1,2,3})
+
 end
 
 function FightScene:backgroundImage(mapInfo)
@@ -61,6 +66,11 @@ end
 
 function FightScene:startFight()
 	self.fightLayer:startFight()
+
+end
+
+function FightScene:handleAOE(node, pos, range, damage, dtype)
+	self.fightLayer:handleAOE(node, pos, range, damage, dtype)
 end
 
 function FightScene:moveBackGround(point)

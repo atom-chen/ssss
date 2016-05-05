@@ -22,6 +22,10 @@ function RoleNode:ctor(base)
 	self:actStand()
 end
 
+function RoleNode:setBaseName(base)
+	self.baseName = base
+end
+
 function RoleNode:face(left)
 	self.role:setFlippedX(left)
 end
@@ -40,8 +44,8 @@ function RoleNode:actStand()
 	end
 
 	self.status = kRoleStand
-	local path = self.baseName.."_0.plist"
-	self.role:playAnimate(path, kRoleActTag, true, 1.0/30)
+	local path = self.baseName.."_1.plist"
+	self.role:playAnimate(path, kRoleActTag, true, 1.0/60)
 	local frame = self.role:getSpriteFrame()
 	local rect = frame:getRect()
 	local size = cc.size(rect.width, rect.height)
@@ -58,8 +62,8 @@ function RoleNode:actMove()
 	end
 
 	self.status = kRoleMove
-	local path = self.baseName.."_1.plist"
-	self.role:playAnimate(path, kRoleActTag, true, 1.0/30)
+	local path = self.baseName.."_2.plist"
+	self.role:playAnimate(path, kRoleActTag, true, 1.0/60)
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 
@@ -69,18 +73,22 @@ function RoleNode:actWin()
 	end
 	
 	self.status = kRoleWin
-	local path = self.baseName.."_3.plist"
-	self.role:playAnimate(path, kRoleActTag, true, 1.0/30)
+	local path = self.baseName.."_4.plist"
+	self.role:playAnimate(path, kRoleActTag, true, 1.0/60)
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 
 function RoleNode:actOnceAction(path, callback, time)
 	local actions = {}
-	local anim = cc.Animation:createWithFile(path, time)
+	local anim = cc.Animation:createWithFile(path, time or 0)
+	anim:setDelayPerUnit(1.0/60)
 	local animate = cc.Animate:create(anim)
 	animate:setTag(kRoleActTag)
 	actions[#actions + 1] = animate
-	actions[#actions + 1] = cc.CallFunc:create(callback)
+	
+	if callback then
+		actions[#actions + 1] = cc.CallFunc:create(callback)
+	end
 
 	self.role:stopActionByTag(kRoleActTag)
 	local seq = cc.Sequence:create(actions)
@@ -94,7 +102,7 @@ function RoleNode:actAttack(callback, time)
 	end
 	
 	self.status = kRoleAttack
-	local path = self.baseName.."_2.plist"
+	local path = self.baseName.."_3.plist"
 	self:actOnceAction(path, callback, time)
 	
 	-- self.role:setTexture("icon/wj1001_1001.png")
@@ -106,7 +114,7 @@ function RoleNode:actDie(callback, time)
 	end
 	
 	self.status = kRoleDie
-	local path = self.baseName.."_4.plist"
+	local path = self.baseName.."_5.plist"
 	self:actOnceAction(path, callback, time)
 	-- self.role:playAnimate(path, SRoleActTag, true)
 
@@ -118,7 +126,7 @@ function RoleNode:actSkill1(callback, time)
 	end
 	
 	self.status = kRoleSkill1
-	local path = self.baseName.."_5.plist"
+	local path = self.baseName.."_6.plist"
 	self:actOnceAction(path, callback, time)
 	-- self.role:playAnimate(path, SRoleActTag, true)
 end
@@ -129,9 +137,14 @@ function RoleNode:actSkill2(callback, time)
 	end
 	
 	self.status = kRoleSkill2
-	local path = self.baseName.."_6.plist"
+	local path = self.baseName.."_7.plist"
 	self:actOnceAction(path, callback, time)
 	-- self.role:playAnimate(path, SRoleActTag, true)
+end
+
+function RoleNode:reset()
+	self.status = kRoleNone
+	self:actStand()
 end
 
 return RoleNode
