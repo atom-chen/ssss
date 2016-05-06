@@ -1,15 +1,13 @@
 
 
 
-local FightNode = class("FightNode")
+local M = class("FightManager")
 
-local kFightScene = 1
-local kPhysicalType = 1
-local kMagicType = 2
-local kSoldierType = 3
-local kGeneralType = 2
 
-function FightNode:ctor()
+cc.exports.FightManager = M
+
+
+function M:ctor()
 
 	self.attackRate = 0
 	self.attackTime = 0
@@ -26,30 +24,27 @@ function FightNode:ctor()
 
 end
 
-function FightNode:createSkillNode(skillList, actionList)
-	local cls = require("app.fight.SkillNode")
-	if cls then
-		self.skillNode = cls:create(skillList, actionList)
-	else
-		print("load app.fight.SkillNode failed")
-	end
+function M:createSkillNode(skillList, actionList)
+
+	
+	
 end
 
-function FightNode:setStandPos(pos)
+function M:setStandPos(pos)
 	self.standPos = pos
 end
 
-function FightNode:setTarget(target)
+function M:setTarget(target)
 	self.target = target
 	self.targetPos = nil
 end
 
-function FightNode:setTargetPos(pos)
+function M:setTargetPos(pos)
 	self.targetPos = pos
 	self.target = nil
 end
 
-function FightNode:parseSoldierCfg(cfg)
+function M:parseSoldierCfg(cfg)
 	self.phyAtt = cfg.physicalAtt
 	self.phyDef = cfg.physicalDef
 	self.phyRatio = (1-(cfg.physicalDef*0.01/(1+cfg.physicalDef*0.5*0.01)))/4
@@ -57,10 +52,11 @@ function FightNode:parseSoldierCfg(cfg)
 	self.magicRatio = (1-(cfg.magicDef*0.01/(1+cfg.magicDef*0.5*0.01)))/4
 	self.moveSpeed = cfg.moveSpeed
 	self.attackSpeed = cfg.attackSpeed
-	self:createSkillNode(cfg.skillList)
+
+	self.skillNode = SkillManager:create(cfg.skillList)
 end
 
-function FightNode:parseBuildingCfg(cfg)
+function M:parseBuildingCfg(cfg)
 	self.phyAtt = cfg.physicalAtt
 	self.phyDef = cfg.physicalDef * 1.25
 	self.phyRatio = (1-(cfg.physicalDef*0.01/(1+cfg.physicalDef*0.5*0.01)))/4
@@ -68,24 +64,24 @@ function FightNode:parseBuildingCfg(cfg)
 	self.magicRatio = (1-(cfg.magicDef*0.01/(1+cfg.magicDef*0.5*0.01)))/4
 	self.moveSpeed = cfg.moveSpeed
 	self.attackSpeed = cfg.attackSpeed
-	self:createSkillNode(cfg.skillList)
+	self.skillNode = SkillManager:create(cfg.skillList)
 
 end
 
-function FightNode:parseGeneralCfg(cfg)
+function M:parseGeneralCfg(cfg)
 	self.phyAtt = cfg.strength * 0.75
 	self.phyDef = cfg.strength * 0.5
 	self.phyRatio = (1-(cfg.strength * 0.5 *0.01/(1+cfg.strength*0.5*0.01)))/4
 	self.magicAtt = cfg.intellect * 0.85
 	self.magicDef = cfg.intellect * 0.5
 	self.magicRatio = (1-(cfg.intellect*0.5*0.01/(1+cfg.intellect*0.5*0.01)))/4
-	self.moveSpeed = math.min(50+cfg.lead/3, 500)
+	self.moveSpeed = math.min(cfg.moveSpeed+cfg.lead/3, 500)
 	self.attackSpeed = cfg.attackSpeed
 	self.health = cfg.lead
-	self:createSkillNode(cfg.skillList, cfg.actionList)
+	self.skillNode = SkillManager:create(cfg.skillList, cfg.actionList)
 end
 
-function FightNode:checkAttack(dt)
+function M:checkAttack(dt)
 	local status, tpos = self:attackStatus()
 	if status ~= 1 then
 		return status
@@ -100,7 +96,7 @@ function FightNode:checkAttack(dt)
 	return status
 end
 
-function FightNode:checkMove(dt)
+function M:checkMove(dt)
 	local status, tpos = self:attackStatus()
 
 	if status ~= 0 then
@@ -117,7 +113,7 @@ function FightNode:checkMove(dt)
 
 end
 
-function FightNode:checkAttackBack(target, ntype, ratio)
+function M:checkAttackBack(target, ntype, ratio)
 	-- local radius = self.skillNode:currentUseRange()
 	-- local tx, ty = target:reachPos()
 	-- local tpos = cc.p(tx, ty)
@@ -137,14 +133,14 @@ function FightNode:checkAttackBack(target, ntype, ratio)
 
 end
 
-function FightNode:checkAutoFight(node)
+function M:checkAutoFight(node)
 	if self.target == nil then
 		self:setTarget(node)
 	end
 
 end
 
-function FightNode:attackStatus()
+function M:attackStatus()
 	local tpos = nil
 	local radius = self.skillNode:currentUseRange()
 	if self.target then
@@ -168,11 +164,11 @@ function FightNode:attackStatus()
 end
 
 
-function FightNode:isTargetGeneral()
+function M:isTargetGeneral()
 	return self.target.type == 2
 end
 
-function FightNode:isTargetInvalid()
+function M:isTargetInvalid()
 	-- return self.target == nil or self.target:isInvalid()
 	if not self.target then
 		return true
@@ -186,7 +182,7 @@ function FightNode:isTargetInvalid()
 	return true
 end
 
-function FightNode:theSameOwner(owner)
+function M:theSameOwner(owner)
 	if self.target then
 		return self.target.owner == owner
 	end
@@ -194,16 +190,16 @@ function FightNode:theSameOwner(owner)
 	return false
 end
 
-function FightNode:isRemoteDamage()
+function M:isRemoteDamage()
 	local skill = self.skillNode:currentSkill()
 	return skill.useRange > 1 or skill.damageRange > 0
 end
 
-function FightNode:currentAction()
+function M:currentAction()
 	return self.skillNode:currentAction()
 end
 
-function FightNode:currentAttack()
+function M:currentAttack()
 	local skill = self.skillNode:currentSkill()
 	if skill.damageType == kPhysicalType then
 		return self.phyAtt * skill.value
@@ -213,7 +209,7 @@ function FightNode:currentAttack()
 
 end
 
-function FightNode:handleFight(node, ratio)
+function M:handleFight(node, ratio)
 	-- if node.type == 3 then
 		-- self.target:handleBeAttackedBySoldier(node)
 	-- end
@@ -237,11 +233,11 @@ function FightNode:handleFight(node, ratio)
 
 end
 
-function FightNode:handleGather(num)
+function M:handleGather(num)
 	self.target:handleGather(num)
 end
 
-function FightNode:getRealDamage(ntype, damage, dtype)
+function M:getRealDamage(ntype, damage, dtype)
 	local ratio = 1
 
 	if dtype == kPhysicalType then
@@ -259,7 +255,7 @@ function FightNode:getRealDamage(ntype, damage, dtype)
 
 end
 
-function FightNode:displayNumber(num)
+function M:displayNumber(num)
 	if num <= 0 then
 		return 0
 	elseif num <= 1 then
@@ -269,21 +265,21 @@ function FightNode:displayNumber(num)
 	end
 end
 
-function FightNode:handleHurt(damage)
+function M:handleHurt(damage)
 	local last = math.floor(self.health)
 	self.health = self.health - damage
 	local curr = math.floor(self.health)
 	return self.health > 0, curr - last
 end
 
-function FightNode:handleAttackBack(ntype, target, ratio)
+function M:handleAttackBack(ntype, target, ratio)
 	local skill = self.skillNode:currentSkill()
 	target:handleAttackBack(ntype, self:currentAttack() * ratio, skill.damageType)
 
 end
 
 
-return FightNode
+return M
 
 
 

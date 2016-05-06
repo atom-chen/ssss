@@ -2,8 +2,6 @@
 
 local FightScene = class("FightScene", cc.Scene)
 
-local maps = cc.exports.maps
-local kFightScene = 1
 
 function FightScene:ctor(mapId)
 	self.touchDistance = -1
@@ -26,20 +24,13 @@ function FightScene:ctor(mapId)
 	end
 
 	local image = self:backgroundImage(mapInfo)
-	print("fightbg image--", image)
+	-- print("fightbg image--", image)
 	self.bg = cc.Sprite:create(image)
 	self.bg:setScale(0.5)
 	self.bg:setPosition(display.center)
 	self:addChild(self.bg)
 
-	local fightLayer = self:createFightLayer(mapInfo, self.bg:getContentSize())
-
-	fightLayer:setAnchorPoint(cc.p(0, 0))
-	fightLayer:setPosition(cc.p(0, 0))
-	self.bg:addChild(fightLayer)
-	self.fightLayer = fightLayer
-
-	fightLayer:createGenerals({1,2,3})
+	self:createFightLayer(mapInfo, self.bg:getContentSize())
 
 end
 
@@ -48,12 +39,14 @@ function FightScene:backgroundImage(mapInfo)
 end
 
 function FightScene:createFightLayer(mapInfo, size)
-	local cls = require("app.fight.FightLayer")
-	if cls then
-		return cls:create(mapInfo, size)
-	else
-		print("load app.fight.FightLayer failed")
-	end
+	local fightLayer = FightLayer:create(mapInfo, size)
+
+	fightLayer:setAnchorPoint(cc.p(0, 0))
+	fightLayer:setPosition(cc.p(0, 0))
+	self.bg:addChild(fightLayer)
+	self.fightLayer = fightLayer
+
+	fightLayer:createGenerals({1,2,3})
 end
 
 function FightScene:setBackGroundPos(ep)
@@ -69,10 +62,6 @@ function FightScene:startFight()
 
 end
 
-function FightScene:handleAOE(node, pos, range, damage, dtype)
-	self.fightLayer:handleAOE(node, pos, range, damage, dtype)
-end
-
 function FightScene:moveBackGround(point)
 	
 	local p2 = cc.p(self.points[0].x, self.points[0].y)
@@ -82,6 +71,10 @@ function FightScene:moveBackGround(point)
 
 	self:setBackGroundPos(ep)
 
+end
+
+function FightScene:handleAOE(node, pos, range, damage, dtype)
+	self.fightLayer:handleAOE(node, pos, range, damage, dtype)
 end
 
 function FightScene:handleTouchesBegan(points)
@@ -96,7 +89,7 @@ function FightScene:handleTouchesBegan(points)
 end
 
 function FightScene:handleTouchesMoved(points)
-
+	
 	if self.points[0] and self.points[1] then
 		local p0 = self.points[0]
 		local p1 = self.points[1]

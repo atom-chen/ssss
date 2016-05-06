@@ -1,15 +1,10 @@
 
 
-local Soldier = class("Soldier", cc.Node)
+local S = class("Soldier", cc.Node)
 
-local kFightStatusReach = 1
-local kFightStatusNotReach = 0
-local kFightStatusNoTarget = -1
+cc.exports.Soldier = S
 
-local kSoldierType = 3
-local kGeneralType = 2
-
-function Soldier:ctor(cfg, owner, num, target)
+function S:ctor(cfg, owner, num, target)
 	self.cfg = cfg
 	self.owner = owner
 	self.roles = {}
@@ -25,24 +20,21 @@ function Soldier:ctor(cfg, owner, num, target)
 	
 end
 
-function Soldier:createFightNode(target)
-	local cls = require("app.fight.FightNode")
-	if cls then
-		local fightNode = cls:create()
+function S:createFightNode(target)
+
+		local fightNode = FightManager:create()
 		fightNode:setTarget(target)
 		fightNode:parseSoldierCfg(self.cfg)
 		self.fightNode = fightNode
-	else
-		print("load app.fight.RoleNode failed")
-	end
+
 end
 
-function Soldier:setStandPos(pos)
+function S:setStandPos(pos)
 	self:setPosition(pos)
 	self.fightNode:setStandPos(pos)
 end
 
-function Soldier:setSoldierNum(num)
+function S:setSoldierNum(num)
 	num = math.max(num, 0)
 	self.soldierNum = num
 	local rn = self:roleNum(num)
@@ -63,7 +55,7 @@ function Soldier:setSoldierNum(num)
 
 end
 
-function Soldier:setTarget(target)
+function S:setTarget(target)
 	if target then
 		self.workDone = false
 		self.fightNode:setTarget(target)
@@ -71,7 +63,7 @@ function Soldier:setTarget(target)
 end
 
 
-function Soldier:roleNum(num)
+function S:roleNum(num)
 	if num <= 0 then
 		return 0
 	elseif num <= 1 then
@@ -81,43 +73,34 @@ function Soldier:roleNum(num)
 	end
 end
 
-function Soldier:createLabelEffect()
-	local cls = require("app.fight.LabelEffect")
-	if cls then
-		local effect = cls:create()
+function S:createLabelEffect()
+
+		local effect = LabelEffect:create()
 		effect:setAnchorPoint(cc.p(0.5, 0))
 		effect:setPosition(self.topLbl:topCenter())
 		self.topLbl:addChild(effect)
 		self.labelEffect = effect
-	else
-		print("load app.fight.Soldier failed")
-	end
+
 end
 
-function Soldier:createTopLbl()
-	local cls = require("app.fight.SoldierTopLbl")
-	if cls then
-		local topLbl = cls:create(self.cfg.typeId, self.owner)
+function S:createTopLbl()
+	
+
+		local topLbl = CampLabel:create(self.cfg.typeId, self.owner)
 		topLbl:setAnchorPoint(cc.p(0.5, 0.5))
 		topLbl:setPosition(self:topCenter())
 		self:addChild(topLbl)
 		self.topLbl = topLbl
 		
-	else
-		print("load app.fight.SoldierTopLbl failed")
-	end
 end
 
-function Soldier:createRoleNode(name)
-	local cls = require("app.fight.RoleNode")
-	if cls then
-		return cls:create(name)
-	else
-		print("load app.fight.RoleNode failed")
-	end
+function S:createRoleNode(name)
+
+		return RoleNode:create(name)
+
 end
 
-function Soldier:addSoldier(num)
+function S:addSoldier(num)
 	-- print("add---", num)
 	local base = self:roleBaseName()
 	local size = nil
@@ -165,7 +148,7 @@ function Soldier:addSoldier(num)
 	
 end
 
-function Soldier:deleteSoldier(num)
+function S:deleteSoldier(num)
 	-- print("delete---", num)
 	local count = num
 	while count > 0 do
@@ -184,11 +167,11 @@ function Soldier:deleteSoldier(num)
 
 end
 
-function Soldier:roleBaseName()
+function S:roleBaseName()
 	return "action/"..self.cfg.icon.."_"..self.owner
 end
 
-function Soldier:updateFace(face)
+function S:updateFace(face)
 	if self.face == face then
 		return 
 	end
@@ -199,7 +182,7 @@ function Soldier:updateFace(face)
 	end
 end
 
-function Soldier:updateMove(dt)
+function S:updateMove(dt)
 	if self.fightNode:isTargetInvalid() then
 		self.workDone = true
 		return 
@@ -215,7 +198,8 @@ function Soldier:updateMove(dt)
 	return status, last
 end
 
-function Soldier:updateAttack(dt)
+function S:updateAttack(dt)
+
 	local status, rate, face = self.fightNode:checkAttack(dt)
 
 	if status == kFightStatusReach then
@@ -238,53 +222,53 @@ function Soldier:updateAttack(dt)
 	return status, rate
 end
 
-function Soldier:isRemoteDamage()
+function S:isRemoteDamage()
 	return self.fightNode:isRemoteDamage()
 end
 
-function Soldier:isInvalid()
+function S:isInvalid()
 	return #self.roles <= 0
 end
 
-function Soldier:isTargetInvalid()
+function S:isTargetInvalid()
 	return self.fightNode:isTargetInvalid()
 end
 
-function Soldier:isTheSameOwnerWithTarget()
+function S:isTheSameOwnerWithTarget()
 	return self.fightNode:theSameOwner(self.owner)
 end
 
 
-function Soldier:handleFight()
+function S:handleFight()
 	self.fightNode:handleFight(self, self:attackRatio())
 end
 
-function Soldier:handleWorkDone()
+function S:handleWorkDone()
 	if not self:isInvalid() then
 		self:handleGather()
 	end
 end
 
-function Soldier:attackRatio()
+function S:attackRatio()
 	return math.max(self.soldierNum, 0)/25.0
 end
 
-function Soldier:reachPos()
+function S:reachPos()
 	local px, py = self:getPosition()
 	return cc.p(px, py)
 end
 
-function Soldier:acceptRadius()
+function S:acceptRadius()
 	return self.acceptR
 end
 
-function Soldier:actStand()
+function S:actStand()
 	for _, v in pairs(self.roles) do
 		v:actStand()
 	end
 end
 
-function Soldier:actAttack(callback, time)
+function S:actAttack(callback, time)
 	for _, v in pairs(self.roles) do
 		v:actAttack(callback, time)
 		callback = nil
@@ -292,21 +276,21 @@ function Soldier:actAttack(callback, time)
 
 end
 
-function Soldier:actMove()
+function S:actMove()
 	for _, v in pairs(self.roles) do
 		v:actMove()
 	end
 end
 
-function Soldier:showNumEffect(num)
+function S:showNumEffect(num)
 	self.labelEffect:showEffect(num)
 end
 
-function Soldier:handleGather()
+function S:handleGather()
 	self.fightNode:handleGather(self.soldierNum)
 end
 
-function Soldier:handleBeAttacked(ntype, damage, dtype)
+function S:handleBeAttacked(ntype, damage, dtype)
 	local real = self.fightNode:getRealDamage(ntype, damage, dtype)
 	-- print("last num -", self.soldierNum)
 	local last = self.fightNode:displayNumber(self.soldierNum)
@@ -320,20 +304,20 @@ function Soldier:handleBeAttacked(ntype, damage, dtype)
 	self:setSoldierNum(currNum)
 end
 
-function Soldier:handleAttackBack(ntype, damage, dtype)
+function S:handleAttackBack(ntype, damage, dtype)
 	print("soldier handle attack back")
 	self:handleBeAttacked(ntype, damage, dtype)
 
 end
 
-function Soldier:handleBeAttackedBySoldier(node, damage, dtype)
+function S:handleBeAttackedBySoldier(node, damage, dtype)
 	self:handleBeAttacked(node.type, damage, dtype)
 
 	self.fightNode:checkAttackBack(node, self.type, self:attackRatio())
 
 end
 
-function Soldier:handleBeAttackedByGeneral(general, damage, dtype)
+function S:handleBeAttackedByGeneral(general, damage, dtype)
 	print("soldier handle be attacked by general")
 	self:handleBeAttacked(general.type, damage, dtype)
 
@@ -342,6 +326,6 @@ function Soldier:handleBeAttackedByGeneral(general, damage, dtype)
 end
 
 
-return Soldier
+return S
 
 

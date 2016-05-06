@@ -1,7 +1,9 @@
 
-local LabelEffect = class("LabelEffect", cc.Node)
+local E = class("LabelEffect", cc.Node)
 
-function LabelEffect:ctor()
+cc.exports.LabelEffect = E
+
+function E:ctor()
 	local lbl = cc.Label:createWithSystemFont("", "Arial", 23)
 	lbl:setAnchorPoint(cc.p(0.5, 0))
 	lbl:setPosition(cc.p(0, 0))
@@ -10,7 +12,7 @@ function LabelEffect:ctor()
 
 end
 
-function LabelEffect:showEffect(num)
+function E:showEffect(num)
 	
 	if num > 0 then
 		self.lbl:setTextColor(cc.c4b(0, 255, 0, 255))
@@ -35,4 +37,4 @@ end
 
 
 
-return LabelEffect
+return E

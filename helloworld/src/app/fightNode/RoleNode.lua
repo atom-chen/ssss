@@ -1,19 +1,14 @@
-local RoleNode = class("RoleNode", cc.Node)
+
+
+local R = class("RoleNode", cc.Node)
+
+cc.exports.RoleNode = R
 
 local kRoleOffY = -146
 
-local kRoleNone = -1
-local kRoleStand = 0
-local kRoleMove = 1
-local kRoleWin = 2
-local kRoleAttack = 3
-local kRolwDie = 4
-local kRoleSkill1 = 5
-local kRoleSkill2 = 6
-
 local kRoleActTag = 100
 
-function RoleNode:ctor(base)
+function R:ctor(base)
 	self.baseName = base
 	self.role = cc.Sprite:create()
 	self.role:setAnchorPoint(cc.p(0.5, 0))
@@ -22,23 +17,23 @@ function RoleNode:ctor(base)
 	self:actStand()
 end
 
-function RoleNode:setBaseName(base)
+function R:setBaseName(base)
 	self.baseName = base
 end
 
-function RoleNode:face(left)
+function R:face(left)
 	self.role:setFlippedX(left)
 end
 
-function RoleNode:setHighLight()
+function R:setHighLight()
 	self.role:setHighLight()
 end
 
-function RoleNode:setNormalLight()
+function R:setNormalLight()
 	self.role:setNormalLight()
 end
 
-function RoleNode:actStand()
+function R:actStand()
 	if self.status == kRoleStand then
 		return
 	end
@@ -56,7 +51,7 @@ function RoleNode:actStand()
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 
-function RoleNode:actMove()
+function R:actMove()
 	if self.status == kRoleMove then
 		return
 	end
@@ -67,7 +62,7 @@ function RoleNode:actMove()
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 
-function RoleNode:actWin()
+function R:actWin()
 	if self.status == kRoleWin then
 		return
 	end
@@ -78,7 +73,7 @@ function RoleNode:actWin()
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 
-function RoleNode:actOnceAction(path, callback, time)
+function R:actOnceAction(path, callback, time)
 	local actions = {}
 	local anim = cc.Animation:createWithFile(path, time or 0)
 	anim:setDelayPerUnit(1.0/60)
@@ -96,7 +91,7 @@ function RoleNode:actOnceAction(path, callback, time)
 	self.role:runAction(seq)
 end
 
-function RoleNode:actAttack(callback, time)
+function R:actAttack(callback, time)
 	if self.status == kRoleAttack then
 		return
 	end
@@ -108,7 +103,7 @@ function RoleNode:actAttack(callback, time)
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 
-function RoleNode:actDie(callback, time)
+function R:actDie(callback, time)
 	if self.status == kRoleDie then
 		return
 	end
@@ -120,7 +115,7 @@ function RoleNode:actDie(callback, time)
 
 end
 
-function RoleNode:actSkill1(callback, time)
+function R:actSkill1(callback, time)
 	if self.status == kRoleSkill1 then
 		return
 	end
@@ -131,7 +126,7 @@ function RoleNode:actSkill1(callback, time)
 	-- self.role:playAnimate(path, SRoleActTag, true)
 end
 
-function RoleNode:actSkill2(callback, time)
+function R:actSkill2(callback, time)
 	if self.status == kRoleSkill2 then
 		return
 	end
@@ -142,9 +137,9 @@ function RoleNode:actSkill2(callback, time)
 	-- self.role:playAnimate(path, SRoleActTag, true)
 end
 
-function RoleNode:reset()
+function R:reset()
 	self.status = kRoleNone
 	self:actStand()
 end
 
-return RoleNode
+return R

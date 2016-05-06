@@ -1,9 +1,9 @@
-local SoldierTopLbl = class("SoldierTopLbl", cc.Node)
+local C = class("CampLabel", cc.Node)
 
-local typeCfg = cc.exports.soldierType
+cc.exports.CampLabel = C
 
-function SoldierTopLbl:ctor(type, owner)
-	self.cfg = typeCfg[type]
+function C:ctor(type, owner)
+	self.cfg = soldierType[type]
 	if not self.cfg then
 		print("load soldier type failed! type id: ", type)
 	end
@@ -36,11 +36,11 @@ function SoldierTopLbl:ctor(type, owner)
 
 end
 
-function SoldierTopLbl:typeImage(owner)
+function C:typeImage(owner)
 	return "icon/"..self.cfg.icon..string.format("_%d%d", owner, self.cfg.id)..".png"
 end
 
-function SoldierTopLbl:setOwner(owner)
+function C:setOwner(owner)
 	if self.owner == owner then
 		return 
 	end
@@ -51,9 +51,9 @@ function SoldierTopLbl:setOwner(owner)
 
 end
 
-function SoldierTopLbl:setSoldierNum(num)
+function C:setSoldierNum(num)
 	self.numLbl:setString(string.format("%d", num))
 end
 
 
-return SoldierTopLbl
+return C

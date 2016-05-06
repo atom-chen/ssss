@@ -1,24 +1,16 @@
 
-local General = class("General", cc.Node)
+local G = class("General", cc.Node)
 
+cc.exports.General = G
 
-local kFightStatusNotReach = 0
-local kFightStatusReach = 1
-local kRolwDie = 4
-local kNormalAttack = 1
-local kSkill1 = 2
-local kSkill2 = 3
-local kRoleMove = 1
-
-function General:ctor(cfg, owner, id)
+function G:ctor(cfg, owner)
 	self.cfg = cfg
 	self.owner = owner
 	self.type = 2
-	self.id = id
 	self.isDead = false
 
 	local image = self:roleImage()
-	self.role = self:createRoleNode(image)
+	self.role = RoleNode:create(image)
 	self.role:setAnchorPoint(cc.p(0, 0))
 	self.role:setPosition(cc.p(0, 0))
 	self:addChild(self.role)
@@ -34,65 +26,52 @@ function General:ctor(cfg, owner, id)
 	
 end
 
-function General:createLabelEffect()
-	local cls = require("app.fight.LabelEffect")
-	if cls then
-		local effect = cls:create()
+function G:createLabelEffect()
+
+		local effect = LabelEffect:create()
 		effect:setAnchorPoint(cc.p(0.5, 0))
 		effect:setPosition(self.role:topCenter())
 		self.role:addChild(effect)
 		self.labelEffect = effect
-	else
-		print("load app.fight.Soldier failed")
-	end
+
 end
 
-function General:createRoleNode(name)
-	local cls = require("app.fight.RoleNode")
-	if cls then
-		return cls:create(name)
-	else
-		print("load app.fight.RoleNode failed")
-	end
-end
 
-function General:createFightNode()
-	local cls = require("app.fight.FightNode")
-	if cls then
-		local fightNode = cls:create()
+function G:createFightNode()
+
+
+		local fightNode = FightManager:create()
 		fightNode:parseGeneralCfg(self.cfg)
 		self.fightNode = fightNode
-	else
-		print("load app.fight.RoleNode failed")
-	end
+
 end
 
-function General:roleImage()
+function G:roleImage()
 	return "action/"..self.cfg.icon
 end
 
-function General:isTouchEnabled()
+function G:isTouchEnabled()
 	return true
 end
 
-function General:isInvalid()
+function G:isInvalid()
 	return self.role.status == kRoleDie
 end
 
-function General:setTarget(target)
+function G:setTarget(target)
 	self.fightNode:setTarget(target)
 end
 
-function General:setTargetPos(pos)
+function G:setTargetPos(pos)
 	self.fightNode:setTargetPos(pos)
 end
 
-function General:setStandPos(pos)
-	self.fightNode:setStandPos(pos)
+function G:setStandPos(pos)
+	self.fightNode:setStandPos(cc.p(pos.x ,pos.y+20))
 	self:setPosition(pos)
 end
 
-function General:select()
+function G:select()
 	-- local sp = self.role
 
 	-- local program = cc.GLProgramCache:getInstance():getGLProgram("ShaderPositionTextureHightLight")
@@ -103,7 +82,7 @@ function General:select()
 
 end
 
-function General:unselect()
+function G:unselect()
 	-- local sp = self.role
 
 	-- local program = cc.GLProgramCache:getInstance():getGLProgram("ShaderPositionTextureColor_noMVP")
@@ -114,24 +93,23 @@ function General:unselect()
 
 end
 
-function General:checkReachTarget(pos)
+function G:checkReachTarget(pos)
 
 end
 
-function General:isRemoteDamage()
+function G:isRemoteDamage()
 	return self.fightNode:isRemoteDamage()
 end
 
-function General:reachPos()
-	local px, py = self:getPosition()
-	return cc.p(px, py+20)
+function G:reachPos()
+	return self.fightNode.standPos
 end
 
-function General:acceptRadius()
+function G:acceptRadius()
 	return self.acceptR
 end
 
-function General:updateMove(dt)
+function G:updateMove(dt)
 	local status, last, face = self.fightNode:checkMove(dt)
 	if status == kFightStatusNotReach then
 		-- print("general move-x--", last.x, "y--", last.y)
@@ -144,9 +122,9 @@ function General:updateMove(dt)
 	return status, last
 end
 
-function General:updateAttack(dt)
+function G:updateAttack(dt)
 	if self.role.status == kRoleDie then
-		return 
+		return
 	end
 
 	local status, rate, face = self.fightNode:checkAttack(dt)
@@ -158,7 +136,7 @@ function General:updateAttack(dt)
 			self.role:actStand()
 		else
 			self.role:face(face)
-			self:actAttack(function()  
+			self:actAttack(function()
 				self:handleFight()
 				self.role:actStand()
 				end, rate)
@@ -169,12 +147,12 @@ function General:updateAttack(dt)
 
 end
 
-function General:attackRatio()
+function G:attackRatio()
 	math.randomseed(os.time())
 	return math.random(75, 125)/100.0
 end
 
-function General:actAttack(callback, rate)
+function G:actAttack(callback, rate)
 	local atype = self.fightNode:currentAction()
 	if atype == kNormalAttack then
 		self.role:actAttack(callback, rate)
@@ -186,7 +164,7 @@ function General:actAttack(callback, rate)
 
 end
 
-function General:handleDamage(damage)
+function G:handleDamage(damage)
 
 	local alive, num = self.fightNode:handleHurt(damage)
 
@@ -195,15 +173,15 @@ function General:handleDamage(damage)
 	return alive
 end
 
-function General:showNumEffect(num)
+function G:showNumEffect(num)
 	self.labelEffect:showEffect(num)
 end
 
-function General:handleFight()
+function G:handleFight()
 	self.fightNode:handleFight(self, self:attackRatio())
 end
 
-function General:handleBeAttacked(ntype, damage, dtype)
+function G:handleBeAttacked(ntype, damage, dtype)
 	local real = self.fightNode:getRealDamage(ntype, damage, dtype)
 	print("general handle be attacked")
 	local alive = self:handleDamage(real)
@@ -216,7 +194,7 @@ function General:handleBeAttacked(ntype, damage, dtype)
 	end
 end
 
-function General:handleAttackBack(ntype, damage, dtype)
+function G:handleAttackBack(ntype, damage, dtype)
 	print("general handle attack back")
 	self:handleBeAttacked(ntype, damage, dtype)
 
@@ -230,7 +208,7 @@ end
 -- 	end
 -- end
 
-function General:handleBeAttackedBySoldier(node, damage, dtype)
+function G:handleBeAttackedBySoldier(node, damage, dtype)
 	print("general attacked by soldier")
 	self:handleBeAttacked(node.type, damage, dtype)
 
@@ -240,7 +218,7 @@ function General:handleBeAttackedBySoldier(node, damage, dtype)
 
 end
 
-function General:handleBeAttackedByGeneral(general, damage, dtype)
+function G:handleBeAttackedByGeneral(general, damage, dtype)
 	self:handleBeAttacked(general.type, damage, dtype)
 
 	-- self.fightNode:checkAttackBack(general, self.type, self:attackRatio())
@@ -251,7 +229,7 @@ end
 
 
 
-return General
+return G
 
 
 

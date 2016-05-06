@@ -1,9 +1,11 @@
 
 
-local GuardTower = class("GuardTower", cc.Node)
+local G = class("GuardTower", cc.Node)
 
-function GuardTower:ctor(baseImage, buildSize)
-	self.baseImage = baseImage
+cc.exports.GuardTower = G
+
+function G:ctor(baseImage, buildSize)
+	self.baseImage = "building/"..baseImage
 	self.buildSize = buildSize
 	local sp1 = cc.Sprite:create()
 	sp1:setAnchorPoint(cc.p(0, 0))
@@ -17,32 +19,30 @@ function GuardTower:ctor(baseImage, buildSize)
 
 end
 
-function GuardTower:createMan(owner)
-	local cls = require("app.fight.RoleNode")
-	if cls then
-		local man = cls:create("action/wj1010_"..owner)
+function G:createMan(owner)
+
+		local man = RoleNode:create("action/wj1010_"..owner)
 		man:setAnchorPoint(cc.p(0.5, 1))
 		self:addChild(man)
 		self.man = man
-	else
-		print("load app.fight.rolenode failed")
-	end
+
 end
 
-function GuardTower:setOffY(offY)
+function G:setOffY(offY)
 	self.offY = offY
 	self.sp1:setPosition(cc.p(0, offY))
 	self.sp2:setPosition(cc.p(0, offY))
 end
 
-function GuardTower:setOwner(owner)
+function G:setOwner(owner)
 	local image = self.baseImage.."_"..owner.."1.png"
 	self.sp1:setTexture(image)
 
 	image = self.baseImage.."_"..owner.."2.png"
 	self.sp2:setTexture(image)
 	local size = self.sp1:getContentSize()
-	self:setContentSize(cc.size(size.width, size.height + self.offY))
+	local final = cc.size(size.width, size.height + self.offY)
+	self:setContentSize(final)
 
 	if owner ~= 0 and self.man == nil then
 		self:createMan(owner)
@@ -56,10 +56,10 @@ function GuardTower:setOwner(owner)
 
 		self.man:setPosition(cc.pSub(self:topCenter(), cc.p(0, offys[self.buildSize])))
 	end
-	
+	return final
 end
 
-function GuardTower:setHighLight()
+function G:setHighLight()
 	self.sp1:setHighLight()
 	self.sp2:setHighLight()
 	if self.man then
@@ -67,7 +67,7 @@ function GuardTower:setHighLight()
 	end
 end
 
-function GuardTower:setNormalLight()
+function G:setNormalLight()
 	self.sp1:setNormalLight()
 	self.sp2:setNormalLight()
 	if self.man then
@@ -77,5 +77,5 @@ function GuardTower:setNormalLight()
 end
 
 
-return GuardTower 
+return G 
 

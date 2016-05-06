@@ -10,6 +10,7 @@ require "configs.init"
 
 local function main()
     -- require("app.MyApp"):create():run("FightScene")
+
     local scene = require("app.views.FightScene"):create(1)
     display.runScene(scene)
     scene:startFight()
