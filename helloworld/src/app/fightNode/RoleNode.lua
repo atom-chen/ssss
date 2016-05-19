@@ -14,7 +14,7 @@ function R:ctor(base, fy, rand)
 	self.status = kRoleNone
 	self:addChild(self.role)
 	self.fy = fy
-
+	self.delay = -1
 	-- self:actStand(1.0/8)
 end
 

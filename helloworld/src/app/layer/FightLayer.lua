@@ -255,6 +255,8 @@ function FightLayer:updateSoldierStatus()
 		if v.status == kSoldierStatusNextTarget then
 			local target = self:findNearestBuild(v.owner, v:centerPos())
 			v:setTarget(target)
+			v:dispersal()
+			print("dispersal")
 		elseif v.status == kSoldierStatusGather then
 			v:handleGather()
 			-- v:removeFromParent(true)

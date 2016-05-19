@@ -10,7 +10,7 @@ function S:ctor(cfg, owner, num, target, ident)
 	self.ident = ident
 	self.roles = {}
 	self.type = 3
-	self.workDone = false
+	-- self.workDone = false
 
 	self.count = 0
 	self.status = kSoldierStatusNormal
@@ -78,8 +78,9 @@ end
 
 function S:setTarget(target)
 	if target then
-		self.workDone = false
+		-- self.workDone = false
 		self.fightProxy:setTarget(target)
+		self.status = kSoldierStatusNormal
 	end
 end
 
@@ -381,8 +382,7 @@ function S:attackRatio()
 end
 
 function S:centerPos()
-	local px, py = self:getPosition()
-	return cc.p(px, py)
+	return self.fightProxy.standPos
 end
 
 function S:actStand()
@@ -406,20 +406,37 @@ function S:actAttack(callback, time, delay)
 	-- self.inAttack = true
 	local final = nil
 	if self.face then
-		final = self:finalPos(4)
+		final = self:finalPos(5)
 	else
-		final = self:finalPo(5)
+		final = self:finalPos(4)
 	end
 
 	for i, v in pairs(self.roles) do
 		-- local actions = {}
 		-- actions[#actions + 1] = cc.Delay:create(v.randDelay)
 		-- local seq = cc.Sequence:create(action)
-		if i == 1 then
-			self:gatherRole(v, final, function () v:actAttack(callback, time, delay) end)
-		else
-			self:gatherRole(v, final, function () v:actAttack(nil, time, delay) end)
+
+		if v.delay == -1 then
+			local delay = self:gatherRole(v, final)
 		end
+
+		local actions = {}
+		actions[#actions + 1] = cc.DelayTime:create(v.delay)
+		if i == 1 then
+			actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(callback, time, delay) end end)
+		else
+			actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(nil, time, delay) end end)
+		end
+		local seq = cc.Sequence:create(actions)
+		self:runAction(seq)
+
+
+
+		-- if i == 1 then
+		-- 	self:gatherRole(v, final, function () v:actAttack(callback, time, delay) end)
+		-- else
+		-- 	self:gatherRole(v, final, function () v:actAttack(nil, time, delay) end)
+		-- end
 		-- if delay > 0 then
 		-- 	local actions = {}
 		-- 	actions[#actions + 1] = cc.DelayTime:create(delay)
@@ -464,14 +481,14 @@ end
 function S:dispersal()
 
 	for i, role in pairs(self.roles) do
-		if role.status ~= kRoleDie then
+		-- if role.status ~= kRoleDie then
 			local last = self:finalPos(i)
-
+			role.delay = -1
 			local move = cc.MoveTo:create(0.7, last)
 			move:setTag(kRoleGatherTag)
 			role:stopActionByTag(kRoleGatherTag)
 			role:runAction(move)
-		end
+		-- end
 
 	end
 
@@ -526,29 +543,28 @@ end
 -- 	end
 -- end
 
-function S:gatherRole(role, final, callback)
+function S:gatherRole(role, final)
 
 	-- for i, role in pairs(self.roles) do
 		-- if role.status ~= kRoleDie then
 	local px, py = role:getPosition()
-	if px - final.x < 0.01 then
-		callback()
-		return 
+
+	if math.abs(px - final.x) < 0.01 then
+		role.delay = 0
+		return 0
 	end
 
 	local sec = math.abs(final.x-px)/kGatherSpeed
 
 	local move = cc.MoveTo:create(sec, cc.p(final.x, py))
-	-- move:setTag(kRoleGatherTag)
-	local actions = {}
-	actions[#actions + 1] = move
-	actions[#actions + 1] = cc.CallFunc:create(callback)
-	local seq = cc.Sequence:create(actions)
-	seq:setTag(kRoleGatherTag)
+	move:setTag(kRoleGatherTag)
+	
 	role:stopActionByTag(kRoleGatherTag)
 	role:runAction(move)
 
+	role.delay = sec
 
+	return sec
 		-- end
 	-- end
 end
