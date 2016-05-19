@@ -174,8 +174,8 @@ function M:reachPos(node)
 	-- local maxy = cp.y + target.acceptH
 
 	-- print("minx", minx, "miny", miny, "maxx", maxx, "maxy", maxy, "px", pos.x, "py", pos.y)
-	print("node.accepw", node.acceptW, "tw", target.acceptW, "minx", minx, "maxx", maxx)
-	print("id", node.ident, "type", node.type)
+	-- print("node.accepw", node.acceptW, "tw", target.acceptW, "minx", minx, "maxx", maxx)
+	-- print("id", node.ident, "type", node.type)
 	if cp.x >= pos.x then
 		return cc.p(minx - node.acceptW, cp.y)
 	else
