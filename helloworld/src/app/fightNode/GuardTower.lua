@@ -17,15 +17,23 @@ function G:ctor(baseImage, buildSize)
 	self:addChild(sp2, 1)
 	self.sp2 = sp2
 
+	-- self:createTargetHalo()
+
 end
 
 function G:createMan(owner)
 
-		local man = RoleNode:create("action/wj1010_"..owner)
-		man:setAnchorPoint(cc.p(0.5, 1))
-		self:addChild(man)
-		self.man = man
+	local man = RoleNode:create("action/wj1010_"..owner, 162)
+	man:setAnchorPoint(cc.p(0.5, 1))
+	self:addChild(man)
+	self.man = man
 
+end
+
+function G:createTargetHalo()
+	local halo = cc.Sprite:create("bg/b11.png")
+	self:addChild(halo)
+	self.targetHalo = halo
 end
 
 function G:setOffY(offY)
@@ -43,19 +51,26 @@ function G:setOwner(owner)
 	local size = self.sp1:getContentSize()
 	local final = cc.size(size.width, size.height + self.offY)
 	self:setContentSize(final)
+	
 
-	if owner ~= 0 and self.man == nil then
-		self:createMan(owner)
-	end
+	if owner ~= kOwnerNone then
+		if self.man == nil then
+			self:createMan(owner)
+		end
 
-	if self.man then
+		self.man:setVisible(true)
 		local base = "action/wj1010_"..owner
 		self.man:setBaseName(base)
 		self.man:reset()
-		local offys = {30, 36, 80}
+		local offys = {14, 20, 64}
 
 		self.man:setPosition(cc.pSub(self:topCenter(), cc.p(0, offys[self.buildSize])))
+	else
+		if self.man then
+			self.man:setVisible(false)
+		end
 	end
+
 	return final
 end
 

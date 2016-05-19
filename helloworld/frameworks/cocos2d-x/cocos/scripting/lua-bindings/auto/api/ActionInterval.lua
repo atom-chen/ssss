@@ -35,6 +35,13 @@
         
 --------------------------------
 -- 
+-- @function [parent=#ActionInterval] setRandomStart 
+-- @param self
+-- @param #bool rand
+-- @return ActionInterval#ActionInterval self (return value: cc.ActionInterval)
+        
+--------------------------------
+-- 
 -- @function [parent=#ActionInterval] startWithTarget 
 -- @param self
 -- @param #cc.Node target

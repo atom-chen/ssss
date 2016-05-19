@@ -16,13 +16,20 @@ function D:addNode(node)
 
 	if self.owner ~= node.owner or node.type ~= self.type then
 		self.target = node
-
 	else
 		self.list[#self.list + 1] = node
 		self.target = nil
 	end
 
 	node:select()
+	-- print("nodetype", node.type, "owner", node.owner, "selfO", self.owner)
+	if node.type == kBuildType then
+		if node.owner == self.owner then
+			node:showHalo(true)
+		else
+			node:showTargetHalo(true)
+		end
+	end
 
 end
 

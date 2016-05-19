@@ -35,6 +35,12 @@
 -- @return size_table#size_table ret (return value: size_table)
         
 --------------------------------
+-- 
+-- @function [parent=#SpriteFrame] getColorRect 
+-- @param self
+-- @return rect_table#rect_table ret (return value: rect_table)
+        
+--------------------------------
 --  Set original size of the trimmed image.<br>
 -- param sizeInPixels The original size of the trimmed image.
 -- @function [parent=#SpriteFrame] setOriginalSize 
@@ -153,6 +159,13 @@
 -- @function [parent=#SpriteFrame] getOffsetInPixels 
 -- @param self
 -- @return vec2_table#vec2_table ret (return value: vec2_table)
+        
+--------------------------------
+-- 
+-- @function [parent=#SpriteFrame] setColorRect 
+-- @param self
+-- @param #rect_table rect
+-- @return SpriteFrame#SpriteFrame self (return value: cc.SpriteFrame)
         
 --------------------------------
 -- @overload self, string, rect_table, bool, vec2_table, size_table         

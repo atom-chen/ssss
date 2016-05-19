@@ -251,6 +251,7 @@ enum ScriptEventType
 {
     kNodeEvent = 0,
     kMenuClickedEvent,
+    kMenuCustomEvent,
     kCallFuncEvent,
     kScheduleEvent,
     kTouchEvent,

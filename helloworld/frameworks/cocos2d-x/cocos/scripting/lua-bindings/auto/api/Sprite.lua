@@ -61,6 +61,7 @@
 -- @param #int tag
 -- @param #bool forever
 -- @param #float delay
+-- @param #bool rand
 -- @return Sprite#Sprite self (return value: cc.Sprite)
         
 --------------------------------

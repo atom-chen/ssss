@@ -1161,12 +1161,16 @@ void Sprite::setNormalLight()
     setGLProgram(program);
 }
 
-void Sprite::playAnimate(const std::string& filename, int tag, bool forever, float delay)
+void Sprite::playAnimate(const std::string& filename, int tag, bool forever, float delay, bool rand)
 {
 //    CCLOG("playAnimate: %s", filename.c_str());
-    
-    Animation *anim = Animation::createWithFile(filename);
-    anim->setDelayPerUnit(delay);
+    AnimationCache *instance = AnimationCache::getInstance();
+    Animation *anim = instance->getAnimation(filename);
+    if (anim == nullptr) {
+        anim = Animation::createWithFile(filename);
+        anim->setDelayPerUnit(delay);
+        instance->addAnimation(anim, filename);
+    }
     
     stopActionByTag(tag);
     
@@ -1174,6 +1178,7 @@ void Sprite::playAnimate(const std::string& filename, int tag, bool forever, flo
     setSpriteFrame(frame->getSpriteFrame());
     
     Animate *animate = Animate::create(anim);
+    animate->setRandomStart(rand);
     
     if (forever) {
         RepeatForever *act = RepeatForever::create(animate);

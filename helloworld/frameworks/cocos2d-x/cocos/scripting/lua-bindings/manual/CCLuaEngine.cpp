@@ -222,6 +222,11 @@ int LuaEngine::sendEvent(ScriptEvent* evt)
                 return handleMenuClickedEvent(evt->data);
             }
             break;
+        case kMenuCustomEvent:
+            {
+                return handleMenuCustomEvent(evt->data);
+            }
+            break;
         case kCallFuncEvent:
             {
                 return handleCallFuncActionEvent(evt->data);
@@ -332,6 +337,44 @@ int LuaEngine::handleMenuClickedEvent(void* data)
     _stack->pushInt(menuItem->getTag());
     _stack->pushObject(menuItem, "cc.MenuItem");
     int ret = _stack->executeFunctionByHandler(handler, 2);
+    _stack->clean();
+    return ret;
+}
+
+int LuaEngine::handleMenuCustomEvent(void* data)
+{
+    if (NULL == data)
+        return 0;
+    
+    BasicScriptData* basicScriptData = (BasicScriptData*)data;
+    if (NULL == basicScriptData->nativeObject)
+        return 0;
+    
+    MenuItem* menuItem = static_cast<MenuItem*>(basicScriptData->nativeObject);
+    
+    int handler = ScriptHandlerMgr::getInstance()->getObjectHandler(menuItem, ScriptHandlerMgr::HandlerType::MENU_CUSTOM);
+    if (0 == handler)
+        return 0;
+    
+    int action = *((int*)(basicScriptData->value));
+    
+    switch (action)
+    {
+        case kMenuItemCustomSelect:
+            _stack->pushString("select");
+            break;
+            
+        case kMenuItemCustomUnselect:
+            _stack->pushString("unselect");
+            break;
+            
+        default:
+            return 0;
+    }
+    
+    _stack->pushInt(menuItem->getTag());
+    _stack->pushObject(menuItem, "cc.MenuItem");
+    int ret = _stack->executeFunctionByHandler(handler, 3);
     _stack->clean();
     return ret;
 }

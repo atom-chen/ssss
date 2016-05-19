@@ -214,7 +214,7 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
         {
             Rect frame = RectFromString(frameDict["frame"].asString());
             bool rotated = false;
-
+            
             // rotation
             if (format == 2)
             {
@@ -231,6 +231,10 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
                                                          offset,
                                                          sourceSize
                                                          );
+            if (format == 2) {
+                Rect cr = RectFromString(frameDict["sourceColorRect"].asString());
+                spriteFrame->setColorRect(cr);
+            }
         } 
         else if (format == 3)
         {

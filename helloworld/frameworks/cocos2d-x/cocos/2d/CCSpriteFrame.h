@@ -130,6 +130,10 @@ public:
      * @param rect The rect of the sprite.
      */
     void setRect(const Rect& rect);
+    
+    inline const Rect& getColorRect() const {return _colorRect;}
+    
+    void setColorRect(const Rect& rect);
 
     /** Get offset of the frame.
      * 
@@ -246,6 +250,7 @@ protected:
     Rect _rectInPixels;
     bool   _rotated;
     Rect _rect;
+    Rect _colorRect;
     Vec2 _offsetInPixels;
     Size _originalSizeInPixels;
     Texture2D *_texture;

@@ -130,6 +130,7 @@ public:
     {
         NODE = 0,
         MENU_CLICKED,
+        MENU_CUSTOM,
         CALLFUNC,
         SCHEDULE,
         TOUCHES,

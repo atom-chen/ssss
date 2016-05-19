@@ -960,4 +960,56 @@ MenuItem* MenuItemToggle::getSelectedItem()
     return _subItems.at(_selectedIndex);
 }
 
+MenuItemCustom* MenuItemCustom::create()
+{
+    MenuItemCustom *ret = new (std::nothrow) MenuItemCustom();
+    if (ret && ret->init())
+    {
+        ret->autorelease();
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+bool MenuItemCustom::init(void)
+{
+    return initWithNormalSprite(nullptr, nullptr, nullptr, (const ccMenuCallback &)nullptr);
+}
+
+void MenuItemCustom::selected()
+{
+    MenuItemSprite::selected();
+    
+#if CC_ENABLE_SCRIPT_BINDING
+    if (kScriptTypeNone != _scriptType)
+    {
+        int action = kMenuItemCustomSelect;
+        BasicScriptData data(this, (void *)&action);
+        ScriptEvent scriptEvent(kMenuCustomEvent,&data);
+        ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&scriptEvent);
+    }
+#endif
+    
+}
+
+
+void MenuItemCustom::unselected()
+{
+    MenuItemSprite::unselected();
+#if CC_ENABLE_SCRIPT_BINDING
+    if (kScriptTypeNone != _scriptType)
+    {
+        int action = kMenuItemCustomUnselect;
+        BasicScriptData data(this, (void *)&action);
+        ScriptEvent scriptEvent(kMenuCustomEvent,&data);
+        ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&scriptEvent);
+    }
+#endif
+}
+
+
+
+
+
 NS_CC_END

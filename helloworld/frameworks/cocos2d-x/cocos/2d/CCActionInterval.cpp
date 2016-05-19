@@ -99,7 +99,8 @@ bool ActionInterval::initWithDuration(float d)
     {
         _duration = FLT_EPSILON;
     }
-
+    
+    _randomStart = false;
     _elapsed = 0;
     _firstTick = true;
 
@@ -128,7 +129,11 @@ void ActionInterval::step(float dt)
     if (_firstTick)
     {
         _firstTick = false;
-        _elapsed = 0;
+        if (_already == false) {
+            _elapsed = _randomStart ? random(0.0f, 1.0f) : 0.0f;
+            _already = true;
+        } else
+            _elapsed = 0.0f;
     }
     else
     {

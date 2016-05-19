@@ -852,6 +852,11 @@
 
 
 --------------------------------------------------------
+-- the cc MenuItemCustom
+-- @field [parent=#cc] MenuItemCustom#MenuItemCustom MenuItemCustom preloaded module
+
+
+--------------------------------------------------------
 -- the cc Menu
 -- @field [parent=#cc] Menu#Menu Menu preloaded module
 

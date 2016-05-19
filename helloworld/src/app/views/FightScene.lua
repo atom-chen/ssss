@@ -32,6 +32,16 @@ function FightScene:ctor(mapId)
 
 	self:createFightLayer(mapInfo, self.bg:getContentSize())
 
+	local transLayer = TransitionLayer:create()
+	transLayer:setAnchorPoint(cc.p(0, 0))
+	transLayer:setPosition(cc.p(0, 0))
+	self:addChild(transLayer)
+
+	transLayer:createSkills({22,23,24,25,26})
+	transLayer:setFightSceneScale(0.5)
+	self.transLayer = transLayer
+
+
 end
 
 function FightScene:backgroundImage(mapInfo)
@@ -73,8 +83,16 @@ function FightScene:moveBackGround(point)
 
 end
 
-function FightScene:handleAOE(node, pos, range, damage, dtype)
-	self.fightLayer:handleAOE(node, pos, range, damage, dtype)
+function FightScene:handleAOE(owner, pos, range, damage, dtype)
+	self.fightLayer:handleAOE(owner, pos, range, damage, dtype)
+end
+
+function FightScene:handleAreaBuff(buff, pos, range, owner)
+	self.fightLayer:handleAreaBuff(buff, pos, range, owner)
+end
+
+function FightScene:handleManualSkill(skill, pos)
+	self.fightLayer:handleManualSkill(skill, pos)
 end
 
 function FightScene:handleTouchesBegan(points)
@@ -109,6 +127,7 @@ function FightScene:handleTouchesMoved(points)
 		scale =  math.max(math.min(1, self.bg:getScale() + delta/4096.0*0.5), 0.5)
 
 		self.bg:setScale(scale)
+		self.transLayer:setFightSceneScale(scale)
 		local px, py = self.bg:getPosition()
 		self:setBackGroundPos(cc.p(px, py))
 

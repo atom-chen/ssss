@@ -6,16 +6,19 @@ local B = class("Building", cc.Node)
 cc.exports.Building = B
 
 
-function B:ctor(cfg, owner, bedSize)
+function B:ctor(cfg, owner, bedSize, ident, halo)
 
 	self.cfg = cfg
-
+	self.ident = ident
 	self.owner = owner
 	self.type = kBuildType
-	self.updating = false
 
-	self.acceptR = bedSize.width/2
+	self.acceptW = bedSize.width/2
+	self.acceptH = bedSize.height/2
 	self.bedSize = bedSize
+	self.halo = halo
+
+	self.totalDamage = 0
 
 	local soldierCfg = soldiers[cfg.soldierId]
 	self.soldierCfg = soldierCfg
@@ -24,10 +27,11 @@ function B:ctor(cfg, owner, bedSize)
 
 
 	self:createTopLbl(soldierCfg, owner)
-	self:createFightManager()
+
+	self:createFightProxy(ident)
 
 	self:createLabelEffect()
-
+	self:createTargetHalo()
 	self:updateAppearance()
 
 end
@@ -61,7 +65,7 @@ function B:createLabelEffect()
 
 end
 
-function B:createSoldier(target)
+function B:createSoldier(target, ident)
 	if not target then
 		return 
 	end
@@ -70,15 +74,15 @@ function B:createSoldier(target)
 		if num > 0 then
 			self:setSoldierNum(self.soldierNum - num)
 			-- return cls:create(scfg, self.owner, 36, target)
-			return Soldier:create(self.soldierCfg, self.owner, num, target)
+			return Soldier:create(self.soldierCfg, self.owner, num, target, ident)
 		end
 end
 
-function B:createFightManager(target)
+function B:createFightProxy(ident)
 
-	local manager = FightManager:create()
-	manager:parseBuildingCfg(self.soldierCfg)
-	self.fightManager = manager
+	local proxy = FightProxy:create(ident)
+	proxy:parseBuildingCfg(self.soldierCfg, ident)
+	self.fightProxy = proxy
 
 end
 
@@ -91,26 +95,59 @@ function B:createTopLbl(scfg, owner)
 		
 end
 
+function B:createFlightProp()
+	local prop = FlightProp:create(self.fightProxy.target, self.cfg.skillId)
+
+	return prop
+end
+
+function B:createTargetHalo()
+	local halo = cc.Sprite:create("bg/b11.png")
+	self:addChild(halo)
+	halo:setVisible(false)
+	self.targetHalo = halo
+end
 
 
 function B:setOwner(owner)
+	if self.owner == owner then
+		return
+	end
+	
+	if owner == kOwnerNone then
+		self.status = kBuildStatusInvalid
+	else
+		self.status = kBuildStatusNormal
+	end
+
 	self.owner = owner
 	self:updateAppearance()
+	
 end
 
 function B:setStandPos(pos)
 	self:setPosition(cc.p(pos.x, pos.y-self.bedSize.height/2))
-	self.fightManager:setStandPos(pos)
+	self.fightProxy:setStandPos(pos)
 end
 
 function B:setSoldierNum(num)
 	self.soldierNum = num
-	local lblNum = self.fightManager:displayNumber(num)
+	local lblNum = self.fightProxy:displayNumber(num)
 	self.topLbl:setSoldierNum(lblNum)
 	return lblNum
 end
 
+function B:showHalo(show)
+	if self.owner == kOwnerNone then
+		return
+	end
 
+	self.halo:setVisible(show)
+end
+
+function B:showTargetHalo(show)
+	self.targetHalo:setVisible(show)
+end
 
 function B:isGuardTower(buildId)
 	return buildId == 4 or buildId == 5 or buildId == 6
@@ -123,6 +160,7 @@ function B:select()
 	-- sp:setGLProgram(program)
 	self.icon:setHighLight()
 	self:setScale(1.3)
+	self.halo:setScale(1.3)
 	self.selected = true
 
 end
@@ -134,8 +172,10 @@ function B:unselect()
 	-- sp:setGLProgram(program)
 	self.icon:setNormalLight()
 	self:setScale(1)
+	self.halo:setScale(1)
 	self.selected = false
-
+	self.targetHalo:setVisible(false)
+	self.halo:setVisible(false)
 end
 
 function B:updateAppearance()
@@ -147,6 +187,11 @@ function B:updateAppearance()
 	self.topLbl:setOwner(self.owner)
 	self.topLbl:setPosition(cc.p(size.width/2, size.height))
 
+	if owner ~= kOwnerNone then
+		self.halo:setTexture("bg/b10_"..self.owner..".png")
+	end
+	self.targetHalo:setPosition(cc.p(size.width/2, size.height/2))
+
 end
 
 
@@ -154,7 +199,7 @@ end
 function B:updateSoldierNum()
 	local num = math.floor(self.soldierNum)
 	local cfg = self.cfg
-	if num < cfg.capacity then
+	if cfg.riseSpeed > 0 and num < cfg.capacity then
 		self:setSoldierNum(self.soldierNum + cfg.riseSpeed * self.soldierCfg.riseRate)
 	elseif num > cfg.capacity then
 		local sub = self.soldierNum/cfg.capacity
@@ -162,35 +207,64 @@ function B:updateSoldierNum()
 	end
 end
 
+function B:actAttack()
+
+end
+
+function B:updateFace()
+
+end
+
 function B:updateAttack(dt)
-	
+	self.fightProxy:updateAttackSkill(dt)
+	self.fightProxy:updateTargetStatus()
+
+	if self.fightProxy.targetStatus ~= kTargetValid or self.status ~= kBuildStatusNormal then
+		return
+	end
+
+	local status, rate = self.fightProxy:checkAttack()
+
+	if status then
+		self.status = kBuildStatusAttack
+		self:updateFace()
+		self:actAttack()
+	else
+		self.status = kBuildStatusNormal
+	end
 
 end
 
 function B:startUpdateSoldierNum()
-	if self.cfg.riseSpeed > 0 and self.owner ~= kOwnerNone and not self.updating then
-		self.updating = true
+	if self.owner ~= kOwnerNone and not self.entryId then
 		local scheduler = self:getScheduler()
-		scheduler:scheduleScriptFunc(function(dt) self:updateSoldierNum() end, 1, false)
+		self.entryId = scheduler:scheduleScriptFunc(function(dt) self:updateSoldierNum() end, 1, false)
 	end
 end
 
+function B:stopUpdateSoldierNum()
+	if self.entryId then
+		local scheduler = self:getScheduler()
+		scheduler:unscheduleScriptEntry(self.entryId)
+		self.entryId = nil
+	end
+end
 
 
 function B:attackRatio()
 	return math.max(self.soldierNum, 0)/25.0
 end
 
-function B:reachPos()
-	return self.fightManager.standPos
+function B:centerPos()
+	return self.fightProxy.standPos
+end
+
+function B:fightNode()
+	return self.fightProxy.fightNode
 end
 
 function B:dispatchPos()
-	return self.fightManager.standPos
-end
-
-function B:acceptRadius()
-	return self.acceptR
+	return self.fightProxy.standPos
 end
 
 
@@ -199,7 +273,7 @@ function B:isTouchEnabled()
 end
 
 function B:isInvalid()
-	return false
+	return self.soldierNum <= 0
 end
 
 function B:isAttackBuild()
@@ -219,35 +293,73 @@ function B:battle()
 end
 
 
-function B:showNumEffect(num)
-	self.labelEffect:showEffect(num)
+function B:showDamageEffect()
+	self.labelEffect:showEffect(-self.totalDamage)
 end
 
-function B:checkAttackBack(node)
-	local remote = node:isRemoteDamage()
+-- function B:checkAttackBack(node)
+-- 	local remote = node:isRemoteDamage()
 
-	if not remote then
-		self.fightManager:handleAttackBack(self.type, node, self:attackRatio())
+-- 	if not remote then
+-- 		self.fightProxy:handleAttackBack(self.type, node, self:attackRatio())
+-- 	end
+-- end
+
+function B:addDamage(damage)
+
+end
+
+function B:checkAutoAttack(node)
+	
+end
+
+
+function B:handleDamage()
+
+	-- local last = self.fightProxy:displayNumber(self.soldierNum)
+	-- local currNum = self.soldierNum - damage
+	-- local curr = self.fightProxy:displayNumber(currNum)
+	-- self:showNumEffect(curr - last)
+
+	-- return curr
+	if self.totalDamage == 0 then
+		return 
 	end
+
+	self:showDamageEffect()
+
+	if self.totalDamage >= self.soldierNum then
+		self:setOwner(kOwnerNone)
+		self.soldierNum = 0
+		self.topLbl:setSoldierNum(0)
+		self:stopUpdateSoldierNum()
+	else
+		self:setSoldierNum(self.soldierNum - self.totalDamage)
+	end
+
+	self.totalDamage = 0
+
+
 end
 
-function B:handleDamage(damage)
-
-	local last = self.fightManager:displayNumber(self.soldierNum)
-	local currNum = self.soldierNum - damage
-	local curr = self.fightManager:displayNumber(currNum)
-	self:showNumEffect(curr - last)
-
-	return curr
+function B:handleAttackBack(node)
+	self.fightProxy:handleAttackBack(node, self:attackRatio())
 end
 
-function B:handleGather(num)
+function B:handleGather(owner, num)
+	self:setOwner(owner)
 	self:setSoldierNum(num + self.soldierNum)
+	self:startUpdateSoldierNum()
 end
 
+function B:handleBeAttacked(damage, dtype)
+	local real = self.fightProxy:getRealDamage(damage, dtype)
+	self.totalDamage = self.totalDamage + real
+
+end
 
 function B:handleBeAttackedBySoldier(node, damage, dtype)
-	local real = self.fightManager:getRealDamage(node.type, damage, dtype)
+	local real = self.fightProxy:getRealDamage(node.type, damage, dtype)
 	local curr = self:handleDamage(real)
 
 	if real > self.soldierNum then
@@ -260,12 +372,12 @@ function B:handleBeAttackedBySoldier(node, damage, dtype)
 		self.topLbl:setSoldierNum(curr)
 	end
 
-	self.fightManager:checkAttackBack(node, self.type, self:attackRatio())
+	self.fightProxy:checkAttackBack(node, self.type, self:attackRatio())
 
 end
 
 function B:handleBeAttackedByGeneral(general, damage, dtype)
-	local real = self.fightManager:getRealDamage(general.type, damage, dtype)
+	local real = self.fightProxy:getRealDamage(general.type, damage, dtype)
 
 	local curr = self:handleDamage(real)
 	
@@ -277,7 +389,7 @@ function B:handleBeAttackedByGeneral(general, damage, dtype)
 		self.topLbl:setSoldierNum(curr)
 	end
 
-	self.fightManager:checkAttackBack(general, self.type, self:attackRatio())
+	self.fightProxy:checkAttackBack(general, self.type, self:attackRatio())
 
 end
 

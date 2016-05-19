@@ -579,7 +579,7 @@ CC_CONSTRUCTOR_ACCESS:
      */
     void setPolygonInfo(const PolygonInfo& info);
     
-    void playAnimate(const std::string& filename, int tag, bool forever = false, float delay = 1.0/24);
+    void playAnimate(const std::string& filename, int tag, bool forever = false, float delay = 1.0/24, bool rand = false);
     
     void setHighLight();
     void setNormalLight();

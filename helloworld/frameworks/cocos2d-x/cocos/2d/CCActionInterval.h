@@ -83,6 +83,8 @@ public:
      * @return  The amplitude rate.
      */
     float getAmplitudeRate(void);
+    
+    virtual void setRandomStart(bool rand) {_randomStart = rand;};
 
     //
     // Overrides
@@ -112,6 +114,8 @@ CC_CONSTRUCTOR_ACCESS:
 protected:
     float _elapsed;
     bool   _firstTick;
+    bool _randomStart;
+    bool _already;
 
 protected:
     bool sendUpdateEventToScript(float dt, Action *actionObject);

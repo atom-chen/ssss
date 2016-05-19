@@ -4,6 +4,8 @@
 #include "cocos2d.h"
 #include "lua_module_register.h"
 
+#include "custom/Caculater.hpp"
+
 #if (CC_TARGET_PLATFORM != CC_PLATFORM_LINUX)
 #include "ide-support/CodeIDESupport.h"
 #endif
@@ -53,6 +55,8 @@ static int register_all_packages()
 
 bool AppDelegate::applicationDidFinishLaunching()
 {
+    sgzj::Caculater::getInstance()->start();
+    
     // set default FPS
     Director::getInstance()->setAnimationInterval(1.0 / 60.0f);
 
@@ -70,7 +74,6 @@ bool AppDelegate::applicationDidFinishLaunching()
     //register custom function
     //LuaStack* stack = engine->getLuaStack();
     //register_custom_function(stack->getLuaState());
-
         
 
 #if (COCOS2D_DEBUG > 0) && (CC_CODE_IDE_DEBUG_SUPPORT > 0)

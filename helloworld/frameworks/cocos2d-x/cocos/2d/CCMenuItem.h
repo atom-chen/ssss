@@ -591,6 +591,33 @@ private:
 
 };
 
+enum {
+    kMenuItemCustomSelect,
+    kMenuItemCustomUnselect
+};
+
+class CC_DLL MenuItemCustom : public MenuItemSprite {
+public:
+    MenuItemCustom(){};
+    /**
+     * @js NA
+     * @lua NA
+     */
+    virtual ~MenuItemCustom(){};
+    
+    static MenuItemCustom* create();
+    bool init();
+    virtual void selected();
+    
+    /** The item was unselected. */
+    virtual void unselected();
+};
+
+
+
+
+
+
 
 // end of 2d group
 /// @}

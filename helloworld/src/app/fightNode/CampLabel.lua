@@ -30,9 +30,10 @@ function C:ctor(type, owner)
 	local numLbl = cc.Label:createWithSystemFont("", "Arial", 23)
 	numLbl:setTextColor(cc.num2c4b(0xfffbf3))
 	numLbl:enableOutline(cc.num2c4b(0x40f700), 2)
-	numLbl:setPosition(lblbg:centerPos())
+	numLbl:setPosition(cc.p(lbls.width/2, lbls.height/2))
 	lblbg:addChild(numLbl)
 	self.numLbl = numLbl
+	-- print("topS", size.width, "h", size.height)
 
 end
 

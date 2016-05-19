@@ -145,6 +145,11 @@ void SpriteFrame::setRect(const Rect& rect)
     _rectInPixels = CC_RECT_POINTS_TO_PIXELS(_rect);
 }
 
+void SpriteFrame::setColorRect(const Rect& rect)
+{
+    _colorRect = rect;
+}
+
 void SpriteFrame::setRectInPixels(const Rect& rectInPixels)
 {
     _rectInPixels = rectInPixels;
