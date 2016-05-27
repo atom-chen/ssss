@@ -74,6 +74,14 @@ function G:setOwner(owner)
 	return final
 end
 
+function G:showColor(color)
+	self.sp1:setColor(cc.c3b(color.r, color.g, color.b))
+	self.sp2:setColor(cc.c3b(color.r, color.g, color.b))
+	if self.man then
+		self.man:setColor(cc.c3b(color.r, color.g, color.b))
+	end
+end
+
 function G:setHighLight()
 	self.sp1:setHighLight()
 	self.sp2:setHighLight()

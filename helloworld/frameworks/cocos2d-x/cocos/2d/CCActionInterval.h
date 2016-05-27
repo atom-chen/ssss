@@ -70,6 +70,8 @@ public:
      *
      * @return The seconds had elapsed since the actions started to run.
      */
+    ActionInterval();
+    
     inline float getElapsed(void) { return _elapsed; }
 
     /** Sets the amplitude rate, extension in GridAction

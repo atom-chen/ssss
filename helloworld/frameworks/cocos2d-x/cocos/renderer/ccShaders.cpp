@@ -61,6 +61,7 @@ NS_CC_BEGIN
 //
 #include "ccShader_PositionTextureColorAlphaTest.frag"
 #include "ccShader_PositionTextureHighLight.frag"
+#include "ccShader_PositionTextureGray.frag"
 
 //
 #include "ccShader_PositionTexture_uColor.frag"

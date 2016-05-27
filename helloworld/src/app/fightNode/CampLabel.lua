@@ -21,15 +21,15 @@ function C:ctor(type, owner)
 
 	local sps = sp:getContentSize()
 	local lbls = lblbg:getContentSize()
-	local size = cc.size(sps.width + lbls.width, math.max(sps.height, lbls.height))
+	local size = cc.size(sps.width + lbls.width - 4, math.max(sps.height, lbls.height))
 	self:setContentSize(size)
 
 	sp:setPosition(cc.p(0, size.height/2))
-	lblbg:setPosition(cc.p(sps.width, size.height/2))
+	lblbg:setPosition(cc.p(sps.width - 4, size.height/2))
 
 	local numLbl = cc.Label:createWithSystemFont("", "Arial", 23)
-	numLbl:setTextColor(cc.num2c4b(0xfffbf3))
-	numLbl:enableOutline(cc.num2c4b(0x40f700), 2)
+	numLbl:setTextColor(cc.num2c4b(0xfffbf3ff))
+	numLbl:enableOutline(cc.num2c4b(0x40f700ff), 2)
 	numLbl:setPosition(cc.p(lbls.width/2, lbls.height/2))
 	lblbg:addChild(numLbl)
 	self.numLbl = numLbl

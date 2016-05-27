@@ -294,15 +294,12 @@ function cc.num2c4b(num)
     local g_ = bit.band(bit.rshift(num, 16), 0xff)
     local b_ = bit.band(bit.rshift(num, 8), 0xff)
     local a_ = bit.band(num, 0xff)
-    
-    if r_ == 0 then
-        r_ = g_
-        g_ = b_
-        b_ = a_
-        a_ = 0xff
-    end
 
     return {r = r_, g = g_, b = b_, a = a_}
+end
+
+function cc.c4b2c4f(color)
+    return {color.r/255.0, color.g/255.0, color.b/255.0, color.a/255.0}
 end
 
 local function isFloatColor(c)

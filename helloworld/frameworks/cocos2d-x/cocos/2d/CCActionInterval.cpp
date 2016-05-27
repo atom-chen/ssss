@@ -88,6 +88,12 @@ void ExtraAction::step(float dt)
 // IntervalAction
 //
 
+ActionInterval::ActionInterval():
+    _randomStart(false)
+{
+    
+}
+
 bool ActionInterval::initWithDuration(float d)
 {
     _duration = d;

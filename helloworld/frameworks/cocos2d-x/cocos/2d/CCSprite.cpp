@@ -1161,6 +1161,12 @@ void Sprite::setNormalLight()
     setGLProgram(program);
 }
 
+void Sprite::setGray()
+{
+    GLProgram *program = GLProgramCache::getInstance()->getGLProgram("ShaderPositionTextureGray");
+    setGLProgram(program);
+}
+
 void Sprite::playAnimate(const std::string& filename, int tag, bool forever, float delay, bool rand)
 {
 //    CCLOG("playAnimate: %s", filename.c_str());

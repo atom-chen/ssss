@@ -20,6 +20,10 @@ function B:setOffY(offY)
 	--
 end
 
+function B:showColor(color)
+	self:setColor(cc.c3b(color.r, color.g, color.b))
+end
+
 function B:setOwner(owner)
 	local image = self.baseImage.."_"..owner..".png"
 	self:setTexture(image)

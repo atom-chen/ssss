@@ -583,6 +583,7 @@ CC_CONSTRUCTOR_ACCESS:
     
     void setHighLight();
     void setNormalLight();
+    void setGray();
 protected:
 
     void updateColor() override;

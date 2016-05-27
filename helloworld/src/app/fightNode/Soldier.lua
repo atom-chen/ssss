@@ -6,6 +6,7 @@ cc.exports.Soldier = S
 
 function S:ctor(cfg, owner, num, target, ident)
 	self.cfg = cfg
+	self.pcfg = soldierPos[cfg.id]
 	self.owner = owner
 	self.ident = ident
 	self.roles = {}
@@ -25,8 +26,6 @@ function S:ctor(cfg, owner, num, target, ident)
 	self:createLabelEffect()
 
 	self:createBuffNode()
-
-	self:dispersal()
 	
 end
 
@@ -132,7 +131,7 @@ function S:addSoldier(num)
 	local b1 = cfg.off 
 	for i=1, num do
 
-		local role = RoleNode:create(base, self.cfg.fy)
+		local role = RoleNode:create(base, self.pcfg.fy)
 		role:actStand(kSoldierAnimDelay)
 		local count = #self.roles
 		local row = count / 4
@@ -291,6 +290,7 @@ function S:updateMove(dt)
 
 	elseif status == kFightStatusReach then
 		-- self.workDone = true
+		self:updateFace(last)
 		if fightProxy:isTargetBuildType() then
 			if targetStatus == kTargetInvalid or fightProxy:theSameOwner(self.owner) then
 				self.status = kSoldierStatusGather
@@ -378,7 +378,7 @@ end
 -- end
 
 function S:attackRatio()
-	return math.max(self.soldierNum, 0)/25.0
+	return math.max(self.soldierNum, 0)*0.25
 end
 
 function S:centerPos()
@@ -405,10 +405,16 @@ function S:actAttack(callback, time, delay)
 	self.roleStatus = kRoleAttack
 	-- self.inAttack = true
 	local final = nil
+	local flag = 0
+	local off = 0
 	if self.face then
 		final = self:finalPos(5)
+		flag = 0
+		off = -kSoldierRowOff
 	else
 		final = self:finalPos(4)
+		flag = 1
+		off = kSoldierRowOff
 	end
 
 	for i, v in pairs(self.roles) do
@@ -417,7 +423,11 @@ function S:actAttack(callback, time, delay)
 		-- local seq = cc.Sequence:create(action)
 
 		if v.delay == -1 then
-			local delay = self:gatherRole(v, final)
+			local rf = cc.p(final.x, final.y)
+			if i~=1 and i%2 == flag then
+				rf.x = rf.x + off
+			end
+			self:gatherRole(v, rf)
 		end
 
 		local actions = {}
@@ -430,22 +440,6 @@ function S:actAttack(callback, time, delay)
 		local seq = cc.Sequence:create(actions)
 		self:runAction(seq)
 
-
-
-		-- if i == 1 then
-		-- 	self:gatherRole(v, final, function () v:actAttack(callback, time, delay) end)
-		-- else
-		-- 	self:gatherRole(v, final, function () v:actAttack(nil, time, delay) end)
-		-- end
-		-- if delay > 0 then
-		-- 	local actions = {}
-		-- 	actions[#actions + 1] = cc.DelayTime:create(delay)
-		-- 	v:actAttack(callback, time, delay)
-		-- 	callback = nil
-		-- else
-		-- 	v:actAttack(callback, time, delay)
-		-- 	callback = nil
-		-- end
 	end
 
 end
@@ -462,8 +456,33 @@ function S:actMove()
 	end
 end
 
+function S:showColor(color)
+	for _, v in pairs(self.roles) do
+		v:showColor(color)
+	end
+end
+
 function S:showDamageEffect()
 	self.labelEffect:showEffect(-self.totalDamage)
+
+	local color = nil
+	if self.owner == kOwnerNone then
+		color = cc.num2c4b(0xc2c2c2ff)
+	elseif self.owner == kOwnerPlayer then
+		color = cc.num2c4b(0x177afdff)
+	else
+		color = cc.num2c4b(0xfe252aff)
+	end
+
+	self:showColor(color)
+
+	local actions = {}
+	actions[#actions + 1] = cc.DelayTime:create(0.1)
+	actions[#actions + 1] = cc.CallFunc:create(function() self:showColor(cc.c3b(255, 255, 255)) end)
+	local seq = cc.Sequence:create(actions)
+	seq:setTag(kBeAttackedTag)
+	self:stopActionByTag(kBeAttackedTag)
+	self:runAction(seq)
 end
 
 function S:checkAutoAttack(node)
@@ -484,7 +503,7 @@ function S:dispersal()
 		-- if role.status ~= kRoleDie then
 			local last = self:finalPos(i)
 			role.delay = -1
-			local move = cc.MoveTo:create(0.7, last)
+			local move = cc.MoveTo:create(1.4, last)
 			move:setTag(kRoleGatherTag)
 			role:stopActionByTag(kRoleGatherTag)
 			role:runAction(move)
@@ -551,7 +570,7 @@ function S:gatherRole(role, final)
 
 	if math.abs(px - final.x) < 0.01 then
 		role.delay = 0
-		return 0
+		return 
 	end
 
 	local sec = math.abs(final.x-px)/kGatherSpeed
@@ -564,7 +583,6 @@ function S:gatherRole(role, final)
 
 	role.delay = sec
 
-	return sec
 		-- end
 	-- end
 end

@@ -16,14 +16,14 @@ function B:ctor(owner, health)
 	self.bar = bar
 
 	local s2 = bar:getContentSize()
-	local size = cc.size(s1.width + s2.width, math.max(s1.height, s2.height))
+	local size = cc.size(s1.width + s2.width - 2, math.max(s1.height, s2.height))
 	self:setContentSize(size)
 
 	-- print("s1", s1.width, "h", s1.height)
 	-- print("s2", s2.width,"h", s2.height)
 	-- print("size", size.width, "h", size.height)
 	sp:setPosition(cc.p(0, size.height/2))
-	bar:setPosition(cc.p(s1.width , size.height/2))
+	bar:setPosition(cc.p(s1.width - 2 , size.height/2))
 
 end
 
@@ -47,6 +47,7 @@ math.randomseed(os.time())
 
 function G:ctor(cfg, owner, ident)
 	self.cfg = cfg
+	self.pcfg = generalPos[cfg.id]
 	self.owner = owner
 	self.type = kGeneralType
 	self.isDead = false
@@ -57,7 +58,7 @@ function G:ctor(cfg, owner, ident)
 	self.totalDamage = 0
 
 	local image = self:roleImage()
-	self.role = RoleNode:create(image, cfg.fy)
+	self.role = RoleNode:create(image, self.pcfg.fy)
 	self.role:actStand(kGeneralAnimDelay)
 	self.role:setAnchorPoint(cc.p(0, 0))
 	self.role:setPosition(cc.p(0, 0))
@@ -98,7 +99,7 @@ function G:createHealthBar()
 end
 
 function G:updateHalo(face)
-	local px = self.cfg.fx
+	local px = self.pcfg.fx
 	if face then
 		px = self.size.width - px
 	end
@@ -348,6 +349,23 @@ end
 
 function G:showDamageEffect()
 	self.labelEffect:showEffect(-self.totalDamage)
+
+	if self.owner == kOwnerNone then
+		self.role:showColor(cc.num2c4b(0xc2c2c2ff))
+	elseif self.owner == kOwnerPlayer then
+		self.role:showColor(cc.num2c4b(0x177afdff))
+	else
+		self.role:showColor(cc.num2c4b(0xfe252aff))
+	end
+
+	local actions = {}
+	actions[#actions + 1] = cc.DelayTime:create(0.1)
+	actions[#actions + 1] = cc.CallFunc:create(function() self.role:showColor(cc.c3b(255, 255, 255)) end)
+	local seq = cc.Sequence:create(actions)
+	seq:setTag(kBeAttackedTag)
+	self:stopActionByTag(kBeAttackedTag)
+	self:runAction(seq)
+
 end
 
 function G:handleAttack()

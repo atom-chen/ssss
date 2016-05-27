@@ -9,7 +9,10 @@ function D:ctor(type, owner)
 end
 
 function D:addNode(node)
-
+	if self.type == kGeneralType and node.type == kBuildType and node.owner == self.owner then
+		return
+	end
+	
 	if self.target then
 		self.target:unselect()
 	end

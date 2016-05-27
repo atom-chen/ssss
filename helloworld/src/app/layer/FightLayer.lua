@@ -21,6 +21,11 @@ function FightLayer:ctor(mapInfo, size)
 
 	self:createBuildings(mapInfo.buildings, size)
 
+	local drawNode = cc.DrawNode:create()
+	drawNode:setAnchorPoint(cc.p(0, 0))
+	drawNode:setLineWidth(5)
+	self:addChild(drawNode, 1)
+	self.drawNode = drawNode
 
 end
 
@@ -39,9 +44,9 @@ function FightLayer:createBuildings(builds, size)
 		self:addChild(bed)
 
 		local halo = cc.Sprite:create()
-			halo:setPosition(bedPos)
-			halo:setVisible(false)
-			self:addChild(halo)
+		halo:setPosition(bedPos)
+		halo:setVisible(false)
+		self:addChild(halo)
 		
 		local bedSize = bed:getContentSize()
 		local ident = self:currentFightId()
@@ -371,6 +376,7 @@ function FightLayer:dispatchTroops(list)
 			local ident = self:currentFightId()
 			local soldier = v:createSoldier(target, ident)
 			if soldier then
+				soldier:dispersal()
 				local pos = v:dispatchPos()
 				soldier:setStandPos(pos)
 				soldier:setAnchorPoint(cc.p(0.5, 0.5))
@@ -455,6 +461,7 @@ function FightLayer:handleSummon(summon, pos, owner)
 	end
 
 	local soldier = Soldier:create(scfg, kOwnerPlayer, summon.num, target, ident)
+	soldier:dispersal()
 
 	soldier:setStandPos(pos)
 	soldier:setAnchorPoint(cc.p(0.5, 0.5))

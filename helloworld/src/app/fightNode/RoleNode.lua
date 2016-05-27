@@ -38,6 +38,10 @@ function R:face(left)
 
 end
 
+function R:showColor(color)
+	self.role:setColor(cc.c3b(color.r, color.g, color.b))
+end
+
 function R:setHighLight()
 	self.role:setHighLight()
 end

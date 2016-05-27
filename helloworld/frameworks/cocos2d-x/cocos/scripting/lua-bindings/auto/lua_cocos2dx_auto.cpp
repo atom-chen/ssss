@@ -70935,6 +70935,53 @@ int lua_cocos2dx_Sprite_setBatchNode(lua_State* tolua_S)
 
     return 0;
 }
+int lua_cocos2dx_Sprite_setGray(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::Sprite* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.Sprite",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::Sprite*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_Sprite_setGray'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Sprite_setGray'", nullptr);
+            return 0;
+        }
+        cobj->setGray();
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Sprite:setGray",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Sprite_setGray'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_cocos2dx_Sprite_getBlendFunc(lua_State* tolua_S)
 {
     int argc = 0;
@@ -71978,6 +72025,7 @@ int lua_register_cocos2dx_Sprite(lua_State* tolua_S)
         tolua_function(tolua_S,"getAtlasIndex",lua_cocos2dx_Sprite_getAtlasIndex);
         tolua_function(tolua_S,"setHighLight",lua_cocos2dx_Sprite_setHighLight);
         tolua_function(tolua_S,"setBatchNode",lua_cocos2dx_Sprite_setBatchNode);
+        tolua_function(tolua_S,"setGray",lua_cocos2dx_Sprite_setGray);
         tolua_function(tolua_S,"getBlendFunc",lua_cocos2dx_Sprite_getBlendFunc);
         tolua_function(tolua_S,"setDisplayFrameWithAnimationName",lua_cocos2dx_Sprite_setDisplayFrameWithAnimationName);
         tolua_function(tolua_S,"setTextureAtlas",lua_cocos2dx_Sprite_setTextureAtlas);

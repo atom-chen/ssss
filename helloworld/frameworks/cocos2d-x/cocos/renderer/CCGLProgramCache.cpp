@@ -43,6 +43,7 @@ enum {
     kShaderType_PositionTextureColorAlphaTest,
     kShaderType_PositionTextureColorAlphaTestNoMV,
     kShaderType_PositionTextureHighLight,
+    kShaderType_PositionTextureGray,
     kShaderType_PositionColor,
     kShaderType_PositionColorTextureAsPointsize,
     kShaderType_PositionColor_noMVP,
@@ -144,6 +145,10 @@ void GLProgramCache::loadDefaultGLPrograms()
     p = new (std::nothrow) GLProgram();
     loadDefaultGLProgram(p, kShaderType_PositionTextureHighLight);
     _programs.insert( std::make_pair( GLProgram::SHADER_NAME_POSITION_TEXTURE_HIGHLIGHT, p ) );
+    
+    p = new (std::nothrow) GLProgram();
+    loadDefaultGLProgram(p, kShaderType_PositionTextureGray);
+    _programs.insert( std::make_pair( GLProgram::SHADER_NAME_POSITION_TEXTURE_GRAY, p ) );
 
     // Position Texture Color alpha test
     p = new (std::nothrow) GLProgram();
@@ -439,6 +444,9 @@ void GLProgramCache::loadDefaultGLProgram(GLProgram *p, int type)
             break;
         case kShaderType_PositionTextureHighLight:
             p->initWithByteArrays(ccPositionTextureColor_noMVP_vert, ccPositionTextureHighLight_frag);
+            break;
+        case kShaderType_PositionTextureGray:
+            p->initWithByteArrays(ccPositionTextureColor_noMVP_vert, ccPositionTextureGray_frag);
             break;
         case kShaderType_PositionTextureColorAlphaTestNoMV:
             p->initWithByteArrays(ccPositionTextureColor_noMVP_vert, ccPositionTextureColorAlphaTest_frag);

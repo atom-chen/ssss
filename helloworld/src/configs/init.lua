@@ -56,6 +56,8 @@ cc.exports.kSoldierStatusGather = 1
 cc.exports.kSoldierStatusNormal = 2
 cc.exports.kSoldierStatusDead = 3
 
+cc.exports.kSoldierRowOff = 25
+
 cc.exports.kGeneralStatusNormal = 0
 cc.exports.kGeneralStatusReset = 1
 cc.exports.kGeneralStatusDead = 2
@@ -75,8 +77,13 @@ cc.exports.kPropMoveSpeed = 100
 cc.exports.kEffectTag = 100
 cc.exports.kRoleActTag = 101
 cc.exports.kRoleGatherTag = 102
+cc.exports.kBeAttackedTag = 103
 
 cc.exports.kGatherSpeed = 100
+
+cc.exports.kSkillPointSpeed = 5
+cc.exports.kMaxSkillPoint = 10
+cc.exports.kSkillCDTime = 3
 
 
 

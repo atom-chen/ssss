@@ -140,6 +140,12 @@
 -- @return Sprite#Sprite self (return value: cc.Sprite)
         
 --------------------------------
+-- 
+-- @function [parent=#Sprite] setGray 
+-- @param self
+-- @return Sprite#Sprite self (return value: cc.Sprite)
+        
+--------------------------------
 -- js  NA<br>
 -- lua NA
 -- @function [parent=#Sprite] getBlendFunc 

@@ -27,8 +27,7 @@
 -- @return ActionInterval#ActionInterval self (return value: cc.ActionInterval)
         
 --------------------------------
---  How many seconds had elapsed since the actions started to run.<br>
--- return The seconds had elapsed since the actions started to run.
+-- 
 -- @function [parent=#ActionInterval] getElapsed 
 -- @param self
 -- @return float#float ret (return value: float)

@@ -179,6 +179,8 @@ public:
     static const char* SHADER_NAME_POSITION_LENGTH_TEXTURE_COLOR;
     
     static const char* SHADER_NAME_POSITION_TEXTURE_HIGHLIGHT;
+    
+    static const char* SHADER_NAME_POSITION_TEXTURE_GRAY;
 
     /**Built in shader for ui effects */
     static const char* SHADER_NAME_POSITION_GRAYSCALE;

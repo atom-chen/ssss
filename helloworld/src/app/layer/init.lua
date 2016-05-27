@@ -1,4 +1,4 @@
 
 
 require("app.layer.FightLayer")
-require("app.layer.TransitionLayer")
+require("app.layer.SkillLayer")

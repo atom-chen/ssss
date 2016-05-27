@@ -71,7 +71,7 @@ end
 
 function M:setPhyDefAdd(add)
 	self.phyDefAdd = add
-	self:updatePhyDefRatio()
+	-- self:updatePhyDefRatio()
 end
 
 function M:setMagicAttackAdd(add)
@@ -80,7 +80,7 @@ end
 
 function M:setMagicDefAdd(add)
 	self.magicDefAdd = add
-	self:updateMagicDefRatio()
+	-- self:updateMagicDefRatio()
 end
 
 function M:setTarget(target)
@@ -96,12 +96,13 @@ end
 function M:parseSoldierCfg(cfg, ident)
 	self.phyAtt = cfg.physicalAtt
 	self.phyDef = cfg.physicalDef
-	self.phyRatio = (1-(cfg.physicalDef*0.01/(1+cfg.physicalDef*0.5*0.01)))/4
+	-- self.phyRatio = (1-(cfg.physicalDef*0.01/(1+cfg.physicalDef*0.5*0.01)))/4
 	self.magicDef = cfg.magicDef
-	self.magicRatio = (1-(cfg.magicDef*0.01/(1+cfg.magicDef*0.5*0.01)))/4
+	-- self.magicRatio = (1-(cfg.magicDef*0.01/(1+cfg.magicDef*0.5*0.01)))/4
 
 	self.moveSpeed = cfg.moveSpeed
 	self.attackSpeed = cfg.attackSpeed
+	self.attackRatio = 1
 
 	-- local fightNode = sgzj.FightNode:create(ident, phyAtt, phyDef, phyRatio, 0, magicDef, magicRatio)
 	-- sgzj.FightManager:getInstance():addFightNode(fightNode)
@@ -113,12 +114,13 @@ end
 function M:parseBuildingCfg(cfg, ident)
 	self.phyAtt = cfg.physicalAtt
 	self.phyDef = cfg.physicalDef * 1.25
-	self.phyRatio = (1-(cfg.physicalDef*0.01/(1+cfg.physicalDef*0.5*0.01)))/4
+	-- self.phyRatio = (1-(cfg.physicalDef*0.01/(1+cfg.physicalDef*0.5*0.01)))/4
 	self.magicDef = cfg.magicDef * 1.25
-	self.magicRatio = (1-(cfg.magicDef*0.01/(1+cfg.magicDef*0.5*0.01)))/4
+	-- self.magicRatio = (1-(cfg.magicDef*0.01/(1+cfg.magicDef*0.5*0.01)))/4
 
 	self.moveSpeed = cfg.moveSpeed
 	self.attackSpeed = cfg.attackSpeed
+	self.attackRatio = 1
 
 	-- local fightNode = sgzj.FightNode:create(ident, phyAtt, phyDef, phyRatio, 0, magicDef, magicRatio)
 	-- sgzj.FightManager:getInstance():addFightNode(fightNode)
@@ -130,13 +132,14 @@ function M:parseBuildingCfg(cfg, ident)
 end
 
 function M:parseGeneralCfg(cfg, ident)
-	self.phyAtt = cfg.strength * 0.6
-	self.phyDef = cfg.strength * 0.5
-	self.phyRatio = (1-(cfg.strength * 0.5 *0.01/(1+cfg.strength*0.5*0.01)))/4
-	self.magicAtt = cfg.intellect * 0.65
-	self.magicDef = cfg.intellect * 0.5
-	self.magicRatio = (1-(cfg.intellect*0.5*0.01/(1+cfg.intellect*0.5*0.01)))/4
+	self.phyAtt = cfg.strength
+	self.phyDef = cfg.strength * 0.75
+	-- self.phyRatio = (1-(cfg.strength * 0.5 *0.01/(1+cfg.strength*0.5*0.01)))/4
+	self.magicAtt = cfg.intellect
+	self.magicDef = cfg.intellect * 0.75
+	-- self.magicRatio = (1-(cfg.intellect*0.5*0.01/(1+cfg.intellect*0.5*0.01)))/4
 	self.health = cfg.lead
+	self.attackRatio = cfg.lead * 0.1
 
 	self.moveSpeed = math.min(cfg.moveSpeed+cfg.lead/3, kMaxMoveSpeed)
 	self.attackSpeed = cfg.attackSpeed
@@ -176,7 +179,7 @@ function M:reachPos(node)
 	-- print("minx", minx, "miny", miny, "maxx", maxx, "maxy", maxy, "px", pos.x, "py", pos.y)
 	-- print("node.accepw", node.acceptW, "tw", target.acceptW, "minx", minx, "maxx", maxx)
 	-- print("id", node.ident, "type", node.type)
-	if cp.x >= pos.x then
+	if cp.x > pos.x then
 		return cc.p(minx - node.acceptW, cp.y)
 	else
 		return cc.p(maxx + node.acceptW, cp.y)
@@ -261,15 +264,14 @@ function M:checkMove(dt, node)
 	local status, tpos, dis = self:checkFightStatus(node)
 	self.status = status
 
-	local tc = nil
-	if self.target then
-		tc = self.target:centerPos()
-	else
-		tc = tpos
-	end
-
 	if status ~= kFightStatusNotReach then
 		if status == kFightStatusReach then
+			local tc = nil
+			if self.target then
+				tc = self.target:centerPos()
+			else
+				tc = tpos
+			end
 			return status, self.standPos.x < tc.x
 		else
 			return status
@@ -286,7 +288,7 @@ function M:checkMove(dt, node)
 	-- print("tpos --", tpos.x, tpos.y)
 	-- print("last --", last.x, last.y)
 
-	return status, last, self.standPos.x < tc.x
+	return status, last, self.standPos.x < tpos.x
 
 end
 
@@ -391,10 +393,11 @@ end
 
 function M:currentAttack(skill)
 
+-- 等级加成
 	if skill.damageType == kPhysicalType then
-		return self:currentPhyAttack() * skill.value
+		return (0 + self:currentPhyAttack() * skill.value) * self.attackRatio
 	else
-		return self:currentMagicAttack() * skill.value
+		return (0 + self:currentMagicAttack() * skill.value) * self.attackRatio
 	end
 
 end
@@ -492,9 +495,9 @@ function M:getRealDamage(damage, dtype)
 	local ratio = 1
 
 	if dtype == kPhysicalType then
-		ratio = self.phyRatio
+		ratio = 1/self.phyDef
 	else
-		ratio = self.magicRatio
+		ratio = 1/self.magicDef
 	end
 
 	local real = damage * ratio

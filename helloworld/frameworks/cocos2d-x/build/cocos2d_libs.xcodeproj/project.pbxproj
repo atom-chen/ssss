@@ -4207,6 +4207,7 @@
 		3041CB2A1CE2C0F10022DCB4 /* Poller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Poller.h; sourceTree = "<group>"; };
 		3041CB2B1CE2C0F10022DCB4 /* RouteFinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RouteFinder.cpp; sourceTree = "<group>"; };
 		3041CB2C1CE2C0F10022DCB4 /* RouteFinder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RouteFinder.hpp; sourceTree = "<group>"; };
+		304B22DA1CF3F3A600FA4429 /* ccShader_PositionTextureGray.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_PositionTextureGray.frag; sourceTree = "<group>"; };
 		3072231C1CCF2F5900DFF5F0 /* ccShader_PositionTextureHighLight.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_PositionTextureHighLight.frag; sourceTree = "<group>"; };
 		30F304821CEAC70E00643B6A /* CustomDraw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomDraw.cpp; sourceTree = "<group>"; };
 		30F304831CEAC70E00643B6A /* CustomDraw.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CustomDraw.hpp; sourceTree = "<group>"; };
@@ -7680,6 +7681,7 @@
 				5034CA02191D591000CE6051 /* ccShader_PositionTexture.vert */,
 				5034CA05191D591000CE6051 /* ccShader_PositionTexture.frag */,
 				3072231C1CCF2F5900DFF5F0 /* ccShader_PositionTextureHighLight.frag */,
+				304B22DA1CF3F3A600FA4429 /* ccShader_PositionTextureGray.frag */,
 				5034CA03191D591000CE6051 /* ccShader_PositionTexture_uColor.vert */,
 				5034CA04191D591000CE6051 /* ccShader_PositionTexture_uColor.frag */,
 				5034CA06191D591000CE6051 /* ccShader_PositionColorLengthTexture.vert */,
@@ -13014,7 +13016,7 @@
 					CC_KEYBOARD_SUPPORT,
 					_USRDLL,
 				);
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../cocos/custom";
 				LD_DYLIB_INSTALL_NAME = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13031,7 +13033,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				OTHER_LDFLAGS = "-llibsql3";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../external/png/include/mac $(SRCROOT)/../external/tiff/include/mac $(SRCROOT)/../external/webp/include/mac $(SRCROOT)/../external/jpeg/include/mac $(SRCROOT)/../external/freetype2/include/mac $(SRCROOT)/../external/glfw3/include/mac $(SRCROOT)/../external/websockets/include/mac $(SRCROOT)/../external/chipmunk/include/chipmunk $(SRCROOT)/../external/curl/include/mac $(SRCROOT)/../external/freetype2/include/mac/freetype2";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../external/png/include/mac $(SRCROOT)/../external/tiff/include/mac $(SRCROOT)/../external/webp/include/mac $(SRCROOT)/../external/jpeg/include/mac $(SRCROOT)/../external/freetype2/include/mac $(SRCROOT)/../external/glfw3/include/mac $(SRCROOT)/../external/websockets/include/mac $(SRCROOT)/../external/chipmunk/include/chipmunk $(SRCROOT)/../external/curl/include/mac $(SRCROOT)/../external/freetype2/include/mac/freetype2 $(SRCROOT)/../cocos/custom";
 			};
 			name = Debug;
 		};
@@ -13052,7 +13054,7 @@
 					CC_TARGET_OS_MAC,
 					_USRDLL,
 				);
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../cocos/custom";
 				LD_DYLIB_INSTALL_NAME = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13069,7 +13071,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				OTHER_LDFLAGS = "-llibsql3";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../external/png/include/mac $(SRCROOT)/../external/tiff/include/mac $(SRCROOT)/../external/webp/include/mac $(SRCROOT)/../external/jpeg/include/mac $(SRCROOT)/../external/freetype2/include/mac $(SRCROOT)/../external/glfw3/include/mac $(SRCROOT)/../external/websockets/include/mac $(SRCROOT)/../external/chipmunk/include/chipmunk $(SRCROOT)/../external/curl/include/mac $(SRCROOT)/../external/freetype2/include/mac/freetype2";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../external/png/include/mac $(SRCROOT)/../external/tiff/include/mac $(SRCROOT)/../external/webp/include/mac $(SRCROOT)/../external/jpeg/include/mac $(SRCROOT)/../external/freetype2/include/mac $(SRCROOT)/../external/glfw3/include/mac $(SRCROOT)/../external/websockets/include/mac $(SRCROOT)/../external/chipmunk/include/chipmunk $(SRCROOT)/../external/curl/include/mac $(SRCROOT)/../external/freetype2/include/mac/freetype2 $(SRCROOT)/../cocos/custom";
 			};
 			name = Release;
 		};

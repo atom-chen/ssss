@@ -252,7 +252,7 @@ end
 
 
 function B:attackRatio()
-	return math.max(self.soldierNum, 0)/25.0
+	return math.max(self.soldierNum, 0)*0.25
 end
 
 function B:centerPos()
@@ -295,6 +295,22 @@ end
 
 function B:showDamageEffect()
 	self.labelEffect:showEffect(-self.totalDamage)
+
+	if self.owner == kOwnerNone then
+		self.icon:showColor(cc.num2c4b(0xc2c2c2ff))
+	elseif self.owner == kOwnerPlayer then
+		self.icon:showColor(cc.num2c4b(0x177afdff))
+	else
+		self.icon:showColor(cc.num2c4b(0xfe252aff))
+	end
+
+	local actions = {}
+	actions[#actions + 1] = cc.DelayTime:create(0.1)
+	actions[#actions + 1] = cc.CallFunc:create(function() self.icon:showColor(cc.c3b(255, 255, 255)) end)
+	local seq = cc.Sequence:create(actions)
+	seq:setTag(kBeAttackedTag)
+	self:stopActionByTag(kBeAttackedTag)
+	self:runAction(seq)
 end
 
 -- function B:checkAttackBack(node)
