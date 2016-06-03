@@ -202,7 +202,7 @@ int lua_register_cocos2dx_custom_Line(lua_State* tolua_S)
     return 1;
 }
 
-int lua_cocos2dx_custom_RouteFinder_findRoute(lua_State* tolua_S)
+int lua_cocos2dx_custom_RouteFinder_addStartPoint(lua_State* tolua_S)
 {
     int argc = 0;
     sgzj::RouteFinder* cobj = nullptr;
@@ -222,7 +222,7 @@ int lua_cocos2dx_custom_RouteFinder_findRoute(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     if (!cobj) 
     {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_custom_RouteFinder_findRoute'", nullptr);
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_custom_RouteFinder_addStartPoint'", nullptr);
         return 0;
     }
 #endif
@@ -232,22 +232,22 @@ int lua_cocos2dx_custom_RouteFinder_findRoute(lua_State* tolua_S)
     {
         cocos2d::Point arg0;
 
-        ok &= luaval_to_point(tolua_S, 2, &arg0, "sgzj.RouteFinder:findRoute");
+        ok &= luaval_to_point(tolua_S, 2, &arg0, "sgzj.RouteFinder:addStartPoint");
         if(!ok)
         {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_custom_RouteFinder_findRoute'", nullptr);
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_custom_RouteFinder_addStartPoint'", nullptr);
             return 0;
         }
-        cobj->findRoute(arg0);
+        cobj->addStartPoint(arg0);
         lua_settop(tolua_S, 1);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "sgzj.RouteFinder:findRoute",argc, 1);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "sgzj.RouteFinder:addStartPoint",argc, 1);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_custom_RouteFinder_findRoute'.",&tolua_err);
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_custom_RouteFinder_addStartPoint'.",&tolua_err);
 #endif
 
     return 0;
@@ -299,6 +299,106 @@ int lua_cocos2dx_custom_RouteFinder_clear(lua_State* tolua_S)
 
     return 0;
 }
+int lua_cocos2dx_custom_RouteFinder_findRoute(lua_State* tolua_S)
+{
+    int argc = 0;
+    sgzj::RouteFinder* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"sgzj.RouteFinder",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (sgzj::RouteFinder*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_custom_RouteFinder_findRoute'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        cocos2d::Point arg0;
+
+        ok &= luaval_to_point(tolua_S, 2, &arg0, "sgzj.RouteFinder:findRoute");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_custom_RouteFinder_findRoute'", nullptr);
+            return 0;
+        }
+        cobj->findRoute(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "sgzj.RouteFinder:findRoute",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_custom_RouteFinder_findRoute'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_custom_RouteFinder_loadRouteConfig(lua_State* tolua_S)
+{
+    int argc = 0;
+    sgzj::RouteFinder* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"sgzj.RouteFinder",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (sgzj::RouteFinder*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_custom_RouteFinder_loadRouteConfig'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        std::string arg0;
+
+        ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sgzj.RouteFinder:loadRouteConfig");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_custom_RouteFinder_loadRouteConfig'", nullptr);
+            return 0;
+        }
+        cobj->loadRouteConfig(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "sgzj.RouteFinder:loadRouteConfig",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_custom_RouteFinder_loadRouteConfig'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_cocos2dx_custom_RouteFinder_currentRoutePath(lua_State* tolua_S)
 {
     int argc = 0;
@@ -332,7 +432,7 @@ int lua_cocos2dx_custom_RouteFinder_currentRoutePath(lua_State* tolua_S)
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_custom_RouteFinder_currentRoutePath'", nullptr);
             return 0;
         }
-        cocos2d::Vector<sgzj::Line *>& ret = cobj->currentRoutePath();
+        cocos2d::Vector<sgzj::Line *> ret = cobj->currentRoutePath();
         ccvector_to_luaval(tolua_S, ret);
         return 1;
     }
@@ -368,8 +468,8 @@ int lua_cocos2dx_custom_RouteFinder_getInstance(lua_State* tolua_S)
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_custom_RouteFinder_getInstance'", nullptr);
             return 0;
         }
-        sgzj::RouteFinder* ret = sgzj::RouteFinder::getInstance();
-        object_to_luaval<sgzj::RouteFinder>(tolua_S, "sgzj.RouteFinder",(sgzj::RouteFinder*)ret);
+//        sgzj::RouteFinder* ret = sgzj::RouteFinder::getInstance();
+//        object_to_luaval<sgzj::RouteFinder>(tolua_S, "sgzj.RouteFinder",(sgzj::RouteFinder*)ret);
         return 1;
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "sgzj.RouteFinder:getInstance",argc, 0);
@@ -392,8 +492,10 @@ int lua_register_cocos2dx_custom_RouteFinder(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RouteFinder","sgzj.RouteFinder","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"RouteFinder");
-        tolua_function(tolua_S,"findRoute",lua_cocos2dx_custom_RouteFinder_findRoute);
+        tolua_function(tolua_S,"addStartPoint",lua_cocos2dx_custom_RouteFinder_addStartPoint);
         tolua_function(tolua_S,"clear",lua_cocos2dx_custom_RouteFinder_clear);
+        tolua_function(tolua_S,"findRoute",lua_cocos2dx_custom_RouteFinder_findRoute);
+        tolua_function(tolua_S,"loadRouteConfig",lua_cocos2dx_custom_RouteFinder_loadRouteConfig);
         tolua_function(tolua_S,"currentRoutePath",lua_cocos2dx_custom_RouteFinder_currentRoutePath);
         tolua_function(tolua_S,"getInstance", lua_cocos2dx_custom_RouteFinder_getInstance);
     tolua_endmodule(tolua_S);

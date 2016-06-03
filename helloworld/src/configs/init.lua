@@ -2,7 +2,8 @@
 
 require("configs.buildings")
 require("configs.generals")
-require("configs.maps")
+-- require("configs.maps")
+require("configs.map.init")
 require("configs.soldiers")
 require("configs.Type")
 require("configs.skills")
@@ -85,5 +86,6 @@ cc.exports.kSkillPointSpeed = 5
 cc.exports.kMaxSkillPoint = 10
 cc.exports.kSkillCDTime = 3
 
+cc.exports.kSoldierDispersal=2.5
 
 

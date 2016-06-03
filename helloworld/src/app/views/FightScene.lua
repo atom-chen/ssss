@@ -17,7 +17,8 @@ function FightScene:ctor(mapId)
 	layer:setPosition(cc.p(0, 0))
 	self:addChild(layer, -1)
 
-	local mapInfo = maps[mapId]
+	-- local mapInfo = maps[mapId]
+	local mapInfo=_G["mapConfig"..mapId]
 
 	if not mapInfo then
 		print("map not found! id:", mapId)
@@ -43,6 +44,14 @@ function FightScene:ctor(mapId)
 
 	skillLayer:startUpdate()
 
+	local path = self:movePath(mapId)
+	sgzj.RouteFinder:getInstance():loadRouteConfig(path)
+
+
+end
+
+function FightScene:movePath(mapId)
+	return "configs/map/"..mapId.."_move.xml"
 end
 
 function FightScene:backgroundImage(mapInfo)

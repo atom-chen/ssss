@@ -26,6 +26,7 @@ function FightLayer:ctor(mapInfo, size)
 	drawNode:setLineWidth(5)
 	self:addChild(drawNode, 1)
 	self.drawNode = drawNode
+	
 
 end
 
@@ -37,14 +38,9 @@ function FightLayer:createBuildings(builds, size)
 		
 		local bedImage = "fightbg/FB002_"..cfg.size..".png"
 		local bed = cc.Sprite:create(bedImage)
-		bed:setAnchorPoint(cc.p(0.5, 0.5))
-		local bedPos = cc.p(v.pos.x, size.height - v.pos.y)
-		-- print("posx", bedPos.x, "poxy", bedPos.y)
-		bed:setPosition(bedPos)
 		self:addChild(bed)
 
 		local halo = cc.Sprite:create()
-		halo:setPosition(bedPos)
 		halo:setVisible(false)
 		self:addChild(halo)
 		
@@ -54,7 +50,13 @@ function FightLayer:createBuildings(builds, size)
 
 		build:setSoldierNum(v.oriNum)
 		build:setAnchorPoint(cc.p(0.5, 0))
-		build:setStandPos(bedPos)
+		local bs=build:getContentSize()
+		local bpos=cc.p(v.pos.x+bs.width/2, v.pos.y-bs.height)
+		build:setStandPos(bpos)
+		-- local hpos=cc.p(bpos.x, bpos.y)
+		bed:setPosition(bpos)
+		halo:setPosition(bpos)
+
 		local z = self:buildZOrder(build:centerPos())
 		-- print("pos.y", pos.y, "z-", z)
 		self:addChild(build, z)
@@ -331,6 +333,7 @@ function FightLayer:updateEvent(dt)
 
 	-- self:updateBuildAttack(dt)
 	-- self.fightTime = self.fightTime + dt
+
 	
 	self:updateMoveEvent(dt)
 
@@ -339,6 +342,19 @@ function FightLayer:updateEvent(dt)
 	self:updateDamage()
 
 	self:updateStatus()
+
+	if self.shouldDraw then
+		local path=sgzj.RouteFinder:getInstance():currentRoutePath()
+		if #path > 0 then
+			self.drawNode:clear()
+			self.drawNode:setLineWidth(10)
+			for _, v in pairs(path) do
+				local sp=v:startPoint()
+				local ep=v:endPoint()
+				self.drawNode:drawLine(sp, ep, cc.c4f(1.0, 0, 0, 1.0))
+			end
+		end
+	end
 
 end
 
@@ -565,7 +581,7 @@ function FightLayer:addDispatchNode(pos, owner)
 
 	self.dispatchManager:addDispatchNode(node)
 
-	return true
+	return true, node
 
 end
 
@@ -592,17 +608,27 @@ function FightLayer:getItemForPos(pos)
 end
 
 function FightLayer:handleTouchBegan(event)
-	return self:addDispatchNode(cc.p(event.x, event.y), kOwnerPlayer)
+	local p = cc.p(event.x, event.y)
+	local status, node = self:addDispatchNode(p, kOwnerPlayer)
+	if status then
+		sgzj.RouteFinder:getInstance():addStartPoint(node:centerPos())
+		self.shouldDraw = true
+	end
+	return status
 end
 
 
 function FightLayer:handleTouchMoved(event)
-	self:addDispatchNode(cc.p(event.x, event.y), -1)
-	
+	local p = cc.p(event.x, event.y)
+	self:addDispatchNode(p, -1)
+	sgzj.RouteFinder:getInstance():findRoute(self:convertToNodeSpace(p))
 end
 
 function FightLayer:handleTouchEnded(event)
 	self:handleDispatch(cc.p(event.x, event.y))
+	self.shouldDraw = false
+	self.drawNode:clear()
+	sgzj.RouteFinder:getInstance():clear()
 end
 
 function FightLayer:touchesEvent(event)

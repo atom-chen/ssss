@@ -113,9 +113,9 @@ end
 
 function M:parseBuildingCfg(cfg, ident)
 	self.phyAtt = cfg.physicalAtt
-	self.phyDef = cfg.physicalDef * 1.25
+	self.phyDef = cfg.physicalDef 
 	-- self.phyRatio = (1-(cfg.physicalDef*0.01/(1+cfg.physicalDef*0.5*0.01)))/4
-	self.magicDef = cfg.magicDef * 1.25
+	self.magicDef = cfg.magicDef 
 	-- self.magicRatio = (1-(cfg.magicDef*0.01/(1+cfg.magicDef*0.5*0.01)))/4
 
 	self.moveSpeed = cfg.moveSpeed

@@ -27,37 +27,42 @@ namespace sgzj {
         inline cocos2d::Point &startPoint() {return m_startPoint;};
         inline cocos2d::Point &endPoint() {return m_endPoint;};
         static Line *create(cocos2d::Point &start, cocos2d::Point &end);
+        void relateTo(std::shared_ptr<Line> &line) { m_relation.push_back(line);};
+        std::vector<std::shared_ptr<Line>> relatedLines() {return m_relation;};
         
     private:
         cocos2d::Point m_startPoint;
         cocos2d::Point m_endPoint;
+        std::vector<std::shared_ptr<Line> > m_relation;
 //        std::string m_name;
     };
     
     class RouteNode {
     public:
         typedef std::vector<std::shared_ptr<RouteNode> > routeList;
-        typedef std::map<std::shared_ptr<Line>, routeList > routeMap;
+       
         typedef std::vector<std::shared_ptr<Line> > lineList;
         RouteNode(lineList &lines);
         ~RouteNode();
         
         bool isMarked() {return m_mark;};
         bool isContainPoint(cocos2d::Point &point);
+        bool isTheSame(RouteNode *node) {return this == node;};
         bool isPointInLine(cocos2d::Point &point);
         float routeValueWithPoint(cocos2d::Point &start, cocos2d::Point &end);
         cocos2d::Point findInPoint(cocos2d::Point &start, cocos2d::Point &end, std::shared_ptr<Line> &line);
         
         std::shared_ptr<RouteNode> findNextRouteNode(cocos2d::Point &start, cocos2d::Point &end, cocos2d::Point *intersect);
+        lineList allLines() {return m_lineList;};
         void clear();
         void reset();
         void mark() {m_mark = true;};
         
-        routeMap neighbours() {return m_neighbours;};
+//        routeMap neighbours() {return m_neighbours;};
         
     private:
         lineList m_lineList;
-        routeMap m_neighbours;
+//        routeMap m_neighbours;
         bool m_mark;
     };
     
@@ -103,27 +108,44 @@ namespace sgzj {
         typedef std::vector<cocos2d::Point > pointList;
         typedef cocos2d::Vector<Line *> pathList;
         void findRoute(cocos2d::Point &point);
+        void addStartPoint(cocos2d::Point &point);
         
         void clear();
         
-        inline pathList &currentRoutePath(){return m_pathList;};
+        pathList currentRoutePath();
+        RouteNode::routeList routeNodeForLine(std::shared_ptr<Line> &line);
         
-        static RouteFinder *getInstance();
         
     private:
         RouteNode::routeList findRouteNodeList(cocos2d::Point &start, cocos2d::Point &end);
         void fillStraightRoute(cocos2d::Point &point);
-        void addStartPoint(cocos2d::Point &point);
+        
+        void fillRouteMap(std::shared_ptr<Line> &line, std::shared_ptr<RouteNode> &node);
         std::shared_ptr<RouteNode> findRouteNode(cocos2d::Point &point);
         std::shared_ptr<RouteInfo> findRoutePath(cocos2d::Point &start, cocos2d::Point &end);
         void doFindRoute();
+        void addRouteNode(std::vector<cocos2d::Point> &vec);
         RouteNode::routeList m_routeList;
         pointList m_startList;
         pointList m_endList;
         pathList m_pathList;
+        pathList m_pathList1;
+        typedef std::map<std::shared_ptr<Line>, std::shared_ptr<RouteNode> > routeMap;
+        routeMap m_routeMap;
+        RouteNode::lineList m_lineList;
         
         lrb::base::MutexLock m_mutex;
         lrb::base::MutexLock m_mutex1;
+        lrb::base::MutexLock m_mutex2;
+    };
+    
+    class RouteData : public cocos2d::Ref {
+    public:
+        void loadRouteConfig(std::string &path);
+        static RouteData *getInstance();
+        void reset();
+    private:
+        
     };
     
 }

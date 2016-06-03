@@ -15,6 +15,9 @@
 #include "ide-support/RuntimeLuaImpl.h"
 #endif
 
+#include "custom/RouteFinder.hpp"
+#include "tinyxml2/tinyxml2.h"
+
 using namespace CocosDenshion;
 
 USING_NS_CC;
@@ -87,7 +90,7 @@ bool AppDelegate::applicationDidFinishLaunching()
         return false;
     }
 #endif
-
+    
     return true;
 }
 

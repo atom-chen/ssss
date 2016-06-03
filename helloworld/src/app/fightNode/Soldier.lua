@@ -459,6 +459,14 @@ end
 function S:showColor(color)
 	for _, v in pairs(self.roles) do
 		v:showColor(color)
+		local actions = {}
+		actions[#actions + 1] = cc.DelayTime:create(0.1)
+		actions[#actions + 1] = cc.CallFunc:create(function() v:showColor(cc.c3b(255, 255, 255)) end)
+		local seq = cc.Sequence:create(actions)
+		seq:setTag(kBeAttackedTag)
+		v:stopActionByTag(kBeAttackedTag)
+		v:runAction(seq)
+
 	end
 end
 
@@ -476,13 +484,7 @@ function S:showDamageEffect()
 
 	self:showColor(color)
 
-	local actions = {}
-	actions[#actions + 1] = cc.DelayTime:create(0.1)
-	actions[#actions + 1] = cc.CallFunc:create(function() self:showColor(cc.c3b(255, 255, 255)) end)
-	local seq = cc.Sequence:create(actions)
-	seq:setTag(kBeAttackedTag)
-	self:stopActionByTag(kBeAttackedTag)
-	self:runAction(seq)
+	
 end
 
 function S:checkAutoAttack(node)
@@ -503,7 +505,7 @@ function S:dispersal()
 		-- if role.status ~= kRoleDie then
 			local last = self:finalPos(i)
 			role.delay = -1
-			local move = cc.MoveTo:create(1.4, last)
+			local move = cc.MoveTo:create(kSoldierDispersal, last)
 			move:setTag(kRoleGatherTag)
 			role:stopActionByTag(kRoleGatherTag)
 			role:runAction(move)
