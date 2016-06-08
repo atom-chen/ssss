@@ -1242,6 +1242,10 @@
 		299CF1FC19A434BC00C378C1 /* ccRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 299CF1F919A434BC00C378C1 /* ccRandom.cpp */; };
 		299CF1FD19A434BC00C378C1 /* ccRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 299CF1FA19A434BC00C378C1 /* ccRandom.h */; };
 		299CF1FE19A434BC00C378C1 /* ccRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 299CF1FA19A434BC00C378C1 /* ccRandom.h */; };
+		303BD22A1D05565E0094E840 /* RoleNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 303BD2281D05565E0094E840 /* RoleNode.cpp */; };
+		303BD22B1D05565E0094E840 /* RoleNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 303BD2281D05565E0094E840 /* RoleNode.cpp */; };
+		303BD22C1D05565E0094E840 /* RoleNode.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 303BD2291D05565E0094E840 /* RoleNode.hpp */; };
+		303BD22D1D05565E0094E840 /* RoleNode.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 303BD2291D05565E0094E840 /* RoleNode.hpp */; };
 		3041CB2D1CE2C0F10022DCB4 /* base.h in Headers */ = {isa = PBXBuildFile; fileRef = 3041CB1B1CE2C0F10022DCB4 /* base.h */; };
 		3041CB2E1CE2C0F10022DCB4 /* base.h in Headers */ = {isa = PBXBuildFile; fileRef = 3041CB1B1CE2C0F10022DCB4 /* base.h */; };
 		3041CB2F1CE2C0F10022DCB4 /* Caculater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3041CB1C1CE2C0F10022DCB4 /* Caculater.cpp */; };
@@ -4189,6 +4193,8 @@
 		29CB8F4B1929D1BB00C841D6 /* UILayoutManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UILayoutManager.h; sourceTree = "<group>"; };
 		29E99D1C1957BA7000046604 /* CocoLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CocoLoader.cpp; sourceTree = "<group>"; };
 		29E99D1D1957BA7000046604 /* CocoLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoLoader.h; sourceTree = "<group>"; };
+		303BD2281D05565E0094E840 /* RoleNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoleNode.cpp; sourceTree = "<group>"; };
+		303BD2291D05565E0094E840 /* RoleNode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RoleNode.hpp; sourceTree = "<group>"; };
 		3041CB1B1CE2C0F10022DCB4 /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base.h; sourceTree = "<group>"; };
 		3041CB1C1CE2C0F10022DCB4 /* Caculater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Caculater.cpp; sourceTree = "<group>"; };
 		3041CB1D1CE2C0F10022DCB4 /* Caculater.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Caculater.hpp; sourceTree = "<group>"; };
@@ -7087,6 +7093,8 @@
 				3041CB2C1CE2C0F10022DCB4 /* RouteFinder.hpp */,
 				30F304821CEAC70E00643B6A /* CustomDraw.cpp */,
 				30F304831CEAC70E00643B6A /* CustomDraw.hpp */,
+				303BD2281D05565E0094E840 /* RoleNode.cpp */,
+				303BD2291D05565E0094E840 /* RoleNode.hpp */,
 			);
 			name = custom;
 			path = ../cocos/custom;
@@ -9822,6 +9830,7 @@
 				B665E2AC1AA80A6500DDB1C5 /* CCPUFlockCenteringAffector.h in Headers */,
 				B6CAB4E91AF9AA1A00B9B856 /* TrbDynBody.h in Headers */,
 				1A570312180BCF190088DEC7 /* CCComponentContainer.h in Headers */,
+				303BD22C1D05565E0094E840 /* RoleNode.hpp in Headers */,
 				15AE1B7119AADA9900C27E9E /* CocosGUI.h in Headers */,
 				B665E2381AA80A6500DDB1C5 /* CCPUBoxEmitterTranslator.h in Headers */,
 				B6CAB4211AF9AA1A00B9B856 /* btMLCPSolver.h in Headers */,
@@ -11113,6 +11122,7 @@
 				501216A31AC473AD009A4BEA /* CCMaterial.h in Headers */,
 				B665E20D1AA80A6500DDB1C5 /* CCPUBaseColliderTranslator.h in Headers */,
 				1A01C68D18F57BE800EFE3A6 /* CCDeprecated.h in Headers */,
+				303BD22D1D05565E0094E840 /* RoleNode.hpp in Headers */,
 				B665E2E91AA80A6500DDB1C5 /* CCPULinearForceAffector.h in Headers */,
 				382384321A259112002C4610 /* ParticleReader.h in Headers */,
 				B6CAB52E1AF9AA1A00B9B856 /* btSerializer.h in Headers */,
@@ -11816,6 +11826,7 @@
 				15AE188A19AAD33D00C27E9E /* CCControlLoader.cpp in Sources */,
 				5012168E1AC47380009A4BEA /* CCRenderState.cpp in Sources */,
 				B6CAB2491AF9AA1A00B9B856 /* btConvexPlaneCollisionAlgorithm.cpp in Sources */,
+				303BD22A1D05565E0094E840 /* RoleNode.cpp in Sources */,
 				B665E35A1AA80A6500DDB1C5 /* CCPUOnRandomObserver.cpp in Sources */,
 				B6CAB2891AF9AA1A00B9B856 /* btCapsuleShape.cpp in Sources */,
 				3E2A09C21BAA91B70086B878 /* CCMotionStreak3D.cpp in Sources */,
@@ -12266,6 +12277,7 @@
 				15AE1AD219AAD40300C27E9E /* b2RopeJoint.cpp in Sources */,
 				B29A7DCC19EE1B7700872B35 /* Skeleton.c in Sources */,
 				B6DD2FEE1B04825B00E47F5F /* DetourTileCache.cpp in Sources */,
+				303BD22B1D05565E0094E840 /* RoleNode.cpp in Sources */,
 				B6CAB2B41AF9AA1A00B9B856 /* btConvexShape.cpp in Sources */,
 				15AE1A4919AAD3D500C27E9E /* b2CircleShape.cpp in Sources */,
 				15AE184119AAD2F700C27E9E /* CCSprite3D.cpp in Sources */,

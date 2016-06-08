@@ -31,6 +31,9 @@ function FightScene:ctor(mapId)
 	self.bg:setPosition(display.center)
 	self:addChild(self.bg)
 
+	local path = self:movePath(mapId)
+	sgzj.RouteData:getInstance():loadRouteData(path)
+
 	self:createFightLayer(mapInfo, self.bg:getContentSize())
 
 	local skillLayer = SkillLayer:create()
@@ -44,14 +47,10 @@ function FightScene:ctor(mapId)
 
 	skillLayer:startUpdate()
 
-	local path = self:movePath(mapId)
-	sgzj.RouteFinder:getInstance():loadRouteConfig(path)
-
-
 end
 
 function FightScene:movePath(mapId)
-	return "configs/map/"..mapId.."_move.xml"
+	return "configs/map/move/"..mapId..".xml"
 end
 
 function FightScene:backgroundImage(mapInfo)

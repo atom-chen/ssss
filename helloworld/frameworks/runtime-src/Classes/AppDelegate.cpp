@@ -90,6 +90,15 @@ bool AppDelegate::applicationDidFinishLaunching()
         return false;
     }
 #endif
+//    std::string p = cocos2d::FileUtils::getInstance()->getWritablePath();
+//    CCLOG("%s", p.c_str());
+//    std::string path = "configs/map/move/3.xml";
+//    sgzj::RouteData::getInstance()->loadRouteData(path);
+    sgzj::RouteFinder *fider = new sgzj::RouteFinder();
+    cocos2d::Point s(654.650024, 517.349976);
+    cocos2d::Point e(951.122558, 1063.51501);
+    fider->setStartPoint(s);
+    fider->findRoute(e);
     
     return true;
 }

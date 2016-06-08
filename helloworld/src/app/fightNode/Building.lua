@@ -1,39 +1,38 @@
 
 
 
-local B = class("Building", cc.Node)
+local B = class("Building", sgzj.RoleNode)
 
 cc.exports.Building = B
 
 
 function B:ctor(cfg, owner, bedSize, ident, halo)
-
+	
 	self.cfg = cfg
 	self.ident = ident
 	self.owner = owner
 	self.type = kBuildType
-
+	self.halo = halo
+	
 	self.acceptW = bedSize.width/2
 	self.acceptH = bedSize.height/2
 	self.bedSize = bedSize
-	self.halo = halo
-
+	
 	self.totalDamage = 0
-
+	
 	local soldierCfg = soldiers[cfg.soldierId]
 	self.soldierCfg = soldierCfg
-
+	
 	self:createBuildIcon(cfg, bedSize)
-
-
+	
 	self:createTopLbl(soldierCfg, owner)
-
+	
 	self:createFightProxy(ident)
-
+	
 	self:createLabelEffect()
 	self:createTargetHalo()
 	self:updateAppearance()
-
+	
 end
 
 function B:createBuildIcon(cfg, bedSize)
@@ -125,9 +124,13 @@ function B:setOwner(owner)
 	
 end
 
+function B:setDrawNode(node)
+	self.drawNode = node
+end
+
 function B:setStandPos(pos)
-	self:setPosition(cc.p(pos.x, pos.y-self.bedSize.height/2))
-	self.fightProxy:setStandPos(pos)
+	self:setPosition(pos)
+	self.fightProxy:setStandPos(cc.p(pos.x, pos.y+self.bedSize.height/2))
 end
 
 function B:setSoldierNum(num)
@@ -183,7 +186,7 @@ function B:updateAppearance()
 	-- print("building image--", image)
 	local size = self.icon:setOwner(self.owner)
 	self:setContentSize(size)
-	-- print("contentsize, x-", s.width, "h-", s.height)
+	-- print("contentsize, x-", size.width, "h-", size.height)
 	self.topLbl:setOwner(self.owner)
 	self.topLbl:setPosition(cc.p(size.width/2, size.height))
 

@@ -6,7 +6,7 @@
 
 --------------------------------
 -- 
--- @function [parent=#RouteFinder] addStartPoint 
+-- @function [parent=#RouteFinder] findRoute 
 -- @param self
 -- @param #vec2_table point
 -- @return RouteFinder#RouteFinder self (return value: sgzj.RouteFinder)
@@ -19,16 +19,9 @@
         
 --------------------------------
 -- 
--- @function [parent=#RouteFinder] findRoute 
+-- @function [parent=#RouteFinder] setStartPoint 
 -- @param self
 -- @param #vec2_table point
--- @return RouteFinder#RouteFinder self (return value: sgzj.RouteFinder)
-        
---------------------------------
--- 
--- @function [parent=#RouteFinder] loadRouteConfig 
--- @param self
--- @param #string path
 -- @return RouteFinder#RouteFinder self (return value: sgzj.RouteFinder)
         
 --------------------------------
@@ -39,7 +32,7 @@
         
 --------------------------------
 -- 
--- @function [parent=#RouteFinder] getInstance 
+-- @function [parent=#RouteFinder] create 
 -- @param self
 -- @return RouteFinder#RouteFinder ret (return value: sgzj.RouteFinder)
         

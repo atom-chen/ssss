@@ -19,14 +19,48 @@ function FightLayer:ctor(mapInfo, size)
 
 	self.dispatchManager = DispatchManager:create()
 
-	self:createBuildings(mapInfo.buildings, size)
+	-- self:createBuildings(mapInfo.buildings, size)
 
 	local drawNode = cc.DrawNode:create()
-	drawNode:setAnchorPoint(cc.p(0, 0))
-	drawNode:setLineWidth(5)
+	-- drawNode:setAnchorPoint(cc.p(0, 0))
+	-- drawNode:setLineWidth(5)
 	self:addChild(drawNode, 1)
 	self.drawNode = drawNode
+
+
 	
+
+end
+
+function FightLayer:createBuild(cfg, owner, pos, num)
+	local bedImage = "fightbg/FB002_"..cfg.size..".png"
+	local bed = cc.Sprite:create(bedImage)
+	self:addChild(bed, 2)
+
+	local halo = cc.Sprite:create()
+	halo:setVisible(false)
+	self:addChild(halo, 2)
+
+	local bedSize = bed:getContentSize()
+	local ident = self:currentFightId()
+
+	local build = Building:create(cfg, owner, bedSize, ident, halo)
+
+	local drawNode = cc.DrawNode:create()
+	self:addChild(drawNode)
+	build:setDrawNode(drawNode)
+
+	build:setSoldierNum(num)
+	build:setAnchorPoint(cc.p(0.5, 0))
+	local bs=build:getContentSize()
+	local bpos=cc.p(pos.x+bs.width/2, pos.y-bs.height)
+	-- print("bpos.x", bpos.x, "bpox.y", bpos.y)
+	build:setStandPos(bpos) 
+	local hpos=cc.p(bpos.x, bpos.y+bedSize.height/2)
+	bed:setPosition(hpos)
+	halo:setPosition(hpos)
+
+	return build
 
 end
 
@@ -34,33 +68,15 @@ function FightLayer:createBuildings(builds, size)
 	local attackBuild = {}
 	local buildList = {}
 	for _, v in pairs(builds) do
-		local cfg = buildings[v.buildId]
+		local cfg = buildings[v.buildID]
 		
-		local bedImage = "fightbg/FB002_"..cfg.size..".png"
-		local bed = cc.Sprite:create(bedImage)
-		self:addChild(bed)
-
-		local halo = cc.Sprite:create()
-		halo:setVisible(false)
-		self:addChild(halo)
-		
-		local bedSize = bed:getContentSize()
-		local ident = self:currentFightId()
-		local build = Building:create(cfg, v.owner, bedSize, ident, halo)
-
-		build:setSoldierNum(v.oriNum)
-		build:setAnchorPoint(cc.p(0.5, 0))
-		local bs=build:getContentSize()
-		local bpos=cc.p(v.pos.x+bs.width/2, v.pos.y-bs.height)
-		build:setStandPos(bpos)
-		-- local hpos=cc.p(bpos.x, bpos.y)
-		bed:setPosition(bpos)
-		halo:setPosition(bpos)
+		local build = self:createBuild(cfg, v.type, v.pos, v.Num)
 
 		local z = self:buildZOrder(build:centerPos())
 		-- print("pos.y", pos.y, "z-", z)
 		self:addChild(build, z)
-		buildList[ident] = build
+		buildList[build.ident] = build
+		
 		-- self.fightList[ident] = build
 		if build:isAttackBuild() then
 			attackBuild[#attackBuild + 1] = build
@@ -83,14 +99,14 @@ function FightLayer:createGenerals(list)
 				list[#list] = nil
 			end
 		else
-			generalId = v.generalId
+			generalId = v.generalID
 		end
 
 		if generalId ~= 0 then
 			local gcfg = generals[generalId]
 
 			local ident = self:currentFightId()
-			local general = General:create(gcfg, v.owner, ident)
+			local general = General:create(gcfg, v.type, ident)
 			general:setAnchorPoint(cc.p(0.5, 0))
 			general:setStandPos(v.pos)
 			local z = self:buildZOrder(general:centerPos())
@@ -328,6 +344,16 @@ function FightLayer:updateStatus()
 
 end
 
+function FightLayer:updateRoutePath()
+	if not self.shouldDraw then
+		return
+	end
+
+	for _, v in pairs(self.buildList) do
+		v:drawRoutePath(v.drawNode)
+	end
+end
+
 function FightLayer:updateEvent(dt)
 	-- print("update event", dt)
 
@@ -343,26 +369,28 @@ function FightLayer:updateEvent(dt)
 
 	self:updateStatus()
 
-	if self.shouldDraw then
-		local path=sgzj.RouteFinder:getInstance():currentRoutePath()
-		if #path > 0 then
-			self.drawNode:clear()
-			self.drawNode:setLineWidth(10)
-			for _, v in pairs(path) do
-				local sp=v:startPoint()
-				local ep=v:endPoint()
-				self.drawNode:drawLine(sp, ep, cc.c4f(1.0, 0, 0, 1.0))
-			end
-		end
-	end
+	self:updateRoutePath()
+
+	-- if self.shouldDraw then
+	-- 	local path=sgzj.RouteFinder:getInstance():currentRoutePath()
+	-- 	if #path > 0 then
+	-- 		self.drawNode:clear()
+	-- 		self.drawNode:setLineWidth(10)
+	-- 		for _, v in pairs(path) do
+	-- 			local sp=v:startPoint()
+	-- 			local ep=v:endPoint()
+	-- 			self.drawNode:drawLine(sp, ep, cc.c4f(1.0, 0, 0, 1.0))
+	-- 		end
+	-- 	end
+	-- end
 
 end
 
 function FightLayer:startFight()
-	for _, v in pairs(self.buildList) do
-		v:startUpdateSoldierNum()
-	end
-
+	-- for _, v in pairs(self.buildList) do
+	-- 	v:startUpdateSoldierNum()
+	-- end
+	sgzj.RouteData:getInstance():debugDraw(self.drawNode)
 	local scheduler = self:getScheduler()
 	scheduler:scheduleScriptFunc(function(dt) self:updateEvent(dt) end, 0, false)
 end
@@ -611,7 +639,8 @@ function FightLayer:handleTouchBegan(event)
 	local p = cc.p(event.x, event.y)
 	local status, node = self:addDispatchNode(p, kOwnerPlayer)
 	if status then
-		sgzj.RouteFinder:getInstance():addStartPoint(node:centerPos())
+		-- sgzj.RouteFinder:getInstance():addStartPoint(node:centerPos())
+		node:setStartPoint(node:centerPos())
 		self.shouldDraw = true
 	end
 	return status
@@ -621,14 +650,21 @@ end
 function FightLayer:handleTouchMoved(event)
 	local p = cc.p(event.x, event.y)
 	self:addDispatchNode(p, -1)
-	sgzj.RouteFinder:getInstance():findRoute(self:convertToNodeSpace(p))
+
+	local list = self.dispatchManager:currentDispatchList()
+
+	for _, v in pairs(list.list) do
+		v:findRoute(self:convertToNodeSpace(p))
+
+	end
+
 end
 
 function FightLayer:handleTouchEnded(event)
 	self:handleDispatch(cc.p(event.x, event.y))
 	self.shouldDraw = false
-	self.drawNode:clear()
-	sgzj.RouteFinder:getInstance():clear()
+	-- self.drawNode:clear()
+
 end
 
 function FightLayer:touchesEvent(event)
@@ -642,7 +678,7 @@ function FightLayer:touchesEvent(event)
 end
 
 function FightLayer:buildZOrder(pos)
-	return math.floor(self.mapSize.height-pos.y)
+	return math.floor(self.mapSize.height-pos.y+10)
 end
 
 
