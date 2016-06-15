@@ -95,8 +95,8 @@ bool AppDelegate::applicationDidFinishLaunching()
 //    std::string path = "configs/map/move/3.xml";
 //    sgzj::RouteData::getInstance()->loadRouteData(path);
     sgzj::RouteFinder *fider = new sgzj::RouteFinder();
-    cocos2d::Point s(1027.99707, 614.254089);
-    cocos2d::Point e(1338.48413, 491.455963);
+    cocos2d::Point s(1017.01392, 666.168274);
+    cocos2d::Point e(762.433044, 923.743164);
     fider->setStartPoint(s);
     fider->findRoute(e);
     

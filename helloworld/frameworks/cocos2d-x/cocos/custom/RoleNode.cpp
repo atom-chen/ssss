@@ -13,13 +13,13 @@ using namespace sgzj;
 
 RoleNode::~RoleNode()
 {
-    CCLOG("45");
+//    CCLOG("45");
     m_finder->release();
 }
 
 bool RoleNode::init()
 {
-    CCLOG("46");
+//    CCLOG("46");
     if (Node::init()) {
         m_finder = new RouteFinder();
         return m_finder != nullptr;
@@ -30,13 +30,13 @@ bool RoleNode::init()
 
 void RoleNode::setStartPoint(cocos2d::Point &point)
 {
-    CCLOG("47");
+//    CCLOG("47");
     m_finder->setStartPoint(point);
 }
 
 void RoleNode::findRoute(cocos2d::Point &point)
 {
-    CCLOG("48");
+//    CCLOG("48");
     m_finder->findRoute(point);
 }
 
@@ -49,7 +49,7 @@ void RoleNode::setDrawNode(cocos2d::DrawNode *node)
 
 void RoleNode::drawRoutePath()
 {
-    CCLOG("49");
+//    CCLOG("49");
     cocos2d::Point start = m_finder->startFindPoint();
     cocos2d::Point end = m_finder->endFindPoint();
     if (m_pathStart == start && m_pathEnd == end)
