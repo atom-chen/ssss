@@ -9,7 +9,9 @@ function D:ctor(type, owner)
 end
 
 function D:addNode(node)
-	if self.type == kGeneralType and node.type == kBuildType and node.owner == self.owner then
+	if node.owner == self.owner and 
+		((self.type == kGeneralType and node.type == kBuildType) or 
+			(self.type == kBuildType and node.type == kGeneralType)) then
 		return
 	end
 	

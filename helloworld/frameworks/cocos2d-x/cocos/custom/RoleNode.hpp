@@ -23,14 +23,16 @@ namespace sgzj {
         ~RoleNode();
         void setStartPoint(cocos2d::Point &point);
         void findRoute(cocos2d::Point &point);
-        void drawRoutePath(cocos2d::DrawNode *node);
+        void drawRoutePath();
+        void setDrawNode(cocos2d::DrawNode *node);
+        RouteFinder::pathList &currentPath() {return m_finder->finalRoutePath();};
         
     private:
         virtual bool init() override;
         cocos2d::Point m_pathStart;
         cocos2d::Point m_pathEnd;
         RouteFinder *m_finder;
-        
+        cocos2d::DrawNode *m_drawNode;
     };
 }
 

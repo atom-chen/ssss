@@ -19,7 +19,7 @@ function FightLayer:ctor(mapInfo, size)
 
 	self.dispatchManager = DispatchManager:create()
 
-	-- self:createBuildings(mapInfo.buildings, size)
+	self:createBuildings(mapInfo.buildings, size)
 
 	local drawNode = cc.DrawNode:create()
 	-- drawNode:setAnchorPoint(cc.p(0, 0))
@@ -72,7 +72,7 @@ function FightLayer:createBuildings(builds, size)
 		
 		local build = self:createBuild(cfg, v.type, v.pos, v.Num)
 
-		local z = self:buildZOrder(build:centerPos())
+		local z = self:buildZOrder(build:reachPos())
 		-- print("pos.y", pos.y, "z-", z)
 		self:addChild(build, z)
 		buildList[build.ident] = build
@@ -109,7 +109,10 @@ function FightLayer:createGenerals(list)
 			local general = General:create(gcfg, v.type, ident)
 			general:setAnchorPoint(cc.p(0.5, 0))
 			general:setStandPos(v.pos)
-			local z = self:buildZOrder(general:centerPos())
+			local drawNode = cc.DrawNode:create()
+			self:addChild(drawNode)
+			general:setDrawNode(drawNode);
+			local z = self:buildZOrder(general:reachPos())
 			self:addChild(general, z)
 			-- self.fightList[ident] = general
 			-- self.moveList[ident] = general
@@ -128,7 +131,7 @@ function FightLayer:findNearestBuild(owner, pos)
 	-- local pos = node:centerPos()
 	for _, v in pairs(self.buildList) do
 		if v.owner == owner then
-			local dis = cc.pGetDistance(v:centerPos(), pos)
+			local dis = cc.pGetDistance(v:reachPos(), pos)
 			if build == nil or mindis > dis then
 				mindis = dis
 				build = v
@@ -145,7 +148,7 @@ function FightLayer:findNearestTarget(owner, pos)
 	local target = nil
 	for _, v in pairs(self.buildList) do
 		if v.owner ~= owner then
-			local dis = cc.pGetDistance(v:centerPos(), pos)
+			local dis = cc.pGetDistance(v:reachPos(), pos)
 			if target == nil or mindis > dis then
 				mindis = dis
 				target = v
@@ -155,7 +158,7 @@ function FightLayer:findNearestTarget(owner, pos)
 
 	for _, v in pairs(self.generalList) do
 		if v.owner ~= owner then
-			local dis = cc.pGetDistance(v:centerPos(), pos)
+			local dis = cc.pGetDistance(v:reachPos(), pos)
 			if mindis > dis then
 				mindis = dis
 				target = v
@@ -276,7 +279,7 @@ function FightLayer:updateSoldierStatus()
 		-- v:updateStatus()
 
 		if v.status == kSoldierStatusNextTarget then
-			local target = self:findNearestBuild(v.owner, v:centerPos())
+			local target = self:findNearestBuild(v.owner, v:reachPos())
 			v:setTarget(target)
 			v:dispersal()
 			print("dispersal")
@@ -350,46 +353,58 @@ function FightLayer:updateRoutePath()
 	end
 
 	for _, v in pairs(self.buildList) do
-		v:drawRoutePath(v.drawNode)
+		v:drawRoutePath()
 	end
+
+	for _, v in pairs(self.generalList) do
+		v:drawRoutePath()
+	end
+
+	for _, v in pairs(self.soldierList) do
+		v:drawRoutePath()
+	end
+
+
+end
+
+function FightLayer:updateStateWithList(list, dt)
+
+	for i, v in pairs(list) do
+
+		v:updateState(dt)
+
+	end
+
+end
+
+function FightLayer:updateState(dt)
+	
+	self:updateStateWithList(self.buildList, dt)
+	self:updateStateWithList(self.generalList, dt)
+	self:updateStateWithList(self.soldierList, dt)
+
 end
 
 function FightLayer:updateEvent(dt)
-	-- print("update event", dt)
-
-	-- self:updateBuildAttack(dt)
-	-- self.fightTime = self.fightTime + dt
-
 	
-	self:updateMoveEvent(dt)
+	-- self:updateState(dt)
+	
+	-- self:updateMoveEvent(dt)
 
-	self:updateAttackEvent(dt)
+	-- self:updateAttackEvent(dt)
 
-	self:updateDamage()
+	-- self:updateDamage()
 
-	self:updateStatus()
+	-- self:updateStatus()
 
 	self:updateRoutePath()
-
-	-- if self.shouldDraw then
-	-- 	local path=sgzj.RouteFinder:getInstance():currentRoutePath()
-	-- 	if #path > 0 then
-	-- 		self.drawNode:clear()
-	-- 		self.drawNode:setLineWidth(10)
-	-- 		for _, v in pairs(path) do
-	-- 			local sp=v:startPoint()
-	-- 			local ep=v:endPoint()
-	-- 			self.drawNode:drawLine(sp, ep, cc.c4f(1.0, 0, 0, 1.0))
-	-- 		end
-	-- 	end
-	-- end
 
 end
 
 function FightLayer:startFight()
-	-- for _, v in pairs(self.buildList) do
-	-- 	v:startUpdateSoldierNum()
-	-- end
+	for _, v in pairs(self.buildList) do
+		v:startUpdateSoldierNum()
+	end
 	sgzj.RouteData:getInstance():debugDraw(self.drawNode)
 	local scheduler = self:getScheduler()
 	scheduler:scheduleScriptFunc(function(dt) self:updateEvent(dt) end, 0, false)
@@ -445,11 +460,13 @@ function FightLayer:dispatchGeneral(list, pos)
 
 	for _, v in pairs(list.list) do
 		v:unselect()
-		if not target then
-			v:setTargetPos(self:convertToNodeSpace(pos))
-		else
-			v:setTarget(target)
-		end
+		local fsm = v.FSM
+		fsm:setState(kRoleStateMove)
+		-- if not target then
+			-- v:setTargetPos(self:convertToNodeSpace(pos))
+		-- else
+			-- v:setTarget(target)
+		-- end
 	end
 end
 
@@ -458,7 +475,7 @@ function FightLayer:addInfluenceNode(owner, list, pos, range, influenceList, sam
 	for _, v in pairs(list) do
 
 		if (not same and v.owner ~= owner) or (same and v.owner == owner) then
-			local reachPos = v:centerPos()
+			local reachPos = v:reachPos()
 			-- local radius = v:acceptRadius()
 			if cc.pGetDistance(pos, reachPos) < range then
 				influenceList[#influenceList + 1] = v
@@ -593,20 +610,22 @@ function FightLayer:handleDispatch(pos)
 end
 
 function FightLayer:addDispatchNode(pos, owner)
+
 	local node = self:getItemForPos(pos)
 
 	if not node or node.selected then
-		return false
+		return false, node
 	end
 
 	if owner ~= -1 then
 		if node.owner ~= owner then
-			return false
+			return false, node
 		else
 			self.dispatchManager:addDispatchList(node.type, owner)
 		end
 	end
 
+	node:setStartPoint(node:reachPos())
 	self.dispatchManager:addDispatchNode(node)
 
 	return true, node
@@ -640,22 +659,32 @@ function FightLayer:handleTouchBegan(event)
 	local status, node = self:addDispatchNode(p, kOwnerPlayer)
 	if status then
 		-- sgzj.RouteFinder:getInstance():addStartPoint(node:centerPos())
-		node:setStartPoint(node:centerPos())
+		-- node:setStartPoint(node:reachPos())
 		self.shouldDraw = true
 	end
 	return status
 end
 
-
 function FightLayer:handleTouchMoved(event)
 	local p = cc.p(event.x, event.y)
-	self:addDispatchNode(p, -1)
+	local status, node = self:addDispatchNode(p, -1)
 
 	local list = self.dispatchManager:currentDispatchList()
-
-	for _, v in pairs(list.list) do
-		v:findRoute(self:convertToNodeSpace(p))
-
+	if list.target then
+		for _, v in pairs(list.list) do
+			v:findRoute(list.target:reachPos())
+		end
+	elseif list.type == kBuildType and #list.list > 1 then
+		local idx = #list.list
+		local target = list.list[idx]
+		for i=1,idx-1 do
+			local v = list.list[i]
+			v:findRoute(target:reachPos())
+		end
+	else
+		for _, v in pairs(list.list) do
+			v:findRoute(self:convertToNodeSpace(p))
+		end
 	end
 
 end

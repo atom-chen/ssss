@@ -100,6 +100,20 @@ function B:ctor()
 
 end
 
+function B:bindUpdateCallback(callback)
+	self.callback = callback
+end
+
+function B:stopUpdate()
+
+	if self.buffEntry then
+		local scheduler = self:getScheduler()
+		scheduler:unscheduleScriptEntry(self.buffEntry)
+		self.buffEntry = nil
+	end
+
+end
+
 function B:updateDuration(dt)
 
 	local dup = false
@@ -135,7 +149,9 @@ function B:updateBuffNum(buff, ratio)
 	self.phyDefAdd = self.phyDefAdd + buff.phyDefAdd * ratio
 	self.magicAttAdd = self.magicAttAdd + buff.magicAttAdd * ratio
 	self.magicDefAdd = self.magicDefAdd + buff.magicDefAdd * ratio
+	
 	self.count = self.count + ratio 
+
 end
 
 function B:updateBuffList()
@@ -161,6 +177,14 @@ function B:updateBuffList()
 		count = count + 1
 	end
 
+	if count == 0 then
+		self:stopUpdate()
+	end
+
+	if self.callback then
+		self.callback()
+	end
+
 end
 
 function B:addBuff(buff, delay)
@@ -177,8 +201,10 @@ function B:addBuff(buff, delay)
 		node.duration = buff.time
 	end
 	
-	
-	
+	if not self.buffEntry then
+		local scheduler = self:getScheduler()
+		self.buffEntry = scheduler:scheduleScriptFunc(function(dt) self:updateDuration(dt) end, 0, false)
+	end
 
 end
 

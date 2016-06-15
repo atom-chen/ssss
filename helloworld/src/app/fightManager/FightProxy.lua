@@ -170,7 +170,7 @@ end
 function M:reachPos(node)
 	local target = self.target
 	local pos = self.standPos
-	local cp = target:centerPos()
+	local cp = target:reachPos()
 	local minx = cp.x - target.acceptW
 	local maxx = cp.x + target.acceptW
 	-- local miny = cp.y - target.acceptH
@@ -187,17 +187,19 @@ function M:reachPos(node)
 
 end
 
+function M:currentUseRange()
+	return self.skillNode:currentUseRange()
+end
 
 function M:checkFightStatus(node)
 	local tpos = nil
-	-- local radius = self.skillNode:currentUseRange()
+	local radius = self.skillNode:currentUseRange()
 	if self.target then
-		-- local tx, ty = self.target:centerPos()
-		-- tpos = cc.p(tx, ty)
-		-- radius = self.target:acceptRadius() + radius
+		tpos = self.target:reachPos()
 
-		tpos = self:reachPos(node)
+		radius = self.target:acceptRadius() + radius
 
+		-- tpos = self:reachPos(node)
 
 	elseif self.targetPos then
 		tpos = self.targetPos
@@ -207,7 +209,7 @@ function M:checkFightStatus(node)
 		if not self.target then
 			return kFightStatusNoTargetPos
 		else
-			return kFightStatusReach, self.target:centerPos()
+			return kFightStatusReach, self.target:reachPos()
 		end
 	end
 
@@ -216,7 +218,7 @@ function M:checkFightStatus(node)
 	-- end
 
 	local dis = cc.pGetDistance(self.standPos, tpos)
-	if dis <= 1 then
+	if dis <= radius then
 		return kFightStatusReach, tpos, dis
 	end
 
@@ -268,7 +270,7 @@ function M:checkMove(dt, node)
 		if status == kFightStatusReach then
 			local tc = nil
 			if self.target then
-				tc = self.target:centerPos()
+				tc = self.target:reachPos()
 			else
 				tc = tpos
 			end
@@ -293,16 +295,6 @@ function M:checkMove(dt, node)
 end
 
 function M:checkAttackBack(target, ntype, ratio)
-	-- local radius = self.skillNode:currentUseRange()
-	-- local tx, ty = target:centerPos()
-	-- local tpos = cc.p(tx, ty)
-	-- radius = target:acceptRadius() + radius
-
-	-- if cc.pGetDistance(self.standPos, tpos) < radius then
-	-- 	return true
-	-- end
-
-	-- return false
 
 	local remote = target:isRemoteDamage()
 
@@ -318,7 +310,6 @@ function M:checkAutoFight(node)
 	end
 
 end
-
 
 function M:isTargetGeneral()
 	return self.target.type == kGeneralType
@@ -415,7 +406,7 @@ function M:handleDamageList(damageList, useRange, ratio, node)
 			local scene = cc.Director:getInstance():getRunningScene()
 			if scene.sceneType == kFightScene then
 				if useRange > 1 then
-					scene:handleAOE(node.owner, self.target:centerPos(), range, self:currentAttack(skill) * ratio, skill.damageType)
+					scene:handleAOE(node.owner, self.target:reachPos(), range, self:currentAttack(skill) * ratio, skill.damageType)
 				else
 					scene:handleAOE(node.owner, self.standPos, range, self:currentAttack(skill) * ratio, skill.damageType)
 				end
@@ -448,7 +439,7 @@ function M:handleBuffList(buffList, node)
 				if buff.effectType == 5 then
 					scene:handleAreaBuff(buff, self.standPos, range, node.owner)
 				elseif buff.effectType == 2 then
-					scene:handleAreaBuff(buff, self.target:centerPos(), range, node.owner)
+					scene:handleAreaBuff(buff, self.target:reachPos(), range, node.owner)
 				end
 			end
 		else
@@ -469,7 +460,10 @@ function M:handleAttack(node, ratio)
 	-- if node.type == 3 then
 		-- self.target:handleBeAttackedBySoldier(node)
 	-- end
-	if self.targetStatus ~= kTargetValid then
+	-- if self.targetStatus ~= kTargetValid then
+		-- return
+	-- end
+	if self.target:isInvalid() then
 		return
 	end
 
@@ -481,6 +475,14 @@ function M:handleAttack(node, ratio)
 
 	self.skillNode:next()
 
+end
+
+function M:targetRadius()
+	if self.target then
+		return self.target:acceptRadius()
+	else
+		return 0
+	end
 end
 
 function M:nextSkill()

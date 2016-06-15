@@ -1,6 +1,6 @@
 
 
-local S = class("Soldier", cc.Node)
+local S = class("Soldier", sgzj.RoleNode)
 
 cc.exports.Soldier = S
 
@@ -15,6 +15,9 @@ function S:ctor(cfg, owner, num, target, ident)
 
 	self.count = 0
 	self.status = kSoldierStatusNormal
+	-- self.roleStatus = kRoleStatusStand
+	-- self.nextRoleStatus = kRoleStatusStand
+	
 
 	self.totalDamage = 0
 
@@ -22,11 +25,23 @@ function S:ctor(cfg, owner, num, target, ident)
 
 	self:createFightProxy(target, ident)
 
+	self:createFSM()
+
 	self:setSoldierNum(num)
 	self:createLabelEffect()
 
 	self:createBuffNode()
 	
+end
+
+function S:createFSM()
+	local fsm = StateMachine:create()
+	fsm:bindStateCallback(kRoleStateStand, function() self:actStand() end)
+	fsm:bindStateCallback(kRoleStateMove, function() self:actMove() end)
+	fsm:bindStateCallback(kRoleStateAttack, function() self:actAttack() end)
+	fsm:bindStateCallback(kRoleStateDead, function() self:actDead() end)
+
+
 end
 
 function S:createFightProxy(target, ident)
@@ -107,15 +122,14 @@ function S:createLabelEffect()
 end
 
 function S:createTopLbl()
-	
 
-		local topLbl = CampLabel:create(self.cfg.typeId, self.owner)
-		topLbl:setAnchorPoint(cc.p(0.5, 0.5))
+	local topLbl = CampLabel:create(self.cfg.typeId, self.owner)
+	topLbl:setAnchorPoint(cc.p(0.5, 0.5))
 		-- local p = self:topCenter()
 		-- print(p.x, "y-", p.y)
-		topLbl:setPosition(self:topCenter())
-		self:addChild(topLbl)
-		self.topLbl = topLbl
+	topLbl:setPosition(self:topCenter())
+	self:addChild(topLbl)
+	self.topLbl = topLbl
 		
 end
 
@@ -214,9 +228,14 @@ function S:initFormationPos()
 	local size = cc.size(base * 3.464, base * 1.75)
 	self.formSize = size
 	
-	self.acceptW = size.width / 2
-	self.acceptH = size.height / 2
+	-- self.acceptW = size.width / 2
+	-- self.acceptH = size.height / 2
+	self.acceptR = math.min(size.width/2, size.height/2)
 
+end
+
+function S:acceptRadius()
+	return self.acceptR
 end
 
 function S:roleBaseName()
@@ -334,6 +353,34 @@ function S:updateAttack(dt)
 	-- return status, rate
 end
 
+function S:updateStand(dt)
+	if self.roleStatus == kRoleStatusStand then
+		return
+	end
+
+
+
+end
+
+function S:updateDead(dt)
+	if self.roleStatus == kRoleStatusDead then
+		return
+	end
+
+end
+
+function S:updateRoleStatus(dt)
+	if self.nextRoleStatus == kRoleStatusStand then
+		self:updateStand(dt)
+	elseif self.nextRoleStatus == kRoleStatusMove then
+		self:updateMove(dt)
+	elseif self.nextRoleStatus == kRoleStatusAttack then
+		self:updateAttack(dt)
+	elseif self.nextRoleStatus == kRoleStatusDead then
+		self:updateDead(dt)
+	end
+end
+
 function S:isRemoteDamage()
 	return self.fightProxy:isRemoteDamage()
 end
@@ -381,7 +428,7 @@ function S:attackRatio()
 	return math.max(self.soldierNum, 0)*0.25
 end
 
-function S:centerPos()
+function S:reachPos()
 	return self.fightProxy.standPos
 end
 
@@ -585,8 +632,6 @@ function S:gatherRole(role, final)
 
 	role.delay = sec
 
-		-- end
-	-- end
 end
 
 function S:handleGather()

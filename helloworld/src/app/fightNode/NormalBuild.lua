@@ -33,5 +33,13 @@ function B:setOwner(owner)
 	return size
 end
 
+function B:actStand()
+	-- do nothing
+end
+
+function B:actAttack()
+	-- do nothing
+end
+
 
 return B

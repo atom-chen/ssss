@@ -39,7 +39,7 @@ end
 
 
 
-local G = class("General", cc.Node)
+local G = class("General", sgzj.RoleNode)
 
 cc.exports.General = G
 
@@ -53,6 +53,11 @@ function G:ctor(cfg, owner, ident)
 	self.isDead = false
 	self.ident = ident
 	self.status = kGeneralStatusNormal
+
+	-- self.roleStatus = kRoleStatusStand
+	-- self.nextRoleStatus = kRoleStatusStand
+	
+
 	self.inAttBuildTime = 0
 
 	self.totalDamage = 0
@@ -67,11 +72,16 @@ function G:ctor(cfg, owner, ident)
 
 	local size = self.role:getContentSize()
 	self:setContentSize(size)
-	self.acceptW = size.width / 2
-	self.acceptH = size.height / 2
+	-- self.acceptW = size.width / 2
+	-- self.acceptH = size.height / 2
+	self.acceptR = math.min(size.width/2, size.height/2)
 	self.size = size
 
 	self:createFightProxy(cfg, ident)
+
+	self:createFSM()
+
+	self:createMoveProxy()
 
 	self:createBuffNode()
 
@@ -88,6 +98,12 @@ function G:ctor(cfg, owner, ident)
 
 	self:createHealthBar()
 	
+end
+
+function G:createMoveProxy()
+	self.moveProxy = MoveProxy:create()
+	self.moveProxy:bindMoveDoneCallback(function() self:moveDone() end)
+	self.moveProxy:setMoveSpeed(self.fightProxy.moveSpeed)
 end
 
 function G:createHealthBar()
@@ -124,15 +140,159 @@ function G:createBuffNode()
 	buff:setAnchorPoint(cc.p(0.5, 0))
 	buff:setPosition(self.role:topCenter())
 	self.role:addChild(buff)
+	buff:bindUpdateCallback(function() self:updateBuffAdd() end)
+
 	self.buffNode = buff
 
 end
 
 function G:createFightProxy(cfg ,ident)
 
-		local fightProxy = FightProxy:create()
-		fightProxy:parseGeneralCfg(cfg, ident)
-		self.fightProxy = fightProxy
+	local fightProxy = FightProxy:create()
+	fightProxy:parseGeneralCfg(cfg, ident)
+	self.fightProxy = fightProxy
+
+end
+
+function G:createFSM()
+
+	local fsm = StateMachine:create()
+	fsm:bindStateCallback(kRoleStateStand, function() self:actStand() end)
+	fsm:bindStateCallback(kRoleStateMove, function() self:actMove() end)
+	fsm:bindStateCallback(kRoleStateAttack, function() self:actAttack() end)
+	fsm:bindStateCallback(kRoleStateDead, function() self:actDead() end)
+	self.FSM = fsm
+
+end
+
+function G:actStand()
+
+	self:stopMove()
+	self:stopAttack()
+	self.role:actStand(kGeneralAnimDelay)
+
+end
+
+function G:stopMove()
+
+	if self.moveEntry then
+		local scheduler = self:getScheduler()
+		scheduler:unscheduleScriptEntry(self.moveEntry)
+		self.moveEntry = nil
+	end
+
+end
+
+function G:updateMove(dt)
+	-- local status = self.buffNode:updateDuration(dt)
+	-- local fightProxy = self.fightProxy
+
+	-- fightProxy:updateTargetStatus()
+	-- local targetStatus = fightProxy.targetStatus
+
+	-- print("target status -- ", targetStatus)
+	-- if targetStatus == kTargetInvalid then
+	-- 	self.status = kGeneralStatusReset
+	-- 	-- self.fightProxy:setTarget(nil)
+	-- 	-- self.fightProxy.status = kFightStatusNoTargetPos
+	-- 	-- self.role:actStand()
+	-- 	return
+	-- end
+	-- if not fightProxy:isTargetBuildType() and targetStatus == kTargetInvalid then
+	-- 	self.status = kGeneralStatusReset
+	-- 	return
+	-- end
+	
+	local proxy = self.moveProxy
+	if proxy:isInMove() then
+		proxy:step(dt)
+		print("x-", proxy.pos.x, "y-", proxy.pos.y)
+		self:setPosition(proxy.pos)
+	else
+		local path = self:currentPath()
+		proxy:setMovePath(path, self.fightProxy:targetRadius()+self.fightProxy:currentUseRange())
+	end
+
+	-- local status, last, nor = fightProxy:checkMove(dt, self)
+	-- if status == kFightStatusNotReach then
+	-- 	-- print("general move-x--", last.x, "y--", last.y)
+	-- 	self:face(nor)
+	-- 	self.role:actMove(kGeneralAnimDelay)
+	-- 	self:setPosition(last)
+	-- 	-- print("not reach")
+	-- elseif status == kFightStatusReach then
+	-- 	self:face(last)
+	-- 	if targetStatus == kTargetInvalid or targetStatus == kTargetNone or fightProxy:theSameOwner(self.owner) then
+	-- 		self.status = kGeneralStatusReset
+	-- 	end
+	-- end
+
+	-- return status, last
+end
+
+function G:actMove()
+
+	self:stopAttack()
+	self.moveProxy:resetPath()
+	self.role:actMove(kGeneralAnimDelay)
+	local scheduler = self:getScheduler()
+	self.moveEntry = scheduler:scheduleScriptFunc(function(dt) self:updateMove(dt) end, 0, false)
+
+end
+
+function G:moveDone()
+	print("moveDone")
+	if self.fightProxy.target ~= nil then
+		self.FSM:setState(kRoleStateAttack)
+	else
+		self.FSM:setState(kRoleStateStand)
+	end
+
+end
+
+function G:stopAttack()
+
+	if self.attackEntry then
+		local scheduler = self:getScheduler()
+		scheduler:unscheduleScriptEntry(self.attackEntry)
+		self.attackEntry = nil
+	end
+
+end
+
+function G:updateAttack(dt)
+	self.fightProxy:updateAttackSkill(dt)
+
+	local status, rate = self.fightProxy:checkAttack()
+
+	if status then
+
+		self:doAttack(function()
+			-- self:handleFight()
+			if self.FSM:currentState() ~= kRoleStateDead then
+				self:handleAttack()
+				self.role:actStand(kGeneralAnimDelay)
+			end
+			end, rate)
+	-- elseif self.role.status == kRoleMove then
+	-- 	self.role:actStand(kGeneralAnimDelay)
+	end
+
+end
+
+function G:actAttack()
+
+	self:stopMove()
+	local scheduler = self:getScheduler()
+	self.attackEntry = scheduler:scheduleScriptFunc(function(dt) self:updateAttack(dt) end, 0, false)
+
+end
+
+function G:actDead()
+
+	self:stopMove()
+	self:stopAttack()
+	self.role:actDie(function() self.FSM:setState(kRoleStateClear) end, 0, kGeneralAnimDelay)
 
 end
 
@@ -149,7 +309,8 @@ function G:isTouchEnabled()
 end
 
 function G:isInvalid()
-	return self.status == kGeneralStatusDead
+	-- return self.status == kGeneralStatusDead
+	return self.FSM:currentState() == kRoleStateDead
 end
 
 function G:setTarget(target)
@@ -161,7 +322,8 @@ function G:setTargetPos(pos)
 end
 
 function G:setStandPos(pos)
-	self.fightProxy:setStandPos(cc.p(pos.x ,pos.y))
+	-- self.fightProxy:setStandPos(cc.p(pos.x ,pos.y))
+	self.moveProxy:setPos(pos)
 	self:setPosition(pos)
 end
 
@@ -191,12 +353,16 @@ function G:checkReachTarget(pos)
 
 end
 
+function G:acceptRadius()
+	return self.acceptR
+end
+
 function G:isRemoteDamage()
 	return self.fightProxy:isRemoteDamage()
 end
 
-function G:centerPos()
-	return self.fightProxy.standPos
+function G:reachPos()
+	return self.moveProxy.pos
 end
 
 
@@ -209,6 +375,10 @@ function G:face(left)
 	self:updateHalo(left)
 end
 
+function G:updateBuff()
+
+end
+
 function G:updateBuffAdd()
 	local fightProxy = self.fightProxy
 
@@ -219,74 +389,31 @@ function G:updateBuffAdd()
 
 end
 
-function G:updateMove(dt)
-	local status = self.buffNode:updateDuration(dt)
-	local fightProxy = self.fightProxy
 
-	if status then
-		self:updateBuffAdd()
-	end
 
-	fightProxy:updateTargetStatus()
-	local targetStatus = fightProxy.targetStatus
 
-	-- print("target status -- ", targetStatus)
-	-- if targetStatus == kTargetInvalid then
-	-- 	self.status = kGeneralStatusReset
-	-- 	-- self.fightProxy:setTarget(nil)
-	-- 	-- self.fightProxy.status = kFightStatusNoTargetPos
-	-- 	-- self.role:actStand()
-	-- 	return
-	-- end
-	if not fightProxy:isTargetBuildType() and targetStatus == kTargetInvalid then
-		self.status = kGeneralStatusReset
-		return
-	end
 
-	local status, last, nor = fightProxy:checkMove(dt, self)
-	if status == kFightStatusNotReach then
-		-- print("general move-x--", last.x, "y--", last.y)
-		self:face(nor)
-		self.role:actMove(kGeneralAnimDelay)
-		self:setPosition(last)
-		-- print("not reach")
-	elseif status == kFightStatusReach then
-		self:face(last)
-		if targetStatus == kTargetInvalid or targetStatus == kTargetNone or fightProxy:theSameOwner(self.owner) then
-			self.status = kGeneralStatusReset
-		end
-	end
-
-	return status, last
-end
-
-function G:updateAttack(dt)
-	self.fightProxy:updateAttackSkill(dt)
-	
-	if self.fightProxy.status ~= kFightStatusReach or self.status ~= kGeneralStatusNormal then
-		return
-	end
-
-	local status, rate = self.fightProxy:checkAttack()
-
-	if status then
-		-- print("isinvalid", self.fightNode:isTargetInvalid())
-
-		self:actAttack(function()
-			-- self:handleFight()
-			if self.status ~= kGeneralStatusDead then
-				self:handleAttack()
-				self.role:actStand(kGeneralAnimDelay)
-			end
-			end, rate)
-
-	elseif self.role.status == kRoleMove then
-		self.role:actStand(kGeneralAnimDelay)
-	end
-
-	-- return status, rate
+function G:updateStand(dt)
 
 end
+
+function G:updateDead(dt)
+
+end
+
+-- function G:updateRoleStatus(dt)
+
+-- 	if self.nextRoleStatus == kRoleStatusStand then
+-- 		self:updateStand(dt)
+-- 	elseif self.nextRoleStatus == kRoleStatusMove then
+-- 		self:updateMove(dt)
+-- 	elseif self.nextRoleStatus == kRoleStatusAttack then
+-- 		self:updateAttack(dt)
+-- 	elseif self.nextRoleStatus == kRoleStatusDead then
+-- 		self:updateDead(dt)
+-- 	end
+
+-- end
 
 function G:resetGeneral()
 	self.status = kGeneralStatusNormal
@@ -295,11 +422,10 @@ function G:resetGeneral()
 end
 
 function G:attackRatio()
-	
 	return math.random(75, 125)/100.0
 end
 
-function G:actAttack(callback, rate)
+function G:doAttack(callback, rate)
 	local atype = self.fightProxy:currentAction()
 	if atype == kNormalAttack then
 		self.role:actAttack(callback, rate, kGeneralAnimDelay)
@@ -395,7 +521,6 @@ end
 function G:handleBuff(buff)
 
 	self.buffNode:addBuff(buff)
-	self:updateBuffAdd()
 
 end
 

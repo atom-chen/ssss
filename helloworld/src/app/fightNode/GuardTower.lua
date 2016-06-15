@@ -99,6 +99,14 @@ function G:setNormalLight()
 
 end
 
+function G:actStand()
+
+end
+
+function G:actAttack()
+
+end
+
 
 return G 
 

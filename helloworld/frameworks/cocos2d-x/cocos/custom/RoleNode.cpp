@@ -40,7 +40,14 @@ void RoleNode::findRoute(cocos2d::Point &point)
     m_finder->findRoute(point);
 }
 
-void RoleNode::drawRoutePath(cocos2d::DrawNode *node)
+void RoleNode::setDrawNode(cocos2d::DrawNode *node)
+{
+    m_drawNode = node;
+}
+
+
+
+void RoleNode::drawRoutePath()
 {
     CCLOG("49");
     cocos2d::Point start = m_finder->startFindPoint();
@@ -48,11 +55,13 @@ void RoleNode::drawRoutePath(cocos2d::DrawNode *node)
     if (m_pathStart == start && m_pathEnd == end)
         return;
     
-    node->clear();
-    node->setLineWidth(5);
-    RouteNode::lineList list = m_finder->currentRoutePath();
+    m_pathStart = start;
+    m_pathEnd = end;
+    m_drawNode->clear();
+    m_drawNode->setLineWidth(5);
+    RouteFinder::pathList list = m_finder->currentRoutePath();
     for (auto &line : list) {
-        node->drawLine(line->startPoint(), line->endPoint(), cocos2d::Color4F(0,0,1,1));
+        m_drawNode->drawLine(line->startPoint(), line->endPoint(), cocos2d::Color4F(0,0,1,1));
     }
 }
 

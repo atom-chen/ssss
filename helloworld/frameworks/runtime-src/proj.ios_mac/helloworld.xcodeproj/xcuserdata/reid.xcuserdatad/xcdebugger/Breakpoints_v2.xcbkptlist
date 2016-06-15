@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487070360.743717"
+            timestampString = "487590512.860936"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
             landmarkName = "RouteNode::clear()"
             landmarkType = "5">
             <Locations>
@@ -58,59 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487070360.743717"
+            timestampString = "487590512.860936"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
-            landmarkName = "RouteNode::isContainPoint(cocos2d::Point &amp;point)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487070360.743717"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "97"
-            endingLineNumber = "97"
-            landmarkName = "RouteNode::isContainPoint(cocos2d::Point &amp;point)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487070360.743717"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
-            landmarkName = "RouteNode::isContainPoint(cocos2d::Point &amp;point)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487070360.743717"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
             landmarkName = "RouteNode::clear()"
             landmarkType = "5">
          </BreakpointContent>
@@ -122,55 +74,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487070360.743717"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
-            landmarkName = "RouteNode::isContainPoint(cocos2d::Point &amp;point)"
-            landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "sgzj::RouteNode::isContainPoint(cocos2d::Vec2&amp;)"
-                  moduleName = "helloworld-mobile"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/reid/Documents/templates/helloworld/frameworks/cocos2d-x/cocos/custom/RouteFinder.cpp"
-                  timestampString = "487070882.095732"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "85"
-                  endingLineNumber = "85"
-                  offsetFromSymbolStart = "92">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "sgzj::RouteNode::isContainPoint(cocos2d::Vec2&amp;)"
-                  moduleName = "helloworld-mobile"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/reid/Documents/templates/helloworld/frameworks/cocos2d-x/cocos/custom/RouteFinder.cpp"
-                  timestampString = "487070882.095923"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "85"
-                  endingLineNumber = "85"
-                  offsetFromSymbolStart = "292">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487072082.744642"
+            timestampString = "487391528.288335"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "25"
@@ -182,15 +86,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487076832.887368"
+            timestampString = "487684468.194311"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "442"
-            endingLineNumber = "442"
+            startingLineNumber = "1993"
+            endingLineNumber = "1993"
             landmarkName = "RouteFinder::doFindRoute()"
             landmarkType = "5">
          </BreakpointContent>
@@ -202,12 +106,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487077414.396406"
+            timestampString = "487684468.194311"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "376"
-            endingLineNumber = "376"
-            landmarkName = "RouteFinder::findRoutePath(cocos2d::Point &amp;start, cocos2d::Point &amp;end)"
+            startingLineNumber = "1855"
+            endingLineNumber = "1855"
+            landmarkName = "RouteFinder::findRoute(cocos2d::Point &amp;point)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -218,61 +122,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487077727.456208"
+            timestampString = "487684468.194311"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "404"
-            endingLineNumber = "404"
+            startingLineNumber = "1934"
+            endingLineNumber = "1934"
             landmarkName = "RouteFinder::findRoutePath(cocos2d::Point &amp;start, cocos2d::Point &amp;end)"
             landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487080601.82046"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "411"
-            endingLineNumber = "411"
-            landmarkName = "RouteFinder::findRoutePath(cocos2d::Point &amp;start, cocos2d::Point &amp;end)"
-            landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "sgzj::RouteFinder::findRoutePath(cocos2d::Vec2&amp;, cocos2d::Vec2&amp;)"
-                  moduleName = "helloworld-mobile"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/reid/Documents/templates/helloworld/frameworks/cocos2d-x/cocos/custom/RouteFinder.cpp"
-                  timestampString = "487080601.826586"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "411"
-                  endingLineNumber = "411"
-                  offsetFromSymbolStart = "1880">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "sgzj::RouteFinder::findRoutePath(cocos2d::Vec2&amp;, cocos2d::Vec2&amp;)::$_0::operator()(std::__1::shared_ptr&lt;sgzj::RouteNode&gt;&amp;, std::__1::shared_ptr&lt;sgzj::RouteNode&gt;&amp;) const"
-                  moduleName = "helloworld-mobile"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/reid/Documents/templates/helloworld/frameworks/cocos2d-x/cocos/custom/RouteFinder.cpp"
-                  timestampString = "487080601.826789"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "411"
-                  endingLineNumber = "411"
-                  offsetFromSymbolStart = "12">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -282,11 +138,635 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
-            timestampString = "487080611.740443"
+            timestampString = "487684468.194311"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "387"
-            endingLineNumber = "387"
+            startingLineNumber = "1954"
+            endingLineNumber = "1954"
+            landmarkName = "RouteFinder::findRoutePath(cocos2d::Point &amp;start, cocos2d::Point &amp;end)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1958"
+            endingLineNumber = "1958"
+            landmarkName = "RouteFinder::findRoutePath(cocos2d::Point &amp;start, cocos2d::Point &amp;end)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1390"
+            endingLineNumber = "1390"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1383"
+            endingLineNumber = "1383"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "717"
+            endingLineNumber = "717"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "724"
+            endingLineNumber = "724"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "778"
+            endingLineNumber = "778"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "824"
+            endingLineNumber = "824"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "545"
+            endingLineNumber = "545"
+            landmarkName = "RouteNode::updateValueWithList22(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487676974.615822"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "437"
+            endingLineNumber = "437"
+            landmarkName = "RouteNode::updateValueWithList21(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487668184.356661"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "280"
+            endingLineNumber = "280"
+            landmarkName = "RouteNode::updateValueWithList2(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1050"
+            endingLineNumber = "1050"
+            landmarkName = "RouteNode::updateValueWithList42(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1126"
+            endingLineNumber = "1126"
+            landmarkName = "RouteNode::updateValueWithList4(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "707"
+            endingLineNumber = "707"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "762"
+            endingLineNumber = "762"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "811"
+            endingLineNumber = "811"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "851"
+            endingLineNumber = "851"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "891"
+            endingLineNumber = "891"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "918"
+            endingLineNumber = "918"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "923"
+            endingLineNumber = "923"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1372"
+            endingLineNumber = "1372"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1426"
+            endingLineNumber = "1426"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1443"
+            endingLineNumber = "1443"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1469"
+            endingLineNumber = "1469"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1507"
+            endingLineNumber = "1507"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1482"
+            endingLineNumber = "1482"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1531"
+            endingLineNumber = "1531"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1548"
+            endingLineNumber = "1548"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1558"
+            endingLineNumber = "1558"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1575"
+            endingLineNumber = "1575"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1580"
+            endingLineNumber = "1580"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "991"
+            endingLineNumber = "991"
+            landmarkName = "RouteNode::updateValueWithList41(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "562"
+            endingLineNumber = "562"
+            landmarkName = "RouteNode::updateValueWithList22(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487672807.79969"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "327"
+            endingLineNumber = "327"
+            landmarkName = "RouteNode::updateValueWithList2(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "497"
+            endingLineNumber = "497"
+            landmarkName = "RouteNode::updateValueWithList21(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "524"
+            endingLineNumber = "524"
+            landmarkName = "RouteNode::updateValueWithList21(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "613"
+            endingLineNumber = "613"
+            landmarkName = "RouteNode::updateValueWithList22(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1002"
+            endingLineNumber = "1002"
+            landmarkName = "RouteNode::updateValueWithList41(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487679285.166366"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1029"
+            endingLineNumber = "1029"
+            landmarkName = "RouteNode::updateValueWithList41(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "487684468.194311"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1938"
+            endingLineNumber = "1938"
             landmarkName = "RouteFinder::findRoutePath(cocos2d::Point &amp;start, cocos2d::Point &amp;end)"
             landmarkType = "5">
          </BreakpointContent>

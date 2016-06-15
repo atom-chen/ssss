@@ -55,24 +55,44 @@ namespace sgzj {
         bool isContainPoint(cocos2d::Point &point);
         bool isTheSame(RouteNode *node) {return this == node;};
         bool isPointInLine(cocos2d::Point &point);
+        bool isFindDone() {return m_findDone;};
 //        float routeValueWithPoint(cocos2d::Point &start, cocos2d::Point &end);
 //        cocos2d::Point findInPoint(cocos2d::Point &start, cocos2d::Point &end, std::shared_ptr<Line> &line);
-        void updateValue(cocos2d::Point &end, std::shared_ptr<Line> &line, std::shared_ptr<RouteNode> &node);
+        void updateValue1(cocos2d::Point &end, std::shared_ptr<Line> &line, std::shared_ptr<RouteNode> &node, int idx);
+        void updateValue(cocos2d::Point &end, std::shared_ptr<Line> &line, std::shared_ptr<RouteNode> &node, int idx);
+        void updateValue2(cocos2d::Point &end, std::shared_ptr<Line> &line, std::shared_ptr<RouteNode> &node);
+        void updateValue4(cocos2d::Point &end, std::shared_ptr<Line> &line, std::shared_ptr<RouteNode> &node);
+        
+        void updateValueWithList21(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
+        
+        void updateValueWithList22(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
+        
+        void updateValueWithList2(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
+        
+        void updateValueWithList41(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
+        
+        void updateValueWithList42(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
+        
+        void updateValueWithList4(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
         
         std::shared_ptr<RouteNode> findNextRouteNode(cocos2d::Point &start, cocos2d::Point &end, cocos2d::Point *intersect);
-        lineList allLines() {return m_lineList;};
+        lineList &allLines() {return m_lineList;};
         void clear();
         void reset();
         
         
 //        void setValue(float value) {m_value = value;};
+//        void setFromList(std::vector<std::shared_ptr<RouteNode>> &list) {m_fromList = list;};
         
-        void setFrom(std::shared_ptr<RouteNode> &from) {m_from = from;};
+//        void setFrom(std::shared_ptr<RouteNode> &from) {m_from = from;};
         void setStartPoint(cocos2d::Point &point) {m_startPoint = point;};
-        std::weak_ptr<RouteNode> &from() {return m_from;};
+//        std::weak_ptr<RouteNode> &from() {return m_from;};
+        std::vector<std::shared_ptr<RouteNode>> &fromList() {return m_fromList;};
         float value() {return m_value;};
         float value1() {return m_value1;};
         cocos2d::Point &startPoint() {return m_startPoint;};
+        void addInflexion(cocos2d::Point &p) {m_inflexion.push_back(p);};
+        std::vector<cocos2d::Point> &inflexionList() {return m_inflexion;};
         
         void mark() {m_mark = true;};
         int type() {return m_type;};
@@ -85,11 +105,20 @@ namespace sgzj {
         lineList m_lineList;
 //        routeMap m_neighbours;
         bool m_mark;
-        std::weak_ptr<RouteNode> m_from;
+//        std::weak_ptr<RouteNode> m_from;
         float m_value;
         float m_value1;
         int m_type;
         cocos2d::Point m_startPoint;
+        cocos2d::Point m_topPoint;
+        cocos2d::Point m_bottomPoint;
+        cocos2d::Point m_fromTop;
+        cocos2d::Point m_fromBot;
+        
+        bool m_findDone;
+        std::vector<std::shared_ptr<RouteNode>> m_fromList;
+        std::vector<cocos2d::Point> m_inflexion;
+        
     };
     
 //    class RouteInfo {
@@ -129,7 +158,9 @@ namespace sgzj {
         
         void clear();
         
-        RouteNode::lineList &currentRoutePath();
+        pathList &finalRoutePath();
+        pathList &currentRoutePath();
+        int findResult() {return m_findResult;};
         
         static RouteFinder *create();
         
@@ -146,7 +177,8 @@ namespace sgzj {
         cocos2d::Point m_findEnd;
         
         RouteNode::lineList m_pathList;
-        RouteNode::lineList m_pathList1;
+        pathList m_pathList1;
+        int m_findResult;
         
         lrb::base::MutexLock m_mutex;
 //        lrb::base::MutexLock m_mutex1;
@@ -201,7 +233,7 @@ namespace sgzj {
         RouteNode::routeList m_routeList;
         RouteNode::lineList m_lineList;
 //        std::shared_ptr<Line> m_lineCheck;
-//        RouteNode::lineList m_lineList1;
+        RouteNode::lineList m_lineList1;
         float m_gridHeight;
         float m_gridWidth;
         float m_gridNum;

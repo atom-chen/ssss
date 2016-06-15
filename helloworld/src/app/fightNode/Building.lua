@@ -14,11 +14,14 @@ function B:ctor(cfg, owner, bedSize, ident, halo)
 	self.type = kBuildType
 	self.halo = halo
 	
-	self.acceptW = bedSize.width/2
-	self.acceptH = bedSize.height/2
+	self.acceptR = math.min(bedSize.width/2, bedSize.height/2)
 	self.bedSize = bedSize
+
+	self.targetList = {}
 	
 	self.totalDamage = 0
+
+	-- self.FSM = StateMachine:create()
 	
 	local soldierCfg = soldiers[cfg.soldierId]
 	self.soldierCfg = soldierCfg
@@ -28,11 +31,22 @@ function B:ctor(cfg, owner, bedSize, ident, halo)
 	self:createTopLbl(soldierCfg, owner)
 	
 	self:createFightProxy(ident)
+
+	self:createFSM()
 	
 	self:createLabelEffect()
 	self:createTargetHalo()
 	self:updateAppearance()
 	
+end
+
+function B:createFSM()
+
+	self.FSM = StateMachine:create()
+	self.FSM:bindStateCallback(kRoleStateStand, function() self:actStand() end)
+	self.FSM:bindStateCallback(kRoleStateAttack, function() self:actAttack() end)
+	self.FSM:bindStateCallback(kRoleStateDead, function() self:actDead() end)
+
 end
 
 function B:createBuildIcon(cfg, bedSize)
@@ -107,7 +121,6 @@ function B:createTargetHalo()
 	self.targetHalo = halo
 end
 
-
 function B:setOwner(owner)
 	if self.owner == owner then
 		return
@@ -124,9 +137,6 @@ function B:setOwner(owner)
 	
 end
 
-function B:setDrawNode(node)
-	self.drawNode = node
-end
 
 function B:setStandPos(pos)
 	self:setPosition(pos)
@@ -212,6 +222,19 @@ end
 
 function B:actAttack()
 
+
+end
+
+function B:actStand()
+
+	self.icon:actStand()
+
+end
+
+function B:actDead()
+	
+	
+
 end
 
 function B:updateFace()
@@ -238,6 +261,15 @@ function B:updateAttack(dt)
 
 end
 
+function B:updateState(dt)
+	
+	local state = self.FSM:currentState()
+	if state == kRoleStatusAttack then
+		self:updateAttack(dt)
+	end
+
+end
+
 function B:startUpdateSoldierNum()
 	if self.owner ~= kOwnerNone and not self.entryId then
 		local scheduler = self:getScheduler()
@@ -253,12 +285,15 @@ function B:stopUpdateSoldierNum()
 	end
 end
 
+function B:acceptRadius()
+	return self.acceptR
+end
 
 function B:attackRatio()
 	return math.max(self.soldierNum, 0)*0.25
 end
 
-function B:centerPos()
+function B:reachPos()
 	return self.fightProxy.standPos
 end
 
