@@ -5,14 +5,16 @@ local B = class("Building", sgzj.RoleNode)
 
 cc.exports.Building = B
 
+local kAttackHaloR = 107
 
 function B:ctor(cfg, owner, bedSize, ident, halo)
-	
+	self:enableNodeEvents()
 	self.cfg = cfg
 	self.ident = ident
 	self.owner = owner
 	self.type = kBuildType
 	self.halo = halo
+	self.canAttackBack = true
 	
 	self.acceptR = math.min(bedSize.width/2, bedSize.height/2)
 	self.bedSize = bedSize
@@ -38,6 +40,15 @@ function B:ctor(cfg, owner, bedSize, ident, halo)
 	self:createTargetHalo()
 	self:updateAppearance()
 	
+end
+
+function B:onExit()
+	self:destroy()
+end
+
+function B:destroy()
+	self:stopUpdateSoldierNum()
+	self:stopAttack()
 end
 
 function B:createFSM()
@@ -94,7 +105,7 @@ end
 function B:createFightProxy(ident)
 
 	local proxy = FightProxy:create(ident)
-	proxy:parseBuildingCfg(self.soldierCfg, ident)
+	proxy:parseBuildingCfg(self.soldierCfg, ident, self.cfg)
 	self.fightProxy = proxy
 
 end
@@ -121,22 +132,33 @@ function B:createTargetHalo()
 	self.targetHalo = halo
 end
 
+function B:bindPropCallback(callback)
+	self.propCallback = callback
+end
+
 function B:setOwner(owner)
 	if self.owner == owner then
 		return
 	end
 	
-	if owner == kOwnerNone then
-		self.status = kBuildStatusInvalid
-	else
-		self.status = kBuildStatusNormal
-	end
+	-- if owner == kOwnerNone then
+	-- 	self.status = kBuildStatusInvalid
+	-- else
+	-- 	self.status = kBuildStatusNormal
+	-- end
 
 	self.owner = owner
 	self:updateAppearance()
-	
+	self:checkAttack(function() self.FSM:setState(kRoleStateAttack) end)
+
 end
 
+function B:setAttackHalo(halo)
+	self.attackHalo = halo
+	local r = self.fightProxy:currentUseRange()
+	halo:setScale(r/kAttackHaloR)
+	self:updateAttackHalo()
+end
 
 function B:setStandPos(pos)
 	self:setPosition(pos)
@@ -150,6 +172,29 @@ function B:setSoldierNum(num)
 	return lblNum
 end
 
+function B:targetInAttackScope(target)
+	self.targetList[#self.targetList + 1] = target
+
+	self:checkAttack(function() self.FSM:setState(kRoleStateAttack) end)
+
+	-- print("target in attack scope")
+end
+
+function B:targetOutAttackScope(target)
+	-- self.targetList[target.ident] = nil
+	local list = self.targetList
+	for i=#list, 1, -1 do
+		if list[i] == target then
+			table.remove(list, i)
+			break
+		end
+	end
+
+	-- self:checkAttack(function() self.FSM:setState(kRoleStateAttack) end)
+
+	-- print("target out attack scope")
+end
+
 function B:showHalo(show)
 	if self.owner == kOwnerNone then
 		return
@@ -160,6 +205,18 @@ end
 
 function B:showTargetHalo(show)
 	self.targetHalo:setVisible(show)
+end
+
+function B:showAttackHalo(show)
+	if self.attackHalo then
+		-- print("show halo -", show, "r-", self.attackHalo:getScale())
+		self.attackHalo:setVisible(show)
+	end
+end
+
+function B:isDead()
+	local state = self.FSM:currentState()
+	return state == kRoleStateDead or state == kRoleStateClear
 end
 
 function B:isGuardTower(buildId)
@@ -189,6 +246,7 @@ function B:unselect()
 	self.selected = false
 	self.targetHalo:setVisible(false)
 	self.halo:setVisible(false)
+	self:showAttackHalo(false)
 end
 
 function B:updateAppearance()
@@ -200,13 +258,24 @@ function B:updateAppearance()
 	self.topLbl:setOwner(self.owner)
 	self.topLbl:setPosition(cc.p(size.width/2, size.height))
 
-	if owner ~= kOwnerNone then
+	if self.owner ~= kOwnerNone then
 		self.halo:setTexture("bg/b10_"..self.owner..".png")
 	end
+	
+	self:updateAttackHalo()
 	self.targetHalo:setPosition(cc.p(size.width/2, size.height/2))
 
 end
 
+function B:updateAttackHalo()
+	if self.owner == kOwnerNone then
+		return
+	end
+
+	if self.attackHalo then
+		self.attackHalo:setTexture("bg/b15_"..self.owner..".png")
+	end
+end
 
 
 function B:updateSoldierNum()
@@ -220,44 +289,118 @@ function B:updateSoldierNum()
 	end
 end
 
+function B:stopAttack()
+
+	if self.attackEntry then
+		local scheduler = self:getScheduler()
+		scheduler:unscheduleScriptEntry(self.attackEntry)
+		self.attackEntry = nil
+	end
+
+end
+
+function B:checkAttack(callback)
+	self:updateTargetList()
+
+	local target = nil
+	for i=1, #self.targetList do
+		local v = self.targetList[i]
+		if v.owner ~= self.owner then
+			target = v
+			break
+		end
+	end
+
+	if target then
+		if self.owner ~= kOwnerNone then
+			callback(target)
+		end
+	else
+		if self.owner ~= kOwnerNone then
+			self.FSM:setState(kRoleStateStand)
+		end
+	end
+
+end
+
+function B:isTargetDead(target)
+	if not target then
+		return true
+	end
+
+	local status, dead = pcall(function() return target:isDead() end)
+	if status then
+		return dead
+	end
+
+	return true
+end
+
+function B:updateTargetList()
+
+	local list = self.targetList
+	for i=#list, 1, -1 do
+		local target = list[i]
+		if self:isTargetDead(target) then
+			table.remove(list, i)
+		end
+	end
+
+end
+
+function B:updateAttack(dt)
+	-- self.fightProxy:updateAttackSkill(dt)
+	-- self.fightProxy:updateTargetStatus()
+	self.fightProxy:updateSkillTime(dt)
+
+	-- if self.fightProxy.targetStatus ~= kTargetValid or self.status ~= kBuildStatusNormal then
+	-- 	return
+	-- end
+	-- print("update attack")
+	local status, rate = self.fightProxy:checkAttack()
+
+	if status then
+		self.icon:actAttack(function()  
+			self:checkAttack(function(target)
+				if self.propCallback then
+					local skill = self.fightProxy:currentSkill()
+					-- print("build target-", target)
+					self.propCallback(skill, self:shootPos(), target, self.fightProxy:currentPhyAttack(), self:attackRatio())
+				end
+			end)
+			self.icon:actStand()
+		end, rate)
+	end
+
+end
+
 function B:actAttack()
 
+	if not self.attackEntry then
+		local scheduler = self:getScheduler()
+		self.attackEntry = scheduler:scheduleScriptFunc(function(dt) self:updateAttack(dt) end, 0, false)
+	end
 
 end
 
 function B:actStand()
 
-	self.icon:actStand()
+	self:stopAttack()
 
 end
 
 function B:actDead()
 	
-	
+	self.soldierNum = 0
+	self.topLbl:setSoldierNum(0)
 
+	self:stopAttack()
+	self:stopUpdateSoldierNum()
+	self:setOwner(kOwnerNone)
+	
 end
 
 function B:updateFace()
-
-end
-
-function B:updateAttack(dt)
-	self.fightProxy:updateAttackSkill(dt)
-	self.fightProxy:updateTargetStatus()
-
-	if self.fightProxy.targetStatus ~= kTargetValid or self.status ~= kBuildStatusNormal then
-		return
-	end
-
-	local status, rate = self.fightProxy:checkAttack()
-
-	if status then
-		self.status = kBuildStatusAttack
-		self:updateFace()
-		self:actAttack()
-	else
-		self.status = kBuildStatusNormal
-	end
 
 end
 
@@ -297,6 +440,13 @@ function B:reachPos()
 	return self.fightProxy.standPos
 end
 
+function B:shootPos()
+	-- return cc.pAdd(self.fightProxy.standPos, self.icon.shootPos)
+	local p = self.fightProxy.standPos
+	return cc.p(p.x-self.bedSize.width/2+self.icon.shootPos.x,
+		p.y+self.icon.shootPos.y)
+end
+
 function B:fightNode()
 	return self.fightProxy.fightNode
 end
@@ -331,8 +481,8 @@ function B:battle()
 end
 
 
-function B:showDamageEffect()
-	self.labelEffect:showEffect(-self.totalDamage)
+function B:showDamageEffect(damage)
+	self.labelEffect:showEffect(-damage)
 
 	if self.owner == kOwnerNone then
 		self.icon:showColor(cc.num2c4b(0xc2c2c2ff))
@@ -368,33 +518,33 @@ function B:checkAutoAttack(node)
 end
 
 
-function B:handleDamage()
+-- function B:handleDamage()
 
-	-- local last = self.fightProxy:displayNumber(self.soldierNum)
-	-- local currNum = self.soldierNum - damage
-	-- local curr = self.fightProxy:displayNumber(currNum)
-	-- self:showNumEffect(curr - last)
+-- 	-- local last = self.fightProxy:displayNumber(self.soldierNum)
+-- 	-- local currNum = self.soldierNum - damage
+-- 	-- local curr = self.fightProxy:displayNumber(currNum)
+-- 	-- self:showNumEffect(curr - last)
 
-	-- return curr
-	if self.totalDamage == 0 then
-		return 
-	end
+-- 	-- return curr
+-- 	if self.totalDamage == 0 then
+-- 		return 
+-- 	end
 
-	self:showDamageEffect()
+-- 	self:showDamageEffect()
 
-	if self.totalDamage >= self.soldierNum then
-		self:setOwner(kOwnerNone)
-		self.soldierNum = 0
-		self.topLbl:setSoldierNum(0)
-		self:stopUpdateSoldierNum()
-	else
-		self:setSoldierNum(self.soldierNum - self.totalDamage)
-	end
+-- 	if self.totalDamage >= self.soldierNum then
+-- 		self:setOwner(kOwnerNone)
+-- 		self.soldierNum = 0
+-- 		self.topLbl:setSoldierNum(0)
+-- 		self:stopUpdateSoldierNum()
+-- 	else
+-- 		self:setSoldierNum(self.soldierNum - self.totalDamage)
+-- 	end
 
-	self.totalDamage = 0
+-- 	self.totalDamage = 0
 
 
-end
+-- end
 
 function B:handleAttackBack(node)
 	self.fightProxy:handleAttackBack(node, self:attackRatio())
@@ -407,45 +557,56 @@ function B:handleGather(owner, num)
 end
 
 function B:handleBeAttacked(damage, dtype)
+
 	local real = self.fightProxy:getRealDamage(damage, dtype)
-	self.totalDamage = self.totalDamage + real
+	self:showDamageEffect(real)
 
-end
-
-function B:handleBeAttackedBySoldier(node, damage, dtype)
-	local real = self.fightProxy:getRealDamage(node.type, damage, dtype)
-	local curr = self:handleDamage(real)
-
-	if real > self.soldierNum then
-		self:setOwner(node.owner)
-		self.soldierNum = 0
-		self.topLbl:setSoldierNum(0)
-		self:startUpdateSoldierNum()
+	if real >= self.soldierNum then
+		self.FSM:setState(kRoleStateDead)
 	else
-		self.soldierNum = self.soldierNum - real
-		self.topLbl:setSoldierNum(curr)
+		self:setSoldierNum(self.soldierNum - real)
 	end
 
-	self.fightProxy:checkAttackBack(node, self.type, self:attackRatio())
+	-- self.totalDamage = self.totalDamage + real
+
+	-- print("build handle be attacked -", real)
 
 end
 
-function B:handleBeAttackedByGeneral(general, damage, dtype)
-	local real = self.fightProxy:getRealDamage(general.type, damage, dtype)
+-- function B:handleBeAttackedBySoldier(node, damage, dtype)
+-- 	local real = self.fightProxy:getRealDamage(node.type, damage, dtype)
+-- 	local curr = self:handleDamage(real)
 
-	local curr = self:handleDamage(real)
+-- 	if real > self.soldierNum then
+-- 		self:setOwner(node.owner)
+-- 		self.soldierNum = 0
+-- 		self.topLbl:setSoldierNum(0)
+-- 		self:startUpdateSoldierNum()
+-- 	else
+-- 		self.soldierNum = self.soldierNum - real
+-- 		self.topLbl:setSoldierNum(curr)
+-- 	end
+
+-- 	self.fightProxy:checkAttackBack(node, self.type, self:attackRatio())
+
+-- end
+
+-- function B:handleBeAttackedByGeneral(general, damage, dtype)
+-- 	local real = self.fightProxy:getRealDamage(general.type, damage, dtype)
+
+-- 	local curr = self:handleDamage(real)
 	
-	if real > self.soldierNum then
-		self.soldierNum = 0
-		self.topLbl:setSoldierNum(0)
-	else
-		self.soldierNum = self.soldierNum - real
-		self.topLbl:setSoldierNum(curr)
-	end
+-- 	if real > self.soldierNum then
+-- 		self.soldierNum = 0
+-- 		self.topLbl:setSoldierNum(0)
+-- 	else
+-- 		self.soldierNum = self.soldierNum - real
+-- 		self.topLbl:setSoldierNum(curr)
+-- 	end
 
-	self.fightProxy:checkAttackBack(general, self.type, self:attackRatio())
+-- 	self.fightProxy:checkAttackBack(general, self.type, self:attackRatio())
 
-end
+-- end
 
 
 return B

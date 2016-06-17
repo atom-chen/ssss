@@ -27,7 +27,6 @@ function FightLayer:ctor(mapInfo, size)
 	self:addChild(drawNode, 1)
 	self.drawNode = drawNode
 
-
 	
 
 end
@@ -35,19 +34,19 @@ end
 function FightLayer:createBuild(cfg, owner, pos, num)
 	local bedImage = "fightbg/FB002_"..cfg.size..".png"
 	local bed = cc.Sprite:create(bedImage)
-	self:addChild(bed, 2)
+	self:addChild(bed)
 
 	local halo = cc.Sprite:create()
 	halo:setVisible(false)
-	self:addChild(halo, 2)
+	self:addChild(halo, 3)
 
 	local bedSize = bed:getContentSize()
 	local ident = self:currentFightId()
 
-	local build = Building:create(cfg, owner, bedSize, ident, halo)
+	local build = Building:create(cfg, kOwnerPlayer, bedSize, ident, halo)
 
 	local drawNode = cc.DrawNode:create()
-	self:addChild(drawNode)
+	self:addChild(drawNode, 1)
 	build:setDrawNode(drawNode)
 
 	build:setSoldierNum(num)
@@ -59,6 +58,19 @@ function FightLayer:createBuild(cfg, owner, pos, num)
 	local hpos=cc.p(bpos.x, bpos.y+bedSize.height/2)
 	bed:setPosition(hpos)
 	halo:setPosition(hpos)
+
+	build:setOwner(owner)
+
+	if build:isAttackBuild() then
+		local attackHalo = cc.Sprite:create()
+		attackHalo:setVisible(false)
+		self:addChild(attackHalo, 2)
+		build:setAttackHalo(attackHalo)
+		attackHalo:setPosition(hpos)
+
+		build:bindPropCallback(function(cfg, pos, target, attack, ratio) self:createFlyingProp(cfg, pos, target, attack, ratio) end)
+		-- print("hposx-", hpos.x, "hposy-", hpos.y)
+	end
 
 	return build
 
@@ -118,11 +130,32 @@ function FightLayer:createGenerals(list)
 			-- self.moveList[ident] = general
 			-- moveList[#moveList + 1] = general
 			generalList[ident] = general
+			general.FSM:bindStateCallback(kRoleStateClear, function() 
+				general:removeFromParent(true)
+				generalList[ident] = nil
+				end)
+			general:bindPathCallback(function(path, node) self:checkPath(path, node) end)
+
 		end
 	end
 
 	-- self.moveList = moveList
 	self.generalList = generalList
+end
+
+function FightLayer:createFlyingProp(cfg, pos, target, attack, ratio)
+	-- print("create fly prop")
+	local prop = PropNode:create(cfg, target, attack, ratio)
+	prop:setStandPos(pos)
+	local z = self:buildZOrder(pos)
+	self:addChild(prop, z)
+
+	prop.FSM:bindStateCallback(kRoleStateClear, function()
+			prop:removeFromParent(true)
+		end)
+
+	prop.FSM:setState(kRoleStateMove)
+
 end
 
 function FightLayer:findNearestBuild(owner, pos)
@@ -167,6 +200,50 @@ function FightLayer:findNearestTarget(owner, pos)
 	end
 
 	return target
+end
+
+function FightLayer:checkPath(path, node)
+	local maxIdx = #path
+	if maxIdx == 0 then
+		return
+	end
+
+	local p = node:reachPos()
+	local list = {}
+	for _, v in pairs(self.attackBuild) do
+
+		local vp = v:reachPos()
+		local proxy = v.fightProxy
+		local range = proxy:currentUseRange()
+		local r2 = range * range
+		local startOut = cc.pDistanceSQ(vp, p) > r2
+		local moveDis = 0
+		local ss = p
+
+		for i = #path, 1, -1 do
+			local point = path[i]
+			local intersect = cc.pGetsegmentIntersectWithCircle(ss, point, vp, range)
+			if intersect.x ~= 0 or intersect.y ~= 0 then
+				local secDis = cc.pGetDistance(ss, intersect) + moveDis
+				if startOut then
+					list[#list+1] = {dis=secDis, callback=function() 
+						v:targetInAttackScope(node)
+					 end}
+					startOut = false
+				else
+					list[#list+1] = {dis=secDis, callback=function()
+						v:targetOutAttackScope(node)
+					end}
+					startOut = true
+				end
+			end
+			moveDis = moveDis + cc.pGetDistance(ss, point)
+			ss = point
+		end
+	end
+
+	node.moveProxy:setMoveCallbackList(list)
+
 end
 
 function FightLayer:updateMoveList(list, dt)
@@ -352,16 +429,24 @@ function FightLayer:updateRoutePath()
 		return
 	end
 
-	for _, v in pairs(self.buildList) do
-		v:drawRoutePath()
-	end
+	-- for _, v in pairs(self.buildList) do
+	-- 	v:drawRoutePath()
+	-- end
 
-	for _, v in pairs(self.generalList) do
-		v:drawRoutePath()
-	end
+	-- for _, v in pairs(self.generalList) do
+	-- 	v:drawRoutePath()
+	-- end
 
-	for _, v in pairs(self.soldierList) do
-		v:drawRoutePath()
+	-- for _, v in pairs(self.soldierList) do
+	-- 	v:drawRoutePath()
+	-- end
+
+	local list = self.dispatchManager:currentDispatchList()
+	local target = list.target
+	for _, v in pairs(list.list) do
+		if v ~= target then
+			v:drawRoutePath()
+		end
 	end
 
 
@@ -405,7 +490,7 @@ function FightLayer:startFight()
 	for _, v in pairs(self.buildList) do
 		v:startUpdateSoldierNum()
 	end
-	sgzj.RouteData:getInstance():debugDraw(self.drawNode)
+	-- sgzj.RouteData:getInstance():debugDraw(self.drawNode)
 	local scheduler = self:getScheduler()
 	scheduler:scheduleScriptFunc(function(dt) self:updateEvent(dt) end, 0, false)
 end
@@ -420,18 +505,17 @@ function FightLayer:attackBuildListOnRoute(node)
 end
 
 function FightLayer:dispatchTroops(list)
-	local target = list:getTroopsTarget()
+	local target = list.target
 
-	target:unselect()
-
-	local dispatch = true
-	if list.owner == target.owner and list.type ~= target.type then
-		dispatch = false
+	
+	if target then
+		target:unselect()
 	end
 
 	for _, v in pairs(list.list) do
 		v:unselect()
-		if dispatch then
+		v:clearPath()
+		if target and v ~= target then
 			local ident = self:currentFightId()
 			local soldier = v:createSoldier(target, ident)
 			if soldier then
@@ -441,12 +525,23 @@ function FightLayer:dispatchTroops(list)
 				soldier:setAnchorPoint(cc.p(0.5, 0.5))
 				local z = self:buildZOrder(pos)
 				self:addChild(soldier, z)
-
-				
-
-				-- self.fightList[ident] = soldier
-				-- self.moveList[ident] = general
 				self.soldierList[ident] = soldier
+
+				soldier.FSM:bindStateCallback(kRoleStateNoTarget, function() 
+					local t = self:findNearestBuild(soldier.owner, soldier:reachPos())
+					soldier:setTarget(t)
+					soldier.FSM:setState(kRoleStateMove)
+					soldier:setStartPoint(soldier:reachPos())
+					soldier:findRoute(t:reachPos())
+				 end)
+				soldier.FSM:bindStateCallback(kRoleStateClear, function() 
+					soldier:removeFromParent(true)
+					self.soldierList[ident] = nil
+					end)
+				soldier:bindPathCallback(function(path, node) self:checkPath(path, node) end)
+
+				soldier.FSM:setState(kRoleStateMove)
+				soldier:setMovePath(v:currentPath())
 			end
 		end
 	end
@@ -460,12 +555,16 @@ function FightLayer:dispatchGeneral(list, pos)
 
 	for _, v in pairs(list.list) do
 		v:unselect()
-		local fsm = v.FSM
-		fsm:setState(kRoleStateMove)
-		-- if not target then
-			-- v:setTargetPos(self:convertToNodeSpace(pos))
-		-- else
-			-- v:setTarget(target)
+		v:clearPath()
+		-- print("posx-", pos.x, "posy-", pos.y)
+		-- print("rx-", v:reachPos().x, "ry-", v:reachPos().y)
+		-- local r = v:acceptRadius()
+		-- if cc.pDistanceSQ(v:reachPos(), pos) > r * then
+		if self.touchMoved then
+			v:setTarget(target)
+			local fsm = v.FSM
+			fsm:setState(kRoleStateMove)
+		end
 		-- end
 	end
 end
@@ -533,6 +632,25 @@ function FightLayer:handleSummon(summon, pos, owner)
 				-- self.moveList[ident] = general
 	self.soldierList[ident] = soldier
 
+	soldier.FSM:bindStateCallback(kRoleStateNoTarget, function() 
+					local t = self:findNearestBuild(soldier.owner, soldier:reachPos())
+					soldier:setTarget(t)
+					soldier.FSM:setState(kRoleStateMove)
+					soldier:setStartPoint(soldier:reachPos())
+					soldier:findRoute(t:reachPos())
+				 end)
+	soldier.FSM:bindStateCallback(kRoleStateClear, function() 
+					soldier:removeFromParent(true)
+					self.soldierList[ident] = nil
+					end)
+	soldier:bindPathCallback(function(path, node) self:checkPath(path, node) end)
+
+	-- soldier.FSM:setState(kRoleStateNoTarget)
+	soldier.FSM:setState(kRoleStateMove)
+	soldier:setStartPoint(pos)
+	soldier:findRoute(target:reachPos())
+	-- soldier:setMovePath(v:currentPath())
+
 end
 
 function FightLayer:handleAOEEffect(name, pos)
@@ -598,10 +716,10 @@ function FightLayer:handleDispatch(pos)
 	local list = self.dispatchManager:currentDispatchList()
 
 	if #list.list then
-		if list.type == 1 then
+		if list.type == kBuildType then
 			self:dispatchTroops(list)
 		else
-			self:dispatchGeneral(list, pos)
+			self:dispatchGeneral(list, self:convertToNodeSpace(pos))
 		end
 
 		self.dispatchManager:dispatchDone()
@@ -611,41 +729,37 @@ end
 
 function FightLayer:addDispatchNode(pos, owner)
 
-	local node = self:getItemForPos(pos)
+	local node = self:getItemForPos(pos, owner)
 
 	if not node or node.selected then
-		return false, node
+		return false
 	end
 
 	if owner ~= -1 then
 		if node.owner ~= owner then
-			return false, node
+			return false
 		else
 			self.dispatchManager:addDispatchList(node.type, owner)
 		end
 	end
 
 	node:setStartPoint(node:reachPos())
-	self.dispatchManager:addDispatchNode(node)
 
 	return true, node
 
 end
 
-function FightLayer:getItemForPos(pos)
+function FightLayer:getItemForPos(pos, owner)
 	local childs = self:getChildren()
-	-- print("item pos ,x-", pos.x, "y-", pos.y)
+
 	for _, v in pairs(childs) do
-		-- print("childen v-", v, "class-", v.__cname)
-		if v.isTouchEnabled and v:isTouchEnabled() and v:isVisible() then
+
+		if v.isTouchEnabled and v:isTouchEnabled() and v:isVisible() and (owner == -1 or v.owner == owner) then
 
 			local p = v:convertToWorldSpace(cc.p(0, 0))
 			local s = v:getRealContentSize()
 			local box = cc.rect(p.x, p.y, s.width, s.height)
-			-- print("box-x", box.x ,"y-", box.y, "w-", box.width, "h-", box.height)
-			-- if v.type == 2 then
-				 -- print("general---")
-			-- end
+
 			if cc.rectContainsPoint(box, pos) then
 				return v
 			end
@@ -654,46 +768,70 @@ function FightLayer:getItemForPos(pos)
 
 end
 
+function FightLayer:updateFindPath(pos)
+	local list = self.dispatchManager:currentDispatchList()
+	if list.target then
+		for _, v in pairs(list.list) do
+			if list.target ~= v then
+				v:findRoute(list.target:reachPos())
+			end
+		end
+	else
+		for _, v in pairs(list.list) do
+			v:findRoute(self:convertToNodeSpace(pos))
+		end
+	end
+end
+
 function FightLayer:handleTouchBegan(event)
 	local p = cc.p(event.x, event.y)
-	local status, node = self:addDispatchNode(p, kOwnerPlayer)
-	if status then
-		-- sgzj.RouteFinder:getInstance():addStartPoint(node:centerPos())
-		-- node:setStartPoint(node:reachPos())
+	local node = self:getItemForPos(p, kOwnerPlayer)
+	if node then
+		node.FSM:setState(kRoleStateStand)
+		self.dispatchManager:addDispatchList(node.type, kOwnerPlayer)
+		self.dispatchManager:addDispatchNode(node)
 		self.shouldDraw = true
 	end
-	return status
+	return node ~= nil
 end
 
 function FightLayer:handleTouchMoved(event)
 	local p = cc.p(event.x, event.y)
-	local status, node = self:addDispatchNode(p, -1)
+	local node = self:getItemForPos(p, -1)
 
-	local list = self.dispatchManager:currentDispatchList()
-	if list.target then
-		for _, v in pairs(list.list) do
-			v:findRoute(list.target:reachPos())
+	if node then
+		if node.selected then
+			return
 		end
-	elseif list.type == kBuildType and #list.list > 1 then
-		local idx = #list.list
-		local target = list.list[idx]
-		for i=1,idx-1 do
-			local v = list.list[i]
-			v:findRoute(target:reachPos())
+
+		local list = self.dispatchManager:currentDispatchList()
+		if node.owner == kOwnerPlayer and node.type == list.type then
+			self.dispatchManager:addDispatchNode(node)
 		end
+
+		if node.owner ~= kOwnerPlayer or node.type == list.type then
+			self.dispatchManager:setTarget(node)
+		end
+
 	else
-		for _, v in pairs(list.list) do
-			v:findRoute(self:convertToNodeSpace(p))
-		end
+		self.dispatchManager:setTarget(nil)
 	end
+	
+	self.touchMoved = true
+
+	self:updateFindPath(p)
 
 end
 
 function FightLayer:handleTouchEnded(event)
-	self:handleDispatch(cc.p(event.x, event.y))
+
+		local p = cc.p(event.x, event.y)
+	-- self:updateFindPath(p)
+		self:handleDispatch(p)
+
 	self.shouldDraw = false
 	-- self.drawNode:clear()
-
+	self.touchMoved = false
 end
 
 function FightLayer:touchesEvent(event)

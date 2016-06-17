@@ -7,7 +7,7 @@ function S:ctor()
 
 	-- self.currentState = kRoleStateStand
 	-- self.nextState = kRoleStateStand
-	self.state = kRoleStateNone
+	self.state = kRoleStateStand
 	self.callbacks = {}
 
 end
@@ -22,9 +22,9 @@ end
 
 function S:setState(state)
 	-- self.nextState = state
-	if self.state == state then
-		return
-	end
+	-- if self.state == state then
+	-- 	return
+	-- end
 
 	self.state = state
 	if self.callbacks[state] then

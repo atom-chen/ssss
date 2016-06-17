@@ -15,27 +15,56 @@ function D:addNode(node)
 		return
 	end
 	
-	if self.target then
+	-- if self.target then
+	-- 	self.target:unselect()
+	-- end
+	if node.owner == self.owner then
+		self.list[#self.list + 1] = node
+	end
+
+	-- if self.owner ~= node.owner or node.type ~= self.type then
+	-- 	self.target = node
+	-- else
+	-- 	self.list[#self.list + 1] = node
+	-- 	self.target = nil
+	-- end
+
+	node:select()
+	node:setStartPoint(node:reachPos())
+	if node.type == kBuildType then
+		node:showHalo(true)
+		node:showAttackHalo(true)
+	end
+	-- print("nodetype", node.type, "owner", node.owner, "selfO", self.owner)
+	-- if node.type == kBuildType then
+	-- 	if node.owner == self.owner then
+	-- 		node:showHalo(true)
+	-- 	else
+	-- 		node:showTargetHalo(true)
+	-- 	end
+	-- end
+
+end
+
+function D:setTarget(target)
+	if self.target and self.target.owner ~= self.owner then
 		self.target:unselect()
 	end
 
-	if self.owner ~= node.owner or node.type ~= self.type then
-		self.target = node
-	else
-		self.list[#self.list + 1] = node
-		self.target = nil
-	end
+	self.target = target
 
-	node:select()
-	-- print("nodetype", node.type, "owner", node.owner, "selfO", self.owner)
-	if node.type == kBuildType then
-		if node.owner == self.owner then
-			node:showHalo(true)
-		else
-			node:showTargetHalo(true)
+	if target then
+		target:select()
+		if target.type == kBuildType then
+			if target.owner ~= self.owner then
+				target:showTargetHalo(true)
+			end
+
+			if target.owner ~= kOwnerNone then
+				target:showAttackHalo(true)
+			end
 		end
 	end
-
 end
 
 function D:getTroopsTarget()
@@ -93,6 +122,10 @@ function M:addDispatchNode(node)
 	-- list:addNode(node)
 	self.dispatchList:addNode(node)
 
+end
+
+function M:setTarget(node)
+	self.dispatchList:setTarget(node)
 end
 
 

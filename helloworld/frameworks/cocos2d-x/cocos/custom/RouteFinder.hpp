@@ -80,6 +80,10 @@ namespace sgzj {
         void clear();
         void reset();
         
+        void caculateValueWith2(std::vector<cocos2d::Point> &vec, cocos2d::Point &end, cocos2d::Point &next, float *value, std::vector<std::shared_ptr<RouteNode>> &fromList);
+        
+        void caculateValueWith4(std::vector<cocos2d::Point> &vec, cocos2d::Point &end, cocos2d::Point &next, float *value, std::vector<std::shared_ptr<RouteNode>> &fromList);
+        
         
 //        void setValue(float value) {m_value = value;};
 //        void setFromList(std::vector<std::shared_ptr<RouteNode>> &list) {m_fromList = list;};
@@ -96,6 +100,8 @@ namespace sgzj {
         
         void mark() {m_mark = true;};
         int type() {return m_type;};
+        bool isBuildTarget() {return m_buildTarget;};
+        void setBuildTarget();
         
 //      routeMap neighbours() {return m_neighbours;};
         static const int kBuildMove = 1;
@@ -114,6 +120,7 @@ namespace sgzj {
         cocos2d::Point m_bottomPoint;
         cocos2d::Point m_fromTop;
         cocos2d::Point m_fromBot;
+        bool m_buildTarget;
         
         bool m_findDone;
         std::vector<std::shared_ptr<RouteNode>> m_fromList;
@@ -157,6 +164,7 @@ namespace sgzj {
         cocos2d::Point endFindPoint();
         
         void clear();
+        bool isFindDone();
         
         pathList &finalRoutePath();
         pathList &currentRoutePath();
@@ -175,10 +183,13 @@ namespace sgzj {
         cocos2d::Point m_endPoint;
         cocos2d::Point m_findStart;
         cocos2d::Point m_findEnd;
+        cocos2d::Point m_startPath;
+        cocos2d::Point m_endPath;
         
         RouteNode::lineList m_pathList;
         pathList m_pathList1;
         int m_findResult;
+        bool m_buildTarget;
         
         lrb::base::MutexLock m_mutex;
 //        lrb::base::MutexLock m_mutex1;

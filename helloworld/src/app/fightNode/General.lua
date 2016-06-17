@@ -19,9 +19,6 @@ function B:ctor(owner, health)
 	local size = cc.size(s1.width + s2.width - 2, math.max(s1.height, s2.height))
 	self:setContentSize(size)
 
-	-- print("s1", s1.width, "h", s1.height)
-	-- print("s2", s2.width,"h", s2.height)
-	-- print("size", size.width, "h", size.height)
 	sp:setPosition(cc.p(0, size.height/2))
 	bar:setPosition(cc.p(s1.width - 2 , size.height/2))
 
@@ -32,13 +29,6 @@ function B:setHealth(health)
 end
 
 
-
-
-
-
-
-
-
 local G = class("General", sgzj.RoleNode)
 
 cc.exports.General = G
@@ -46,17 +36,17 @@ cc.exports.General = G
 math.randomseed(os.time())
 
 function G:ctor(cfg, owner, ident)
+	self:enableNodeEvents()
 	self.cfg = cfg
 	self.pcfg = generalPos[cfg.id]
 	self.owner = owner
 	self.type = kGeneralType
-	self.isDead = false
+	-- self.isDead = false
 	self.ident = ident
 	self.status = kGeneralStatusNormal
 
 	-- self.roleStatus = kRoleStatusStand
 	-- self.nextRoleStatus = kRoleStatusStand
-	
 
 	self.inAttBuildTime = 0
 
@@ -98,6 +88,17 @@ function G:ctor(cfg, owner, ident)
 
 	self:createHealthBar()
 	
+end
+
+function G:onExit()
+	self:destroy()
+end
+
+function G:destroy()
+	self.buffNode:stopUpdate()
+	self:stopMove()
+	self:stopAttack()
+
 end
 
 function G:createMoveProxy()
@@ -165,6 +166,10 @@ function G:createFSM()
 
 end
 
+function G:bindPathCallback(callback)
+	self.pathCallback = callback
+end
+
 function G:actStand()
 
 	self:stopMove()
@@ -206,11 +211,24 @@ function G:updateMove(dt)
 	local proxy = self.moveProxy
 	if proxy:isInMove() then
 		proxy:step(dt)
-		print("x-", proxy.pos.x, "y-", proxy.pos.y)
+		-- print("x-", proxy.pos.x, "y-", proxy.pos.y)
 		self:setPosition(proxy.pos)
+		self:face(proxy:currentFace())
 	else
-		local path = self:currentPath()
-		proxy:setMovePath(path, self.fightProxy:targetRadius()+self.fightProxy:currentUseRange())
+		-- print("set path")
+		if self:isFindDone() then
+			local path = self:currentPath()
+			-- print("path-", #path)
+			if #path == 0 then
+				self.FSM:setState(kRoleStateStand)
+			else
+				proxy:setMovePath(path, self.fightProxy:targetRadius()+self.fightProxy:currentUseRange() + self.acceptR)
+				if self.pathCallback then
+					self.pathCallback(proxy.path, self)
+				end
+			end
+		end
+		
 	end
 
 	-- local status, last, nor = fightProxy:checkMove(dt, self)
@@ -231,21 +249,45 @@ function G:updateMove(dt)
 end
 
 function G:actMove()
-
 	self:stopAttack()
 	self.moveProxy:resetPath()
 	self.role:actMove(kGeneralAnimDelay)
-	local scheduler = self:getScheduler()
-	self.moveEntry = scheduler:scheduleScriptFunc(function(dt) self:updateMove(dt) end, 0, false)
+	if not self.moveEntry then
+		local scheduler = self:getScheduler()
+		self.moveEntry = scheduler:scheduleScriptFunc(function(dt) self:updateMove(dt) end, 0, false)
+	end
+
+end
+
+function G:checkAttack(callback)
+	-- print("owner-", self.owner)
+	-- print("check attack")
+	local moveProxy = self.moveProxy
+	local p = moveProxy.pos
+	local target = self.fightProxy.target
+	if self.fightProxy:attackStatus(p, self.acceptR) then
+		-- print("attack callback")
+		callback()
+	else
+		-- print("attack move")
+		-- moveProxy:resetPath()
+		self.FSM:setState(kRoleStateMove)
+		self:setStartPoint(p)
+		self:findRoute(target:reachPos())
+
+	end
 
 end
 
 function G:moveDone()
-	print("moveDone")
-	if self.fightProxy.target ~= nil then
-		self.FSM:setState(kRoleStateAttack)
-	else
+	-- print("moveDone")
+	-- local target = self.fightProxy.target
+	if self.fightProxy:isTargetDead() then
 		self.FSM:setState(kRoleStateStand)
+	else
+		self:checkAttack(function()
+			self.FSM:setState(kRoleStateAttack)
+			end)
 	end
 
 end
@@ -261,19 +303,32 @@ function G:stopAttack()
 end
 
 function G:updateAttack(dt)
-	self.fightProxy:updateAttackSkill(dt)
+	if self.fightProxy:isTargetDead() then
+		self.FSM:setState(kRoleStateStand)
+		return
+	end
 
+	self.fightProxy:updateSkillTime(dt)
+	
 	local status, rate = self.fightProxy:checkAttack()
 
 	if status then
-
-		self:doAttack(function()
+		-- print("update attack")
+		self:checkAttack(function()
+			local target = self.fightProxy.target
+			local tp = target:reachPos()
+			self:face(tp.x > self.moveProxy.pos.x)
+			self:doAttack(function()
 			-- self:handleFight()
-			if self.FSM:currentState() ~= kRoleStateDead then
+			if self.fightProxy:isTargetDead() then
+				self.FSM:setState(kRoleStateStand)
+			else
 				self:handleAttack()
 				self.role:actStand(kGeneralAnimDelay)
 			end
 			end, rate)
+			end)
+		
 	-- elseif self.role.status == kRoleMove then
 	-- 	self.role:actStand(kGeneralAnimDelay)
 	end
@@ -283,8 +338,10 @@ end
 function G:actAttack()
 
 	self:stopMove()
-	local scheduler = self:getScheduler()
-	self.attackEntry = scheduler:scheduleScriptFunc(function(dt) self:updateAttack(dt) end, 0, false)
+	if not self.attackEntry then
+		local scheduler = self:getScheduler()
+		self.attackEntry = scheduler:scheduleScriptFunc(function(dt) self:updateAttack(dt) end, 0, false)
+	end
 
 end
 
@@ -359,6 +416,11 @@ end
 
 function G:isRemoteDamage()
 	return self.fightProxy:isRemoteDamage()
+end
+
+function G:isDead()
+	local state = self.FSM:currentState()
+	return state == kRoleStateDead or state == kRoleStateClear
 end
 
 function G:reachPos()
@@ -438,8 +500,9 @@ function G:doAttack(callback, rate)
 end
 
 function G:checkAutoAttack(node)
-	if self.fightProxy.targetStatus == kTargetNone then
+	if self.fightProxy:isTargetDead() then
 		self.fightProxy:setTarget(node)
+		self.FSM:setState(kRoleStateAttack)
 	end
 	-- print("chek auto attack status ", self.fightProxy.targetStatus)
 end
@@ -473,8 +536,8 @@ function G:handleDamage()
 
 end
 
-function G:showDamageEffect()
-	self.labelEffect:showEffect(-self.totalDamage)
+function G:showDamageEffect(damage)
+	self.labelEffect:showEffect(-damage)
 
 	if self.owner == kOwnerNone then
 		self.role:showColor(cc.num2c4b(0xc2c2c2ff))
@@ -511,8 +574,17 @@ function G:handleBeAttacked(damage, dtype)
 	-- end
 
 	local real = self.fightProxy:getRealDamage(damage, dtype)
-	self.totalDamage = self.totalDamage + real
+	self:showDamageEffect(real)
 
+	self.fightProxy:handleDamage(real)
+	self.bar:setHealth(self.fightProxy.health)
+
+	if self.fightProxy.health <= 0 then
+		-- self.fightProxy.status = kFightStatusNoTargetPos
+		self.FSM:setState(kRoleStateDead)
+	
+	end
+	
 	-- self.fightProxy:setTarget()
 
 

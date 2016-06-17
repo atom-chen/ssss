@@ -48,12 +48,17 @@ cc.exports.kTargetDestroyed = 1
 cc.exports.kTargetInvalid = 2
 cc.exports.kTargetValid = 3
 
+cc.exports.kInAttackScope = 0
+cc.exports.kOutAttackScope = 1
+
 cc.exports.kRoleStateNone = -1
 cc.exports.kRoleStateStand = 0
 cc.exports.kRoleStateMove = 1
 cc.exports.kRoleStateAttack = 2
 cc.exports.kRoleStateDead = 3
 cc.exports.kRoleStateClear = 4
+cc.exports.kRoleStateGather = 5
+cc.exports.kRoleStateNoTarget = 6
 
 cc.exports.kBuildStatusInvalid = 0
 cc.exports.kBuildStatusNormal = 1

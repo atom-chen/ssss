@@ -26,6 +26,8 @@ namespace sgzj {
         void drawRoutePath();
         void setDrawNode(cocos2d::DrawNode *node);
         RouteFinder::pathList &currentPath() {return m_finder->finalRoutePath();};
+        bool isFindDone() {return m_finder->isFindDone();};
+        void clearPath();
         
     private:
         virtual bool init() override;

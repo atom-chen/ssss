@@ -155,13 +155,13 @@ function B:updateBuffNum(buff, ratio)
 end
 
 function B:updateBuffList()
-
+	
 	local count = 0
 	local leftc = self.count
 	local mc = math.min(kBuffColNum, leftc)
 	local row = 0
 	local sc = (kBuffColNum - mc) / 2
-
+	
 	for _, v in pairs(self.buffList) do
 		if count >= kBuffColNum then
 			count = 0
@@ -169,22 +169,22 @@ function B:updateBuffList()
 			mc = math.min(kBuffColNum, leftc)
 			row = row + 1
 		end
-
+		
 		local col = count + sc
-
+		
 		v:setPosition(cc.p(col * kBuffWidth, row * kBuffHeight))
-
+		
 		count = count + 1
 	end
-
+	
 	if count == 0 then
 		self:stopUpdate()
 	end
-
+	
 	if self.callback then
 		self.callback()
 	end
-
+	
 end
 
 function B:addBuff(buff, delay)

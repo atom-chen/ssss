@@ -16,6 +16,7 @@ function G:ctor(baseImage, buildSize)
 	sp2:setAnchorPoint(cc.p(0, 0))
 	self:addChild(sp2, 1)
 	self.sp2 = sp2
+	self.shootPos = cc.p(0, 0)
 
 	-- self:createTargetHalo()
 
@@ -63,8 +64,9 @@ function G:setOwner(owner)
 		self.man:setBaseName(base)
 		self.man:reset()
 		local offys = {14, 20, 64}
-
-		self.man:setPosition(cc.pSub(self:topCenter(), cc.p(0, offys[self.buildSize])))
+		local manPos = cc.pSub(self:topCenter(), cc.p(0, offys[self.buildSize]))
+		self.shootPos = cc.pAdd(cc.p(0, manPos.y), cc.p(-10, -20))
+		self.man:setPosition(manPos)
 	else
 		if self.man then
 			self.man:setVisible(false)
@@ -100,11 +102,15 @@ function G:setNormalLight()
 end
 
 function G:actStand()
-
+	if self.man then
+		self.man:actStand(kSoldierAnimDelay)
+	end
 end
 
-function G:actAttack()
-
+function G:actAttack(callback, rate)
+	if self.man then
+		self.man:actAttack(callback, rate, kSoldierAnimDelay)
+	end
 end
 
 

@@ -5,6 +5,7 @@ local S = class("Soldier", sgzj.RoleNode)
 cc.exports.Soldier = S
 
 function S:ctor(cfg, owner, num, target, ident)
+	self:enableNodeEvents()
 	self.cfg = cfg
 	self.pcfg = soldierPos[cfg.id]
 	self.owner = owner
@@ -12,12 +13,12 @@ function S:ctor(cfg, owner, num, target, ident)
 	self.roles = {}
 	self.type = 3
 	-- self.workDone = false
-
+	self.disList = {}
 	self.count = 0
 	self.status = kSoldierStatusNormal
 	-- self.roleStatus = kRoleStatusStand
 	-- self.nextRoleStatus = kRoleStatusStand
-	
+	self.canAttackBack = true
 
 	self.totalDamage = 0
 
@@ -27,6 +28,8 @@ function S:ctor(cfg, owner, num, target, ident)
 
 	self:createFSM()
 
+	self:createMoveProxy()
+
 	self:setSoldierNum(num)
 	self:createLabelEffect()
 
@@ -34,13 +37,27 @@ function S:ctor(cfg, owner, num, target, ident)
 	
 end
 
+function S:onExit()
+	self:destroy()
+end
+
+function S:destroy()
+
+	self.buffNode:stopUpdate()
+	self:stopMove()
+	self:stopAttack()
+	-- self:removeFromParent(true)
+
+end
+
 function S:createFSM()
 	local fsm = StateMachine:create()
 	fsm:bindStateCallback(kRoleStateStand, function() self:actStand() end)
 	fsm:bindStateCallback(kRoleStateMove, function() self:actMove() end)
 	fsm:bindStateCallback(kRoleStateAttack, function() self:actAttack() end)
-	fsm:bindStateCallback(kRoleStateDead, function() self:actDead() end)
-
+	-- fsm:bindStateCallback(kRoleStateDead, function() self:actDead() end)
+	fsm:bindStateCallback(kRoleStateGather, function() self:handleGather() end)
+	self.FSM = fsm
 
 end
 
@@ -50,6 +67,14 @@ function S:createFightProxy(target, ident)
 	fightProxy:setTarget(target)
 	fightProxy:parseSoldierCfg(self.cfg, ident)
 	self.fightProxy = fightProxy
+
+end
+
+function S:createMoveProxy()
+	local proxy = MoveProxy:create()
+	proxy:bindMoveDoneCallback(function() self:moveDone() end)
+	proxy:setMoveSpeed(self.fightProxy.moveSpeed)
+	self.moveProxy = proxy
 
 end
 
@@ -64,9 +89,13 @@ function S:createBuffNode()
 
 end
 
+function S:bindPathCallback(callback)
+	self.pathCallback = callback
+end
+
 function S:setStandPos(pos)
 	self:setPosition(pos)
-	self.fightProxy:setStandPos(pos)
+	self.moveProxy:setPos(pos)
 end
 
 function S:setSoldierNum(num)
@@ -98,6 +127,9 @@ function S:setTarget(target)
 	end
 end
 
+function S:setPathTargetList(list)
+	self.disList = list
+end
 
 function S:roleNum(num)
 	if num <= 0 then
@@ -196,7 +228,8 @@ function S:deleteSoldier(num)
 				self.count = self.count - 1
 				if self.count == 0 then
 					-- self.workDone = true
-					self:removeFromParent(true)
+					-- self:removeFromParent(true)
+					self.FSM:setState(kRoleStateClear)
 				end
 			end, 0, kSoldierAnimDelay)
 		
@@ -205,7 +238,8 @@ function S:deleteSoldier(num)
 	end
 
 	if #self.roles == 0 then
-		self.status = kSoldierStatusDead
+		-- self.status = kSoldierStatusDead
+		self.FSM:setState(kRoleStateDead)
 	end
 
 end
@@ -251,6 +285,7 @@ function S:updateFace(face)
 		return 
 	end
 
+	-- print("face-", face, "sface-", self.face)
 	self.face = face
 	for _, v in pairs(self.roles) do
 		v:face(face)
@@ -260,7 +295,6 @@ end
 function S:updateStatus()
 	
 	-- local targetStatus = self.fightProxy.targetStatus
-
 
 end
 
@@ -274,91 +308,49 @@ function S:updateBuffAdd()
 
 end
 
-function S:updateMove(dt)
-	-- self.fightProxy:updateTargetStatus()
-	-- local targetStatus = self.fightProxy.targetStatus
-	-- -- print("target status--", targetStatus)
 
-	-- if targetStatus == kTargetDestroyed then
-	-- 	self.workDone = true
-	-- 	self.status = kSoldierStatusNextTarget
-	-- 	self.fightProxy.status = kFightStatusNoTargetPos
-	-- 	return 
-	-- end
-	local status = self.buffNode:updateDuration(dt)
-	local fightProxy = self.fightProxy
+-- function S:updateAttack(dt)
+-- 	-- print("fightProxy status--", self.fightProxy.status)
+-- 	if self.fightProxy:isTargetDead() then
+-- 		self:handleTargetDead()
+-- 		return
+-- 	end
 
-	if status then
-		self:updateBuffAdd()
-	end
+-- 	self.fightProxy:updateSkillTime(dt)
 
-	fightProxy:updateTargetStatus()
-	local targetStatus = fightProxy.targetStatus
+-- 	-- if self.fightProxy.status ~= kFightStatusReach or self.status ~= kSoldierStatusNormal then
+-- 	-- 	return
+-- 	-- end
 
-	if not fightProxy:isTargetBuildType() and targetStatus == kTargetInvalid then
-		self.status = kSoldierStatusNextTarget
-		return
-	end
+-- 	local status, rate = self.fightProxy:checkAttack()
 
-	local status, last, nor = fightProxy:checkMove(dt, self)
-
-	if status == kFightStatusNotReach then
-		self:updateFace(nor)
-		self:actMove()
-		self:setPosition(last)
-
-	elseif status == kFightStatusReach then
-		-- self.workDone = true
-		self:updateFace(last)
-		if fightProxy:isTargetBuildType() then
-			if targetStatus == kTargetInvalid or fightProxy:theSameOwner(self.owner) then
-				self.status = kSoldierStatusGather
-			end
-		end
-
-	end
-
-	return status, last
-end
-
-function S:updateAttack(dt)
-	-- print("fightProxy status--", self.fightProxy.status)
-	self.fightProxy:updateAttackSkill(dt)
-
-	if self.fightProxy.status ~= kFightStatusReach or self.status ~= kSoldierStatusNormal then
-		return
-	end
-
-	local status, rate = self.fightProxy:checkAttack()
-
-	if status then
+-- 	if status then
 		
-		-- if self.fightNode:isTargetGeneral() then
+-- 	-- 	-- if self.fightNode:isTargetGeneral() then
 			
-		self:actAttack(
-			function()  
-				if self.status ~= kSoldierStatusDead then
-					self:handleAttack()
-					self:actStand()
-				end
-			end, rate, kSoldierAnimDelay)
+-- 	-- 	self:actAttack(
+-- 	-- 		function()  
+-- 	-- 			if self.status ~= kSoldierStatusDead then
+-- 	-- 				self:handleAttack()
+-- 	-- 				self:actStand()
+-- 	-- 			end
+-- 	-- 		end, rate, kSoldierAnimDelay)
 			
-		-- else
-		-- self.workDone = true
+-- 	-- 	-- else
+-- 	-- 	-- self.workDone = true
 
-	elseif self.roleStatus == kRoleMove then
-		self:actStand()
-	end
+-- 	-- elseif self.roleStatus == kRoleMove then
+-- 	-- 	self:actStand()
+-- 	end
 
-	-- return status, rate
-end
+-- 	-- return status, rate
+-- end
 
 function S:updateStand(dt)
+
 	if self.roleStatus == kRoleStatusStand then
 		return
 	end
-
-
 
 end
 
@@ -393,10 +385,24 @@ function S:isTargetInvalid()
 	return self.fightProxy:isTargetInvalid()
 end
 
+function S:isDead()
+	local state = self.FSM:currentState()
+	return state == kRoleStateDead or state == kRoleStateClear
+end
+
 function S:isTheSameOwnerWithTarget()
 	return self.fightProxy:theSameOwner(self.owner)
 end
 
+function S:handleTargetDead()
+	local targetType = self.fightProxy.targetType
+	if targetType and targetType == kBuildType then
+		self.FSM:setState(kRoleStateGather)
+	else
+		self.FSM:setState(kRoleStateNoTarget)
+	end
+
+end
 
 function S:handleDamage()
 	if self.totalDamage == 0 then
@@ -429,27 +435,231 @@ function S:attackRatio()
 end
 
 function S:reachPos()
-	return self.fightProxy.standPos
+	return self.moveProxy.pos
 end
 
-function S:actStand()
-	if self.roleStatus == kRoleStand then
-		return
-	end
-
-	self.roleStatus = kRoleStand
-
+function S:roleActStand()
 	for _, v in pairs(self.roles) do
 		v:actStand(kSoldierAnimDelay, true)
 	end
 end
 
-function S:actAttack(callback, time, delay)
-	if self.roleStatus == kRoleAttack then
-		return
+function S:actStand()
+	-- if self.roleStatus == kRoleStand then
+	-- 	return
+	-- end
+
+	-- self.roleStatus = kRoleStand
+	self:stopMove()
+	self:stopAttack()
+	self:roleActStand()
+	
+end
+
+function S:stopMove()
+
+	if self.moveEntry then
+		local scheduler = self:getScheduler()
+		scheduler:unscheduleScriptEntry(self.moveEntry)
+		self.moveEntry = nil
+	end
+
+end
+
+function S:setMovePath(path)
+	self.moveProxy:setMovePath(path, self.fightProxy:targetRadius() + self.fightProxy:currentUseRange() + self.acceptR)
+end
+
+function S:updateMove(dt)
+	-- self.fightProxy:updateTargetStatus()
+	-- local targetStatus = self.fightProxy.targetStatus
+	-- -- print("target status--", targetStatus)
+
+	-- if targetStatus == kTargetDestroyed then
+	-- 	self.workDone = true
+	-- 	self.status = kSoldierStatusNextTarget
+	-- 	self.fightProxy.status = kFightStatusNoTargetPos
+	-- 	return 
+	-- end
+	-- local status = self.buffNode:updateDuration(dt)
+	-- local fightProxy = self.fightProxy
+
+	-- if status then
+	-- 	self:updateBuffAdd()
+	-- end
+
+	local proxy = self.moveProxy
+	if proxy:isInMove() then
+		proxy:step(dt)
+		-- print("x-", proxy.pos.x, "y-", proxy.pos.y)
+		self:setPosition(proxy.pos)
+		self:updateFace(proxy:currentFace())
+	else
+		if self:isFindDone() then
+			local path = self:currentPath()
+			if #path == 0 then
+				self.FSM:setState(kRoleStateStand)
+			else
+				proxy:setMovePath(path, self.fightProxy:targetRadius()+self.fightProxy:currentUseRange() + self.acceptR)
+				if self.pathCallback then
+					self.pathCallback(proxy.path, self)
+				end
+			end
+		end
 	end
 	
-	self.roleStatus = kRoleAttack
+	-- fightProxy:updateTargetStatus()
+	-- local targetStatus = fightProxy.targetStatus
+	
+	-- if not fightProxy:isTargetBuildType() and targetStatus == kTargetInvalid then
+	-- 	self.status = kSoldierStatusNextTarget
+	-- 	return
+	-- end
+	
+	-- local status, last, nor = fightProxy:checkMove(dt, self)
+	
+	-- if status == kFightStatusNotReach then
+	-- 	self:updateFace(nor)
+	-- 	self:actMove()
+	-- 	self:setPosition(last)
+
+	-- elseif status == kFightStatusReach then
+	-- 	-- self.workDone = true
+	-- 	self:updateFace(last)
+	-- 	if fightProxy:isTargetBuildType() then
+	-- 		if targetStatus == kTargetInvalid or fightProxy:theSameOwner(self.owner) then
+	-- 			self.status = kSoldierStatusGather
+	-- 		end
+	-- 	end
+
+	-- end
+
+	-- return status, last
+end
+
+function S:roleActMove()
+	for _, v in pairs(self.roles) do
+		v:actMove(kSoldierAnimDelay, true)
+	end
+end
+
+function S:actMove()
+	-- if self.roleStatus== kRoleMove then
+	-- 	return
+	-- end
+
+	-- self.roleStatus = kRoleMove
+	self:stopAttack()
+	self.moveProxy:resetPath()
+	self:roleActMove()
+	if not self.moveEntry then
+		local scheduler = self:getScheduler()
+		self.moveEntry = scheduler:scheduleScriptFunc(function(dt) self:updateMove(dt) end, 0, false)
+	end
+
+end
+
+function S:moveDone()
+	-- print("move done")
+	-- local target = self.fightProxy.target
+	if self.fightProxy:isTargetDead() then
+		self:handleTargetDead()
+	else
+		
+		local target = self.fightProxy.target
+		if target.owner == self.owner then
+			self.FSM:setState(kRoleStateGather)
+			return 
+		end
+
+		self:checkAttack(function()
+			self.FSM:setState(kRoleStateAttack)
+			end)
+	end
+end
+
+function S:nextAction()
+
+end
+
+function S:checkAttack(callback)
+	local moveProxy = self.moveProxy
+	local p = moveProxy.pos
+
+	if self.fightProxy:attackStatus(p, self.acceptR) then
+		callback()
+	else
+			-- print("reset")
+		self.FSM:setState(kRoleStateMove)
+		self:setStartPoint(p)
+		self:findRoute(target:reachPos())
+	end
+
+
+end
+
+function S:stopAttack()
+
+	if self.attackEntry then
+		local scheduler = self:getScheduler()
+		scheduler:unscheduleScriptEntry(self.attackEntry)
+		self.attackEntry = nil
+	end
+
+end
+
+function S:updateAttack(dt)
+	-- print("fightProxy status--", self.fightProxy.status)
+
+	if self.fightProxy:isTargetDead() then
+		self:handleTargetDead()
+		return
+	end
+
+	self.fightProxy:updateSkillTime(dt)
+
+	-- if self.fightProxy.status ~= kFightStatusReach or self.status ~= kSoldierStatusNormal then
+		-- return
+	-- end
+
+	local status, rate = self.fightProxy:checkAttack()
+
+	if status then
+		self:checkAttack(function()
+			local target = self.fightProxy.target
+			local tp = target:reachPos()
+			self:updateFace(tp.x > self.moveProxy.pos.x)
+
+			self:roleActAttack(function() 
+					if self.fightProxy:isTargetDead() then
+						self:handleTargetDead()
+					else
+						self:handleAttack()
+					-- self:roleActStand()
+					end
+				end, rate, kSoldierAnimDelay)
+
+			end)
+	end
+
+end
+
+function S:actAttack()
+
+	self:stopMove()
+	if not self.attackEntry then
+		local scheduler = self:getScheduler()
+		self.attackEntry = scheduler:scheduleScriptFunc(function(dt) self:updateAttack(dt) end, 0, false)
+	end
+
+end
+
+function S:roleActAttack(callback, time, delay)
+	-- if self.roleStatus == kRoleAttack then
+	-- 	return
+	-- end
+	
+	-- self.roleStatus = kRoleAttack
 	-- self.inAttack = true
 	local final = nil
 	local flag = 0
@@ -465,9 +675,6 @@ function S:actAttack(callback, time, delay)
 	end
 
 	for i, v in pairs(self.roles) do
-		-- local actions = {}
-		-- actions[#actions + 1] = cc.Delay:create(v.randDelay)
-		-- local seq = cc.Sequence:create(action)
 
 		if v.delay == -1 then
 			local rf = cc.p(final.x, final.y)
@@ -476,32 +683,30 @@ function S:actAttack(callback, time, delay)
 			end
 			self:gatherRole(v, rf)
 		end
-
+		-- print("delay-", v.delay)
 		local actions = {}
 		actions[#actions + 1] = cc.DelayTime:create(v.delay)
 		if i == 1 then
-			actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(callback, time, delay) end end)
+			actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(function() 
+				callback() 
+				if v.status ~= kRoleDie then
+					v:actStand() 
+				end
+				end, time, delay) end end)
 		else
-			actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(nil, time, delay) end end)
+			actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(function() 
+				if v.status ~= kRoleDie then
+					v:actStand() 
+				end
+				end, time, delay) end end)
 		end
 		local seq = cc.Sequence:create(actions)
-		self:runAction(seq)
+		v:runAction(seq)
 
 	end
 
 end
 
-function S:actMove()
-	if self.roleStatus== kRoleMove then
-		return
-	end
-
-	self.roleStatus = kRoleMove
-
-	for _, v in pairs(self.roles) do
-		v:actMove(kSoldierAnimDelay, true)
-	end
-end
 
 function S:showColor(color)
 	for _, v in pairs(self.roles) do
@@ -517,8 +722,8 @@ function S:showColor(color)
 	end
 end
 
-function S:showDamageEffect()
-	self.labelEffect:showEffect(-self.totalDamage)
+function S:showDamageEffect(damage)
+	self.labelEffect:showEffect(-damage)
 
 	local color = nil
 	if self.owner == kOwnerNone then
@@ -636,6 +841,7 @@ end
 
 function S:handleGather()
 	self.fightProxy:handleGather(self.owner, self.soldierNum)
+	self.FSM:setState(kRoleStateClear)
 end
 
 function S:handleBeAttacked(damage, dtype)
@@ -652,7 +858,11 @@ function S:handleBeAttacked(damage, dtype)
 	-- self:setSoldierNum(currNum)
 	-- print("damage--", damage, "dtype--", dtype)
 	local real = self.fightProxy:getRealDamage(damage, dtype)
-	self.totalDamage = self.totalDamage + real
+
+	self:showDamageEffect(real)
+	
+	self:setSoldierNum(self.soldierNum - real)
+	-- self.totalDamage = self.totalDamage + real
 	-- print("real-", real)
 	-- print("soldier totalDamage--", self.totalDamage)
 

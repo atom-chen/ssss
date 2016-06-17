@@ -181,6 +181,42 @@ function cc.pIsSegmentIntersect(pt1,pt2,pt3,pt4)
     return false
 end
 
+function cc.pGetsegmentIntersectWithCircle(pt1, pt2, pt3, r)
+
+    local dis1 = cc.pDistanceSQ(pt1, pt3)
+    local dis2 = cc.pDistanceSQ(pt2, pt3)
+    local r2 = r * r
+
+    local opt, ipt
+    if (dis1 < r2 and dis2 < r2) or (dis1 > r2 and dis2 > r2) then
+        return cc.p(0, 0)
+    end
+
+    if dis1 < r2 then
+        ipt = pt1
+        opt = pt2
+    else
+        ipt = pt2
+        opt = pt1
+    end
+
+    local xx = ipt.x - pt3.x
+    local yy = ipt.y - pt3.y
+    local dir = cc.pNormalize(cc.p(opt.x-ipt.x, opt.y-ipt.y))
+
+    if math.abs(xx) < 0.001 and math.abs(yy) < 0.001 then
+        return cc.pAdd(cc.pMul(dir, r), pt3)
+    else
+        local b = 2*xx*dir.x + 2*yy*dir.y
+        local c = xx * xx + yy * yy - r * r
+        local delta = math.sqrt(b * b - 4 * c)
+        local s = (-b + delta) / 2
+
+        return cc.pAdd(cc.pMul(dir, s), ipt)
+    end
+
+end
+
 function cc.pGetIntersectPoint(pt1,pt2,pt3,pt4)
     local s,t, ret = 0,0,false
     ret,s,t = cc.pIsLineIntersect(pt1,pt2,pt3,pt4,s,t)

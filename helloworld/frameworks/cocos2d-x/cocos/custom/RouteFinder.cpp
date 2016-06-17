@@ -206,6 +206,7 @@ void RouteNode::clear()
 void RouteNode::reset()
 {
 //    CCLOG("11");
+    m_buildTarget = false;
     m_mark = false;
     m_value = MAXFLOAT;
     m_value1 = 0;
@@ -219,60 +220,326 @@ void RouteNode::reset()
     m_inflexion.clear();
 }
 
+void RouteNode::setBuildTarget()
+{
+    if (m_type == kNormalMove || m_buildTarget)
+        return;
+    
+    m_buildTarget = true;
+    RouteData *instance = RouteData::getInstance();
+    for (auto &line : m_lineList) {
+        RouteNode::routeList nList = instance->routeNodeForLine(line);
+        for (auto &n : nList) {
+//            if (n->type() == kBuildMove) {
+            
+            n->setBuildTarget();
+//            }
+        }
+    }
+    
+}
+
+void RouteNode::caculateValueWith2(std::vector<cocos2d::Point> &vec, cocos2d::Point &end, cocos2d::Point &next, float *value, std::vector<std::shared_ptr<RouteNode>> &fromList)
+{
+    std::vector<std::shared_ptr<RouteNode>>::iterator iter;
+    for (iter = fromList.begin(); iter!= fromList.end();++iter) {
+        if ((*iter)->isContainPoint(next)) {
+            break;
+        }
+    }
+    
+    ++iter;
+    if (iter==fromList.end() || !(*iter)->isContainPoint(next)) {
+        --iter;
+    }
+    
+    //    lineList &list = (*iter)->allLines();
+    //    std::shared_ptr<Line> &l1 = list[3];
+    cocos2d::Point top1 = (*iter)->m_fromTop;
+    cocos2d::Point bot1 = (*iter)->m_fromBot;
+    
+    std::vector<std::shared_ptr<RouteNode>>::iterator iter1 = iter + 1;
+    if (iter1 != fromList.end()) {
+        top1 = (*iter1)->m_fromTop;
+        bot1 = (*iter1)->m_fromBot;
+    }
+    
+    if (top1 == cocos2d::Vec2::ZERO && bot1 == cocos2d::Vec2::ZERO) {
+        lineList &list = (*iter)->allLines();
+        std::shared_ptr<Line> &l1 = list[3];
+        top1 = l1->endPoint();
+        bot1 = l1->startPoint();
+    }
+    
+    std::vector<std::shared_ptr<RouteNode>>::iterator last;
+    for (last = iter, ++iter;iter!=fromList.end();++last,++iter) {
+        lineList &ll1 = (*iter)->allLines();
+        std::shared_ptr<Line> &line1 = ll1[3];
+        lineList &ll2 = (*last)->allLines();
+        std::shared_ptr<Line> &line2 = ll2[1];
+        
+        if ((top1-next).cross(line1->endPoint()-next) < 0) {
+            top1 = line1->endPoint();
+        }
+        
+        if ((top1-next).cross(line2->startPoint()-next) < 0) {
+            top1 = line2->startPoint();
+        }
+        
+        if ((bot1-next).cross(line1->startPoint()-next) > 0) {
+            bot1 = line1->startPoint();
+        }
+        
+        if ((bot1-next).cross(line2->endPoint()-next) > 0) {
+            bot1 = line2->endPoint();
+        }
+    }
+    
+//    if ((top1-next).cross(tp1-next) <= 0) {
+//        top1 = tp1;
+//    }
+//    
+//    if ((bot1-next).cross(bp1-next) >= 0) {
+//        bot1 = bp1;
+//    }
+    
+    if ((top1-next).cross(end-next) > 0) {
+        vec.push_back(next);
+        *value = *value + next.getDistance(top1);
+        caculateValueWith2(vec, end, top1, value, fromList);
+//        updateValueWithList22(end, vec, top1, v1, fromList, tp1, bp1, inflexion);
+        return;
+    }
+    
+    if ((bot1-next).cross(end-next) < 0) {
+        vec.push_back(next);
+        *value = *value + next.getDistance(bot1);
+        caculateValueWith2(vec, end, bot1, value, fromList);
+//        updateValueWithList22(end, vec, bot1, v1, fromList, tp1, bp1, inflexion);
+        return;
+    }
+    
+    vec.push_back(next);
+
+}
+
+void RouteNode::caculateValueWith4(std::vector<cocos2d::Point> &vec, cocos2d::Point &end, cocos2d::Point &next, float *value, std::vector<std::shared_ptr<RouteNode>> &fromList)
+{
+    std::vector<std::shared_ptr<RouteNode>>::iterator iter;
+    for (iter = fromList.begin(); iter!= fromList.end();++iter) {
+        if ((*iter)->isContainPoint(next)) {
+            break;
+        }
+    }
+    
+    ++iter;
+    if (iter==fromList.end() || !(*iter)->isContainPoint(next)) {
+        --iter;
+    }
+    
+    
+    //    lineList &list = (*iter)->allLines();
+    //    std::shared_ptr<Line> &l1 = list[1];
+    cocos2d::Point top1 = (*iter)->m_fromTop;
+    cocos2d::Point bot1 = (*iter)->m_fromBot;
+    
+    std::vector<std::shared_ptr<RouteNode>>::iterator iter1 = iter + 1;
+    if (iter1 != fromList.end()) {
+        top1 = (*iter1)->m_fromTop;
+        bot1 = (*iter1)->m_fromBot;
+    }
+    
+    if (top1 == cocos2d::Vec2::ZERO && bot1 == cocos2d::Vec2::ZERO) {
+        lineList &list = (*iter)->allLines();
+        std::shared_ptr<Line> &l1 = list[1];
+        top1 = l1->startPoint();
+        bot1 = l1->endPoint();
+    }
+    
+    std::vector<std::shared_ptr<RouteNode>>::iterator last;
+    for (last = iter, ++iter;iter!=fromList.end();++last,++iter) {
+        lineList &ll1 = (*iter)->allLines();
+        std::shared_ptr<Line> &line1 = ll1[1];
+        lineList &ll2 = (*last)->allLines();
+        std::shared_ptr<Line> &line2 = ll2[3];
+        
+        if ((top1-next).cross(line1->startPoint()-next) > 0) {
+            top1 = line1->startPoint();
+        }
+        
+        if ((top1-next).cross(line2->endPoint()-next) > 0) {
+            top1 = line2->endPoint();
+        }
+        
+        if ((bot1-next).cross(line1->endPoint()-next) < 0) {
+            bot1 = line1->endPoint();
+        }
+        
+        if ((bot1-next).cross(line2->startPoint()-next) < 0) {
+            bot1 = line2->startPoint();
+        }
+    }
+    
+//    if ((top1-next).cross(tp1-next) >= 0) {
+//        top1 = tp1;
+//    }
+//    
+//    if ((bot1-next).cross(bp1-next) <= 0) {
+//        bot1 = bp1;
+//    }
+//
+    vec.push_back(next);
+    if ((top1-next).cross(end-next) < 0) {
+        *value = *value + top1.getDistance(next);
+        caculateValueWith4(vec, end, top1, value, fromList);
+//        updateValueWithList42(end, vec, top1, v1, fromList, tp1, bp1, inflexion);
+        return;
+    }
+    
+    if ((bot1-next).cross(end-next) > 0) {
+        *value = *value + bot1.getDistance(next);
+        caculateValueWith4(vec, end, bot1, value, fromList);
+//        float v1 = value1 + bot1.getDistance(next);
+//        updateValueWithList42(end, vec, bot1, v1, fromList, tp1, bp1, inflexion);
+        return;
+    }
+    
+//    m_inflexion = inflexion;
+//    m_inflexion.insert(m_inflexion.end(), vec.begin(), vec.end());
+//    m_inflexion.push_back(next);
+    
+
+}
+
 void RouteNode::updateValue1(cocos2d::Point &end, std::shared_ptr<Line> &line, std::shared_ptr<RouteNode> &node, int idx)
 {
+    
     std::shared_ptr<Line> &l1 = m_lineList[0];
     std::shared_ptr<Line> &l3 = m_lineList[2];
     
     cocos2d::Point start = node->startPoint();
+    
+    if (isContainPoint(end)) {
+        m_findDone = true;
+    }
+    
     cocos2d::Point md1 = l1->startPoint().getMidpoint(l1->endPoint());
     cocos2d::Point md2 = l3->startPoint().getMidpoint(l3->endPoint());
+    
+    if (node->isContainPoint(start)) {
+        
+        if (idx == 1) {
+            float value1 = node->value1() + start.getDistance(md2);
+            float value = value1 + md2.getDistance(end);
+            if (value < m_value) {
+                m_startPoint = md2;
+                m_value1 = value1;
+                m_value = value;
+                m_topPoint = cocos2d::Vec2::ZERO;
+                m_bottomPoint = cocos2d::Vec2::ZERO;
+                m_fromTop = cocos2d::Vec2::ZERO;
+                m_fromBot = cocos2d::Vec2::ZERO;
+                m_fromList.clear();
+                m_inflexion = node->inflexionList();
+//                m_inflexion.insert(m_inflexion.end(), vec.begin()+1, vec.end());
+                m_inflexion.push_back(md2);
+                m_mark = false;
+            }
+            
+        } else if (idx == 3) {
+            float value1 = node->value1() + start.getDistance(md1);
+            float value = value1 + md1.getDistance(end);
+            if (value < m_value) {
+                m_startPoint = md1;
+                m_value1 = value1;
+                m_value = value;
+                m_topPoint = cocos2d::Vec2::ZERO;
+                m_bottomPoint = cocos2d::Vec2::ZERO;
+                m_fromTop = cocos2d::Vec2::ZERO;
+                m_fromBot = cocos2d::Vec2::ZERO;
+                m_inflexion = node->inflexionList();
+//                m_inflexion.insert(m_inflexion.end(), vec.begin()+1, vec.end());
+                m_inflexion.push_back(md1);
+                m_fromList.clear();
+                m_mark = false;
+            }
+        }
+
+        
+        return;
+    }
+    
+    
+    cocos2d::Point top = node->m_topPoint;
+    cocos2d::Point bot = node->m_bottomPoint;
+    
+//    cocos2d::Point &lineSP = line->startPoint();
+//    cocos2d::Point &lineEP = line->endPoint();
+//    cocos2d::Point ltop = lineEP;
+//    cocos2d::Point lbot = lineSP;
+//    if (lineSP.y > lineEP.y) {
+//        ltop = lineSP;
+//        lbot = lineEP;
+//    }
+    
+    std::vector<cocos2d::Point> vec;
+    std::vector<std::shared_ptr<RouteNode>> fl = node->fromList();
+    fl.push_back(node);
+    float v = node->value1();
+    
+    if ((top-start).cross(bot-start) < 0) {
+        if (idx == 1)
+            caculateValueWith2(vec, md2, start, &v, fl);
+        else
+            caculateValueWith2(vec, md1, start, &v, fl);
+        //left
+    } else {
+        //right
+        
+        if (idx == 1)
+            caculateValueWith4(vec, md2, start, &v, fl);
+        else
+            caculateValueWith4(vec, md1, start, &v, fl);
+    }
+    
     if (idx == 1) {
-        float value1 = node->value1() + start.getDistance(md2);
-        float value = value1 + md2.getDistance(end);
+        
+        float value = v + md2.getDistance(end);
         if (value < m_value) {
             m_startPoint = md2;
-            m_value1 = value1;
+            m_value1 = v;
             m_value = value;
-//            m_fromList = node->fromList();
-//            m_fromList.push_back(node);
-//            m_pList = node->startPointList();
-//            m_pList.push_back(md2);
-//            m_from = node;
             m_topPoint = cocos2d::Vec2::ZERO;
             m_bottomPoint = cocos2d::Vec2::ZERO;
             m_fromTop = cocos2d::Vec2::ZERO;
             m_fromBot = cocos2d::Vec2::ZERO;
             m_fromList.clear();
+            m_inflexion = node->inflexionList();
+            m_inflexion.insert(m_inflexion.end(), vec.begin()+1, vec.end());
             m_inflexion.push_back(md2);
             m_mark = false;
         }
 
     } else if (idx == 3) {
-        float value1 = node->value1() + start.getDistance(md1);
-        float value = value1 + md1.getDistance(end);
+        
+        float value = v + md1.getDistance(end);
         if (value < m_value) {
             m_startPoint = md1;
-            m_value1 = value1;
+            m_value1 = v;
             m_value = value;
-//            m_fromList = node->fromList();
-//            m_fromList.push_back(node);
-//            m_pList = node->startPointList();
-//            m_pList.push_back(md1);
-//            m_from = node;
             m_topPoint = cocos2d::Vec2::ZERO;
             m_bottomPoint = cocos2d::Vec2::ZERO;
             m_fromTop = cocos2d::Vec2::ZERO;
             m_fromBot = cocos2d::Vec2::ZERO;
+            m_inflexion = node->inflexionList();
+            m_inflexion.insert(m_inflexion.end(), vec.begin()+1, vec.end());
             m_inflexion.push_back(md1);
             m_fromList.clear();
             m_mark = false;
         }
     }
     
-    if (isContainPoint(end)) {
-        m_findDone = true;
-    }
+    
 }
 
 void RouteNode::updateValueWithList2(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion)
@@ -680,7 +947,7 @@ void RouteNode::updateValue2(cocos2d::Point &end, std::shared_ptr<Line> &line, s
         bp = lSP3;
     }
     
-    if (fabs((top-start).cross(bot-start)) < FLT_EPSILON) {
+    if (fabs((lineSP-start).cross(lineEP-start)) < FLT_EPSILON) {
         if (tp.y > start.y && bp.y > start.y) {
             float value1 = node->value1() + bp.getDistance(start);
             float value = value1 + bp.getDistance(end);
@@ -1373,7 +1640,7 @@ void RouteNode::updateValue4(cocos2d::Point &end, std::shared_ptr<Line> &line, s
         bp = lEP1;
     }
     
-    if (fabs((top-start).cross(bot-start)) < FLT_EPSILON) {
+    if (fabs((lineSP-start).cross(lineEP-start)) < FLT_EPSILON) {
         if (tp.y > start.y && bp.y > start.y) {
             float value1 = node->value1() + bp.getDistance(start);
             float value = value1 + bp.getDistance(end);
@@ -1905,6 +2172,7 @@ void RouteFinder::findRoute(cocos2d::Point &point)
     {
         lrb::base::MutexLockGuard lock(m_mutex);
         m_endPoint = point;
+//        m_buildTarget = buildTarget;
     }
     
     std::function<void()> f = std::bind(&RouteFinder::doFindRoute, this);
@@ -1931,6 +2199,18 @@ cocos2d::Point RouteFinder::endFindPoint()
         p = m_findEnd;
     }
     return p;
+}
+
+bool RouteFinder::isFindDone()
+{
+    bool isDone = false;
+    {
+        lrb::base::MutexLockGuard lock(m_mutex);
+        if (m_findStart == m_startPoint && m_findEnd == m_endPoint)
+            isDone = true;
+    }
+    
+    return isDone;
 }
 
 void RouteFinder::fillStraightRoute(cocos2d::Point &start, cocos2d::Point &end)
@@ -1976,6 +2256,10 @@ std::shared_ptr<RouteNode> RouteFinder::findRoutePath(cocos2d::Point &start, coc
     if (!node)
         return nullptr;
     
+    if (node->isContainPoint(end)) {
+        return node;
+    }
+    
     node->setStartPoint(start);
     
 //    node->addStartPoint(start);
@@ -1990,14 +2274,10 @@ std::shared_ptr<RouteNode> RouteFinder::findRoutePath(cocos2d::Point &start, coc
         int idx = 0;
         for (auto &line : bptr->allLines()) {
             RouteNode::routeList nList = instance->routeNodeForLine(line);
-            if (line->startPoint().x == 255 && line->startPoint().y == 1160) {
-                int a = 1;
-                a++;
-            }
             ++idx;
             int ftype = bptr->type();
             for (auto &n : nList) {
-                if (n == bptr || (ftype == RouteNode::kNormalMove && n->type() == RouteNode::kBuildMove))
+                if (n == bptr || (!n->isBuildTarget() && ftype == RouteNode::kNormalMove && n->type() == RouteNode::kBuildMove))
                     continue;
                 
                 switch (idx) {
@@ -2045,6 +2325,7 @@ void RouteFinder::doFindRoute()
 {
 //    CCLOG("find route");
     cocos2d::Point start, end;
+//    bool buildTarget;
     {
         lrb::base::MutexLockGuard lock(m_mutex);
         if (m_findStart == m_startPoint && m_findEnd == m_endPoint)
@@ -2052,16 +2333,23 @@ void RouteFinder::doFindRoute()
         
         start = m_startPoint;
         end = m_endPoint;
+//        buildTarget = m_buildTarget;
         
     }
     
     RouteData *instance = RouteData::getInstance();
     instance->reset();
     std::shared_ptr<RouteNode> ptr = instance->findRouteNode(end);
+//    ptr->setBuildTarget()
 
     if (!ptr) {
-        this->fillStraightRoute(start, end);
+//        return;
+//        this->fillStraightRoute(start, end);
+        lrb::base::MutexLockGuard lock(m_mutex2);
+        m_pathList.clear();
     } else {
+//    if (ptr) {
+        ptr->setBuildTarget();
         RouteNode::lineList list;
 //        for (auto &start : m_startList) {
         
@@ -2161,16 +2449,19 @@ RouteFinder::pathList &RouteFinder::finalRoutePath()
     bool flag = false;
     {
         lrb::base::MutexLockGuard lock(m_mutex);
-        if (m_startPoint != m_findStart || m_endPoint != m_findEnd) {
+        if (m_startPath != m_findStart || m_endPath != m_findEnd) {
             flag = true;
+            m_startPath = m_findStart;
+            m_endPath = m_findEnd;
         }
     }
+    
     if (flag) {
         m_pathList1.clear();
-        return m_pathList1;
+        return currentRoutePath();
     }
     
-    return currentRoutePath();
+    return m_pathList1;
 }
 
 RouteFinder::pathList &RouteFinder::currentRoutePath()
@@ -2179,17 +2470,16 @@ RouteFinder::pathList &RouteFinder::currentRoutePath()
     {
         lrb::base::MutexLockGuard lock(m_mutex2);
         if (!m_pathList.empty()) {
-//            m_pathList1.swap(m_pathList);
             m_pathList1.clear();
+//            m_pathList1.swap(m_pathList);
             for (auto &l : m_pathList) {
                 sgzj::Line *line = Line::create(l->startPoint(), l->endPoint());
                 m_pathList1.pushBack(line);
             }
             m_pathList.clear();
-            
         }
     }
-    
+//    CCLOG("list1 size-%lu", m_pathList1.size());
     return m_pathList1;
     //    return m_pathList;
 }

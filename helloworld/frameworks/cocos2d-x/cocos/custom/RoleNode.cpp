@@ -59,10 +59,15 @@ void RoleNode::drawRoutePath()
     m_pathEnd = end;
     m_drawNode->clear();
     m_drawNode->setLineWidth(5);
-    RouteFinder::pathList list = m_finder->currentRoutePath();
+    RouteFinder::pathList list = m_finder->finalRoutePath();
     for (auto &line : list) {
         m_drawNode->drawLine(line->startPoint(), line->endPoint(), cocos2d::Color4F(0,0,1,1));
     }
+}
+
+void RoleNode::clearPath()
+{
+    m_drawNode->clear();
 }
 
 RoleNode *RoleNode::create()

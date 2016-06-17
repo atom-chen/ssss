@@ -86,6 +86,9 @@ end
 function M:setTarget(target)
 	self.target = target
 	self.targetPos = nil
+	if target then
+		self.targetType = target.type
+	end
 end
 
 function M:setTargetPos(pos)
@@ -111,15 +114,15 @@ function M:parseSoldierCfg(cfg, ident)
 	self.skillNode = SkillManager:create(cfg.skillList)
 end
 
-function M:parseBuildingCfg(cfg, ident)
+function M:parseBuildingCfg(cfg, ident, bcfg)
 	self.phyAtt = cfg.physicalAtt
 	self.phyDef = cfg.physicalDef 
 	-- self.phyRatio = (1-(cfg.physicalDef*0.01/(1+cfg.physicalDef*0.5*0.01)))/4
 	self.magicDef = cfg.magicDef 
 	-- self.magicRatio = (1-(cfg.magicDef*0.01/(1+cfg.magicDef*0.5*0.01)))/4
 
-	self.moveSpeed = cfg.moveSpeed
-	self.attackSpeed = cfg.attackSpeed
+	self.moveSpeed = 0
+	self.attackSpeed = bcfg.attackSpeed
 	self.attackRatio = 1
 
 	-- local fightNode = sgzj.FightNode:create(ident, phyAtt, phyDef, phyRatio, 0, magicDef, magicRatio)
@@ -127,7 +130,7 @@ function M:parseBuildingCfg(cfg, ident)
 
 	-- self.fightNode = fightNode
 
-	self.skillNode = SkillManager:create(cfg.skillList)
+	self.skillNode = SkillManager:create({bcfg.skillId})
 
 end
 
@@ -152,8 +155,10 @@ function M:parseGeneralCfg(cfg, ident)
 	self.skillNode = SkillManager:create(cfg.skillList, cfg.actionList)
 end
 
-function M:parsePropCfg(speed, skillId)
-	self.moveSpeed = speed
+function M:parsePropCfg(skillId, attack)
+
+	self.attackRatio = 1
+	self.phyAtt = attack
 	self.skillNode = SkillManager:create({skillId})
 
 end
@@ -238,6 +243,14 @@ function M:resetAttackTime()
 	self.attackTime = 0
 end
 
+function M:updateSkillTime(dt)
+	if self.attackTime <= 0 then
+		return
+	end
+
+	self.attackTime = self.attackTime - dt
+end
+
 function M:updateAttackSkill(dt)
 	-- local status, tpos = self:attackStatus()
 	-- if status ~= 1 then
@@ -304,6 +317,17 @@ function M:checkAttackBack(target, ntype, ratio)
 
 end
 
+function M:attackStatus(p, add)
+	local radius = self.target:acceptRadius() + self:currentUseRange() + add
+	-- print("radius 2-", radius * radius)
+	local pos = self.target:reachPos()
+	-- print("dissq-", cc.pDistanceSQ(p, pos))
+	-- print("px-", p.x, "py-", p.y)
+	-- print("posx-", pos.x, "posy-", pos.y)
+	return cc.pDistanceSQ(p, pos) <= radius * radius + 0.1
+
+end
+
 function M:checkAutoFight(node)
 	if self.target == nil then
 		self:setTarget(node)
@@ -336,6 +360,21 @@ function M:isTargetInvalid()
 	end
 	
 	return true
+end
+
+function M:isTargetDead()
+	if not self.target then
+		-- print("no target")
+		return true
+	end
+	local status, dead = pcall(function() return self.target:isDead() end)
+	if status then
+		-- print("state-", dead)
+		return dead
+	end
+	-- print("bad call")
+	return true
+
 end
 
 function M:updateTargetStatus()
@@ -408,15 +447,16 @@ function M:handleDamageList(damageList, useRange, ratio, node)
 				if useRange > 1 then
 					scene:handleAOE(node.owner, self.target:reachPos(), range, self:currentAttack(skill) * ratio, skill.damageType)
 				else
-					scene:handleAOE(node.owner, self.standPos, range, self:currentAttack(skill) * ratio, skill.damageType)
+					scene:handleAOE(node.owner, node:reachPos(), range, self:currentAttack(skill) * ratio, skill.damageType)
 				end
 			end
 		else
-			-- sgzj.FightManager:getInstance():handleFight(node:fightNode(), self.target:fightNode(), skill.damageType, self.currentAttack() * ratio, false)
 			self.target:handleBeAttacked(self:currentAttack(skill) * ratio, skill.damageType)
-			self.target:checkAutoAttack(node)
-			if useRange <= 1 and self.target.type ~= kGeneralType then
-				self.target:handleAttackBack(node)
+			if node.type ~= kPropType then
+				self.target:checkAutoAttack(node)
+				if useRange <= 1 and self.target.canAttackBack then
+					self.target:handleAttackBack(node)
+				end
 			end
 		end		
 	end
@@ -437,7 +477,7 @@ function M:handleBuffList(buffList, node)
 			local scene = cc.Director:getInstance():getRunningScene()
 			if scene.sceneType == kFightScene then
 				if buff.effectType == 5 then
-					scene:handleAreaBuff(buff, self.standPos, range, node.owner)
+					scene:handleAreaBuff(buff, node:reachPos(), range, node.owner)
 				elseif buff.effectType == 2 then
 					scene:handleAreaBuff(buff, self.target:reachPos(), range, node.owner)
 				end
@@ -463,9 +503,11 @@ function M:handleAttack(node, ratio)
 	-- if self.targetStatus ~= kTargetValid then
 		-- return
 	-- end
-	if self.target:isInvalid() then
-		return
-	end
+	-- print("handle attack")
+	-- if self.target:isInvalid() then
+	-- 	print("attack invalid")
+	-- 	return
+	-- end
 
 	local skill = self.skillNode:currentSkill()
 
