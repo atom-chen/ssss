@@ -25,6 +25,16 @@
         
 --------------------------------
 -- 
+-- @function [parent=#RoleNode] drawNodeRect 
+-- @param self
+-- @param #vec2_table p1
+-- @param #vec2_table p2
+-- @param #vec2_table p3
+-- @param #vec2_table p4
+-- @return RoleNode#RoleNode self (return value: sgzj.RoleNode)
+        
+--------------------------------
+-- 
 -- @function [parent=#RoleNode] currentPath 
 -- @param self
 -- @return array_table#array_table ret (return value: array_table)
@@ -54,5 +64,12 @@
 -- @function [parent=#RoleNode] create 
 -- @param self
 -- @return RoleNode#RoleNode ret (return value: sgzj.RoleNode)
+        
+--------------------------------
+-- 
+-- @function [parent=#RoleNode] isPointCanReach 
+-- @param self
+-- @param #vec2_table p
+-- @return bool#bool ret (return value: bool)
         
 return nil

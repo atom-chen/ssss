@@ -602,6 +602,65 @@ int lua_cocos2dx_custom_RoleNode_setDrawNode(lua_State* tolua_S)
 
     return 0;
 }
+int lua_cocos2dx_custom_RoleNode_drawNodeRect(lua_State* tolua_S)
+{
+    int argc = 0;
+    sgzj::RoleNode* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"sgzj.RoleNode",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (sgzj::RoleNode*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_custom_RoleNode_drawNodeRect'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 4) 
+    {
+        cocos2d::Point arg0;
+        cocos2d::Point arg1;
+        cocos2d::Point arg2;
+        cocos2d::Point arg3;
+
+        ok &= luaval_to_point(tolua_S, 2, &arg0, "sgzj.RoleNode:drawNodeRect");
+
+        ok &= luaval_to_point(tolua_S, 3, &arg1, "sgzj.RoleNode:drawNodeRect");
+
+        ok &= luaval_to_point(tolua_S, 4, &arg2, "sgzj.RoleNode:drawNodeRect");
+
+        ok &= luaval_to_point(tolua_S, 5, &arg3, "sgzj.RoleNode:drawNodeRect");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_custom_RoleNode_drawNodeRect'", nullptr);
+            return 0;
+        }
+        cobj->drawNodeRect(arg0, arg1, arg2, arg3);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "sgzj.RoleNode:drawNodeRect",argc, 4);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_custom_RoleNode_drawNodeRect'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_cocos2dx_custom_RoleNode_currentPath(lua_State* tolua_S)
 {
     int argc = 0;
@@ -830,6 +889,42 @@ int lua_cocos2dx_custom_RoleNode_create(lua_State* tolua_S)
 #endif
     return 0;
 }
+int lua_cocos2dx_custom_RoleNode_isPointCanReach(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertable(tolua_S,1,"sgzj.RoleNode",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+
+    if (argc == 1)
+    {
+        cocos2d::Point arg0;
+        ok &= luaval_to_point(tolua_S, 2, &arg0, "sgzj.RoleNode:isPointCanReach");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_custom_RoleNode_isPointCanReach'", nullptr);
+            return 0;
+        }
+        bool ret = sgzj::RoleNode::isPointCanReach(arg0);
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "sgzj.RoleNode:isPointCanReach",argc, 1);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_custom_RoleNode_isPointCanReach'.",&tolua_err);
+#endif
+    return 0;
+}
 static int lua_cocos2dx_custom_RoleNode_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RoleNode)");
@@ -845,11 +940,13 @@ int lua_register_cocos2dx_custom_RoleNode(lua_State* tolua_S)
         tolua_function(tolua_S,"drawRoutePath",lua_cocos2dx_custom_RoleNode_drawRoutePath);
         tolua_function(tolua_S,"clearPath",lua_cocos2dx_custom_RoleNode_clearPath);
         tolua_function(tolua_S,"setDrawNode",lua_cocos2dx_custom_RoleNode_setDrawNode);
+        tolua_function(tolua_S,"drawNodeRect",lua_cocos2dx_custom_RoleNode_drawNodeRect);
         tolua_function(tolua_S,"currentPath",lua_cocos2dx_custom_RoleNode_currentPath);
         tolua_function(tolua_S,"isFindDone",lua_cocos2dx_custom_RoleNode_isFindDone);
         tolua_function(tolua_S,"findRoute",lua_cocos2dx_custom_RoleNode_findRoute);
         tolua_function(tolua_S,"setStartPoint",lua_cocos2dx_custom_RoleNode_setStartPoint);
         tolua_function(tolua_S,"create", lua_cocos2dx_custom_RoleNode_create);
+        tolua_function(tolua_S,"isPointCanReach", lua_cocos2dx_custom_RoleNode_isPointCanReach);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(sgzj::RoleNode).name();
     g_luaType[typeName] = "sgzj.RoleNode";

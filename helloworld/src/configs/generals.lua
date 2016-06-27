@@ -16,3 +16,30 @@ cc.exports.generalPos = {
 	{id=5, fx=69, fy=143},
 	{id=6, fx=49, fy=135},
 }
+
+cc.exports.generalAttack = {
+	{id=1, index=4, atype=3},
+	{id=2, index=5, atype=3},
+	{id=3, index=5, atype=3},
+	{id=4, index=5, atype=3},
+	{id=5, index=5, atype=3},
+	{id=6, index=6, atype=3},
+}
+
+cc.exports.generalSkill1 = {
+    {id=1, index=8, atype=5},
+	{id=2, index=9, atype=5},
+	{id=3, index=10, atype=5},
+	{id=4, index=6, atype=5},
+	{id=5, index=5, atype=5},
+	{id=6, index=7, atype=5},
+}
+
+cc.exports.generalSkill2 = {
+    {id=1, index=5, atype=6},
+	{id=2, index=8, atype=6},
+	{id=3, index=7, atype=6},
+	{id=4, index=8, atype=6},
+	{id=5, index=6, atype=6},
+	{id=6, index=8, atype=6},
+}

@@ -400,6 +400,11 @@ function M:isTargetGatherBuild()
 	
 end
 
+function M:isAttackNeedTarget()
+	local skill = self.skillNode:currentSkill()
+	return skill.id ~= 19 and skill.id ~= 20 and skill.id ~= 21
+end
+
 function M:theSameOwner(owner)
 	if self.target then
 		return self.target.owner == owner
@@ -445,9 +450,13 @@ function M:handleDamageList(damageList, useRange, ratio, node)
 			local scene = cc.Director:getInstance():getRunningScene()
 			if scene.sceneType == kFightScene then
 				if useRange > 1 then
-					scene:handleAOE(node.owner, self.target:reachPos(), range, self:currentAttack(skill) * ratio, skill.damageType)
+					local tp = self.targetPos
+					if not tp then
+						tp = self.target:reachPos()
+					end
+					scene:handleAOE(node.owner, tp, self:currentAttack(skill) * ratio, skill)
 				else
-					scene:handleAOE(node.owner, node:reachPos(), range, self:currentAttack(skill) * ratio, skill.damageType)
+					scene:handleAOE(node.owner, node:reachPos(), self:currentAttack(skill) * ratio, skill)
 				end
 			end
 		else

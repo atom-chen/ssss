@@ -1,8 +1,8 @@
 
 cc.exports.buildings = {
 	{id=1, icon="cj10001", name="兵营（小）", attackSpeed=1, skillId=15, riseSpeed=0.3, capacity=30, size=1, soldierId=1},
-	{id=2, icon="cj10002", name="兵营（中）", attackSpeed=1,skillId=15, riseSpeed=0.6, capacity=60, size=2, soldierId=1},
-	{id=3, icon="cj10003", name="兵营（大）", attackSpeed=1,skillId=15, riseSpeed=1, capacity=100, size=3, soldierId=1},
+	{id=2, icon="cj10002", name="兵营（中）", attackSpeed=1,skillId=15, riseSpeed=0.4, capacity=60, size=2, soldierId=1},
+	{id=3, icon="cj10003", name="兵营（大）", attackSpeed=1,skillId=15, riseSpeed=0.5, capacity=100, size=3, soldierId=1},
 	{id=4, icon="cj10004", name="箭塔（小）", attackSpeed=1,skillId=16, riseSpeed=0, capacity=30, size=1, soldierId=1},
 	{id=5, icon="cj10005", name="箭塔（中）", attackSpeed=1,skillId=17, riseSpeed=0, capacity=60, size=2, soldierId=4},		
 	{id=6, icon="cj10006", name="箭塔（大）", attackSpeed=1, skillId=18, riseSpeed=0, capacity=80, size=3, soldierId=4},	

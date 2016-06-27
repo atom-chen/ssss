@@ -125,10 +125,7 @@ Animation* Animation::createWithFile(const std::string filename, float total/* =
         frameVector.pushBack(frame);
     }
     
-    float delay = 1.0/24;
-    if (total > 0) {
-        delay = MIN(delay, total/frameVector.size());
-    }
+    float delay = total > 0 ? total/frameVector.size() : 0;
     
     return Animation::createWithSpriteFrames(frameVector, delay, loops);
 

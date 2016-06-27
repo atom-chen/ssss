@@ -11,25 +11,26 @@ function S:ctor(cfg, owner, num, target, ident)
 	self.owner = owner
 	self.ident = ident
 	self.roles = {}
+	-- self.deadRoles = {}
 	self.type = 3
 	-- self.workDone = false
 	self.disList = {}
 	self.count = 0
 	self.status = kSoldierStatusNormal
-	-- self.roleStatus = kRoleStatusStand
-	-- self.nextRoleStatus = kRoleStatusStand
+
+	local container = cc.Node:create()
+	container:setAnchorPoint(cc.p(0.5,0.5))
+	self:addChild(container)
+	self.container = container
+
 	self.canAttackBack = true
 
 	self.totalDamage = 0
-
 	self:initFormationPos()
-
 	self:createFightProxy(target, ident)
-
 	self:createFSM()
 
 	self:createMoveProxy()
-
 	self:setSoldierNum(num)
 	self:createLabelEffect()
 
@@ -39,6 +40,9 @@ end
 
 function S:onExit()
 	self:destroy()
+	if self.acceptSite then
+		self.acceptSite.ref = self.acceptSite.ref - 1
+	end
 end
 
 function S:destroy()
@@ -96,6 +100,7 @@ end
 function S:setStandPos(pos)
 	self:setPosition(pos)
 	self.moveProxy:setPos(pos)
+	self:setLocalZOrder(math.floor(1546-pos.y))
 end
 
 function S:setSoldierNum(num)
@@ -103,7 +108,7 @@ function S:setSoldierNum(num)
 	self.soldierNum = num
 	local rn = self:roleNum(num)
 	local cur = #self.roles
-	-- print("num---", num, "rn--", rn, "cur--", cur)
+	-- print("ident-", self.ident, "num---", num, "rn--", rn, "cur--", cur)
 	if rn > cur then
 		self:addSoldier(rn-cur)
 	elseif rn < cur then
@@ -204,7 +209,7 @@ function S:addSoldier(num)
 		role:setPosition(pos)
 		-- role:setPosition(cc.p(colW * col, rowH * (2 - row)))
 		-- print("rolex--", colW*col, "rolwy--", rowH*(2-row))
-		self:addChild(role)
+		self.container:addChild(role)
 		self.roles[count+1] = role
 	end
 
@@ -212,7 +217,11 @@ function S:addSoldier(num)
 	if flag == 0 then
 		-- print("setcoententsize--w--", colW * 3+size.width, "h--", rowH * 2 + size.height)
 		local h = size.height + self.formSize.height
-		self:setContentSize(cc.size(self.formSize.width, h))
+		local sz = cc.size(self.formSize.width, h)
+		self.container:setPosition(sz.width/2,sz.height/2)
+		self.container:setContentSize(sz)
+		self:setContentSize(sz)
+		-- print("sz-w", sz.width, "sz-h", sz.height)
 		
 	end
 	
@@ -221,17 +230,22 @@ end
 function S:deleteSoldier(num)
 	-- print("delete---", num)
 	local count = num
+	local userInfo = {fightId = self.ident, index=-1, atype=kRoleDie}
 	while count > 0 do
-		local role = self.roles[#self.roles]
-		role:actDie(function()
+		local idx = #self.roles
+		local role = self.roles[idx]
+		-- self.deadRoles[idx] = role
+		role:actDie(0, kSoldierAnimDelay, nil, function()
 				role:removeFromParent(true)
+				-- self.deadRoles[idx] = nil
 				self.count = self.count - 1
 				if self.count == 0 then
 					-- self.workDone = true
 					-- self:removeFromParent(true)
+					-- print("set clear state-")
 					self.FSM:setState(kRoleStateClear)
 				end
-			end, 0, kSoldierAnimDelay)
+			end)
 		
 		self.roles[#self.roles] = nil
 		count = count - 1
@@ -421,6 +435,7 @@ function S:handleAttack()
 end
 
 function S:handleAttackBack(node)
+	
 	self.fightProxy:handleAttackBack(node, self:attackRatio())
 end
 
@@ -457,7 +472,8 @@ function S:actStand()
 end
 
 function S:stopMove()
-
+	-- print("move Entry-", self.moveEntry)
+	-- print("movedis-", self.moveProxy.moveDis)
 	if self.moveEntry then
 		local scheduler = self:getScheduler()
 		scheduler:unscheduleScriptEntry(self.moveEntry)
@@ -467,7 +483,61 @@ function S:stopMove()
 end
 
 function S:setMovePath(path)
-	self.moveProxy:setMovePath(path, self.fightProxy:targetRadius() + self.fightProxy:currentUseRange() + self.acceptR)
+	-- self.moveProxy:setMovePath(path, self.fightProxy:targetRadius() + self.fightProxy:currentUseRange() + self.acceptR)
+	local proxy = self.moveProxy
+	proxy:setMovePath(path, self.fightProxy:targetRadius() + self.fightProxy:currentUseRange() + self.acceptR)
+	if self.pathCallback then
+		self.pathCallback(proxy.path, self)
+	end
+
+	local distance = proxy.maxMove-100
+	-- print("distance-", distance)
+	proxy:addMoveCallback({dis=distance, callback=function() 
+						-- self:gatherRole()
+						local final = self:finalPos(1)
+						for i, v in pairs(self.roles) do
+
+							if v.delay == -1 then
+								local rf = cc.p(final.x, final.y)
+								if i > 5 then
+									rf.y = rf.y - kSoldierRowOff
+								end
+
+								self:gatherRole(v, rf)
+							end
+
+						end
+
+					 end})
+
+end
+
+function S:updateRotation(dir)
+	if not dir then
+		return
+	end
+
+	local rotation = 90-cc.pToAngleSelf(dir) * 180 / math.pi
+	self.container:setRotation(rotation)
+	local children = self.container:getChildren()
+	for _, v in pairs(children) do
+		v:setRotation(-rotation)
+	end
+	-- local sz = self.container:getContentSize()
+	
+	-- local p1 = self.container:convertToWorldSpace(cc.p(0, 0))
+	-- local p2 = self.container:convertToWorldSpace(cc.p(0, sz.height))
+	-- local p3 = self.container:convertToWorldSpace(cc.p(sz.width, sz.height))
+	-- local p4 = self.container:convertToWorldSpace(cc.p(sz.width, 0))
+
+	-- self:drawNodeRect(p1, p2, p3, p4)
+	-- for _, v in pairs(self.roles) do
+	-- 	v:setRotation(-rotation)
+	-- end
+	-- for _, v in pairs(self.deadRoles) do
+	-- 	v:setRotation(-rotation)
+	-- end
+
 end
 
 function S:updateMove(dt)
@@ -487,23 +557,28 @@ function S:updateMove(dt)
 	-- if status then
 	-- 	self:updateBuffAdd()
 	-- end
+	if self:isDead() then
+		return
+	end
 
 	local proxy = self.moveProxy
 	if proxy:isInMove() then
-		proxy:step(dt)
+
+		local dir = proxy:step(dt)
 		-- print("x-", proxy.pos.x, "y-", proxy.pos.y)
-		self:setPosition(proxy.pos)
-		self:updateFace(proxy:currentFace())
+		if dir then
+			self:updateRotation(dir)
+			self:setPosition(proxy.pos)
+			self:setLocalZOrder(math.floor(1546-proxy.pos.y))
+			self:updateFace(proxy:currentFace())
+		end
 	else
 		if self:isFindDone() then
 			local path = self:currentPath()
 			if #path == 0 then
 				self.FSM:setState(kRoleStateStand)
 			else
-				proxy:setMovePath(path, self.fightProxy:targetRadius()+self.fightProxy:currentUseRange() + self.acceptR)
-				if self.pathCallback then
-					self.pathCallback(proxy.path, self)
-				end
+				self:setMovePath(path)
 			end
 		end
 	end
@@ -565,12 +640,6 @@ function S:moveDone()
 	if self.fightProxy:isTargetDead() then
 		self:handleTargetDead()
 	else
-		
-		local target = self.fightProxy.target
-		if target.owner == self.owner then
-			self.FSM:setState(kRoleStateGather)
-			return 
-		end
 
 		self:checkAttack(function()
 			self.FSM:setState(kRoleStateAttack)
@@ -583,8 +652,29 @@ function S:nextAction()
 end
 
 function S:checkAttack(callback)
+	
+	local target = self.fightProxy.target
+	if target.owner == self.owner then
+		self.FSM:setState(kRoleStateGather)
+		return 
+	end
+
 	local moveProxy = self.moveProxy
 	local p = moveProxy.pos
+
+	if target.type == kBuildType and not self.acceptSite then
+
+		local fl, site = target:acceptSite(p, self.acceptR)
+		-- print("fl", fl)
+		if fl then
+			self.acceptSite = site
+			moveProxy:addMovePath(fl)
+			self.acceptSite.ref = self.acceptSite.ref + 1
+			-- print("add move path")
+			return
+		end
+
+	end
 
 	if self.fightProxy:attackStatus(p, self.acceptR) then
 		callback()
@@ -610,7 +700,10 @@ end
 
 function S:updateAttack(dt)
 	-- print("fightProxy status--", self.fightProxy.status)
-
+	if self:isDead() then
+		return
+	end
+	
 	if self.fightProxy:isTargetDead() then
 		self:handleTargetDead()
 		return
@@ -629,15 +722,8 @@ function S:updateAttack(dt)
 			local target = self.fightProxy.target
 			local tp = target:reachPos()
 			self:updateFace(tp.x > self.moveProxy.pos.x)
-
-			self:roleActAttack(function() 
-					if self.fightProxy:isTargetDead() then
-						self:handleTargetDead()
-					else
-						self:handleAttack()
-					-- self:roleActStand()
-					end
-				end, rate, kSoldierAnimDelay)
+			self:updateRotation(cc.pSub(tp, self.moveProxy.pos))
+			self:roleActAttack( rate, kSoldierAnimDelay)
 
 			end)
 	end
@@ -654,52 +740,64 @@ function S:actAttack()
 
 end
 
-function S:roleActAttack(callback, time, delay)
+function S:roleActAttack(time, delay)
 	-- if self.roleStatus == kRoleAttack then
 	-- 	return
 	-- end
 	
 	-- self.roleStatus = kRoleAttack
 	-- self.inAttack = true
-	local final = nil
-	local flag = 0
-	local off = 0
-	if self.face then
-		final = self:finalPos(5)
-		flag = 0
-		off = -kSoldierRowOff
-	else
-		final = self:finalPos(4)
-		flag = 1
-		off = kSoldierRowOff
-	end
+	-- local final = nil
+	-- local flag = 0
+	-- local off = 0
+	-- if self.face then
+	-- 	final = self:finalPos(5)
+	-- 	flag = 0
+	-- 	off = -kSoldierRowOff
+	-- else
+	-- 	final = self:finalPos(4)
+	-- 	flag = 1
+	-- 	off = kSoldierRowOff
+	-- end
+	-- local info = soldierAttack[self.cfg.id]
+
 
 	for i, v in pairs(self.roles) do
-
-		if v.delay == -1 then
-			local rf = cc.p(final.x, final.y)
-			if i~=1 and i%2 == flag then
-				rf.x = rf.x + off
-			end
-			self:gatherRole(v, rf)
-		end
 		-- print("delay-", v.delay)
 		local actions = {}
+		
+
 		actions[#actions + 1] = cc.DelayTime:create(v.delay)
+		-- if i == 1 then
+			-- actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(function() 
+			-- 	callback() 
+			-- 	if v.status ~= kRoleDie then
+			-- 		v:actStand() 
+			-- 	end
+			-- 	end, time, delay) end end)
+		local userInfos = nil
 		if i == 1 then
-			actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(function() 
-				callback() 
-				if v.status ~= kRoleDie then
-					v:actStand() 
-				end
-				end, time, delay) end end)
-		else
-			actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(function() 
-				if v.status ~= kRoleDie then
-					v:actStand() 
-				end
-				end, time, delay) end end)
+			local userInfo = {}
+			for k, v in pairs(soldierAttack[self.cfg.id]) do
+				userInfo[k] = v
+			end
+			userInfo.fightId = self.ident
+			userInfos = {userInfo}
 		end
+
+		actions[#actions + 1] = cc.CallFunc:create(
+			function () 
+				if v.status ~= kRoleDie then 
+					v:actAttack(time, delay, userInfos, function() v:actStand(kSoldierAnimDelay) end) 
+				end 
+			end)
+		-- else
+		-- 	actions[#actions + 1] = cc.CallFunc:create(function () if v.status ~= kRoleDie then v:actAttack(function() 
+		-- 		if v.status ~= kRoleDie then
+		-- 			v:actStand() 
+		-- 		end
+		-- 		end, time, delay) end end)
+		-- end
 		local seq = cc.Sequence:create(actions)
 		v:runAction(seq)
 
@@ -822,14 +920,15 @@ function S:gatherRole(role, final)
 		-- if role.status ~= kRoleDie then
 	local px, py = role:getPosition()
 
-	if math.abs(px - final.x) < 0.01 then
+	if math.abs(py - final.y) < 0.01 then
 		role.delay = 0
 		return 
 	end
 
-	local sec = math.abs(final.x-px)/kGatherSpeed
+	local sec = math.abs(final.y-py)/kGatherSpeed
+	-- print("sec-", sec)
 
-	local move = cc.MoveTo:create(sec, cc.p(final.x, py))
+	local move = cc.MoveTo:create(sec, cc.p(px, final.y))
 	move:setTag(kRoleGatherTag)
 	
 	role:stopActionByTag(kRoleGatherTag)
@@ -871,6 +970,36 @@ end
 function S:handleBuff(buff)
 	self.buffNode:addBuff(buff)
 	self:updateBuffAdd()
+end
+
+function S:handleAnimationFrameDisplayed(target, userInfo)
+	-- if userInfo.atype == kRoleDie then
+	-- 	-- self.FSM:setState(kRoleStateClear)
+	-- 	-- function()
+	-- 			role:removeFromParent(true)
+	-- 			-- self.deadRoles[idx] = nil
+	-- 			self.count = self.count - 1
+	-- 			if self.count == 0 then
+	-- 				-- self.workDone = true
+	-- 				-- self:removeFromParent(true)
+	-- 				self.FSM:setState(kRoleStateClear)
+	-- 			end
+	-- 		-- end, 0, kSoldierAnimDelay
+
+
+	-- else
+	-- if userInfo.isHead then
+	if target == self.roles[1].role then
+		if self.fightProxy:isTargetDead() then
+			self.FSM:setState(kRoleStateStand)
+		else
+			-- print("ident-", self.ident, "handle attack")
+			self:handleAttack()
+			-- self.role:actStand(kGeneralAnimDelay)
+		end
+	end
+	-- end
+	-- end
 end
 
 -- function S:handleAttackBack(ntype, damage, dtype)

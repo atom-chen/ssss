@@ -46,6 +46,7 @@ function FightScene:ctor(mapId)
 	self.skillLayer = skillLayer
 
 	skillLayer:startUpdate()
+	self.enemy1 = SimpleAI:create(self.fightLayer, 2)
 
 end
 
@@ -66,6 +67,7 @@ function FightScene:createFightLayer(mapInfo, size)
 	self.fightLayer = fightLayer
 
 	fightLayer:createGenerals({1,2,3})
+
 end
 
 function FightScene:setBackGroundPos(ep)
@@ -78,6 +80,7 @@ end
 
 function FightScene:startFight()
 	self.fightLayer:startFight()
+	self.enemy1:startFight()
 
 end
 
@@ -92,8 +95,8 @@ function FightScene:moveBackGround(point)
 
 end
 
-function FightScene:handleAOE(owner, pos, range, damage, dtype)
-	self.fightLayer:handleAOE(owner, pos, range, damage, dtype)
+function FightScene:handleAOE(owner, pos, damage, skill)
+	self.fightLayer:handleAOE(owner, pos, damage, skill)
 end
 
 function FightScene:handleAreaBuff(buff, pos, range, owner)

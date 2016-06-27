@@ -32,6 +32,7 @@
 #include "lua_cocos2dx_extension_manual.h"
 #include "lua_cocos2dx_coco_studio_manual.hpp"
 #include "lua_cocos2dx_ui_manual.hpp"
+#include "LuaBasicConversions.h"
 
 #if _MSC_VER > 1800
 #pragma comment(lib,"lua51-2015.lib")
@@ -799,7 +800,19 @@ int LuaEngine::handleEvenCustom(void* data)
     
     lua_State* L = _stack->getLuaState();
     toluafix_pushusertype_ccobject(L, eventCustom->_ID, &(eventCustom->_luaID), (void*)(eventCustom),"cc.EventCustom");
-    int ret = _stack->executeFunctionByHandler(handler, 1);
+    
+    const std::string &eventName = eventCustom->getEventName();
+    const void *userData = eventCustom->getUserData();
+    int ret = 0;
+    if (eventName.compare(AnimationFrameDisplayedNotification) == 0) {
+        AnimationFrame::DisplayedEventInfo *eventInfo = (AnimationFrame::DisplayedEventInfo *)userData;
+        _stack->pushObject(eventInfo->target, "cc.Node");
+        ccvaluemap_to_luaval(_stack->getLuaState(), *(eventInfo->userInfo));
+        
+        ret = _stack->executeFunctionByHandler(handler, 3);
+    } else {
+        ret = _stack->executeFunctionByHandler(handler, 1);
+    }
     _stack->clean();
     
     return ret;

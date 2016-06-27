@@ -14,6 +14,7 @@ function M:ctor()
 	self.face = false
 	self.moveDis = 0
 	self.moveCallbackList = {}
+	self.maxMove = 0
 end
 
 function M:bindMoveDoneCallback(callback)
@@ -39,6 +40,7 @@ end
 function M:resetPath()
 	self.inMove = false
 	self.moveDis = 0
+	self.maxMove = 0
 	self.path = {}
 	self.moveCallbackLit = {}
 end
@@ -50,6 +52,24 @@ end
 function M:setMoveCallbackList(list)
 	table.sort(list, function(a,b) return a.dis < b.dis end)
 	self.moveCallbackList = list
+end
+
+function M:addMoveCallback(node)
+	local idx = 1
+	for i, v in pairs(self.moveCallbackList) do
+		if v.dis < node.dis then
+			idx = i
+			break
+		end
+	end
+	
+	table.insert(self.moveCallbackList, idx, node)
+end
+
+function M:addMovePath(path)
+	for _, v in pairs(path) do
+		table.insert(self.path, 1, v)
+	end
 end
 
 function M:setMovePath(path, r)
@@ -88,11 +108,7 @@ function M:setMovePath(path, r)
 	local yy = se.y - ep.y
 
 	local p = {}
-
-	-- print("ssx-", ss.x, "ssy-", ss.y)
-	-- print("sex-", se.x, "sey-", se.y)
-	-- print("epx-", ep.x, "epy-", ep.y)
-	-- print("dirx-", dir.x, "diry-", dir.y, "r-", r, "xx-", xx, "yy-", yy)
+	
 	if math.abs(xx) < 0.001 and math.abs(yy) < 0.001 then
 		p = cc.pAdd(cc.pMul(dir, r), ep)
 		-- print("px-", p.x, "py-", p.y)
@@ -101,20 +117,22 @@ function M:setMovePath(path, r)
 		local c = xx * xx + yy * yy - r * r
 		local delta = math.sqrt(b * b - 4 * c)
 		local s = (-b + delta) / 2
-		-- print("b-", b)
-		-- print("c-", c)
-		-- print("delta-", delta)
-		-- print("s-", s)
 		p = cc.pAdd(cc.pMul(dir, s), se)
 	end
 
 	self.path[#self.path + 1] = p
 	-- print("px-", p.x, "py-", p.y)
+	local dis = 0
+	ep = p
 	for i=idx + 1, #path do
 		local l = path[i]
 		local pos = l:endPoint()
 		self.path[#self.path + 1] = pos
+		dis = dis + cc.pGetDistance(ep, pos)
+		ep = pos
 	end
+	dis = dis + cc.pGetDistance(ep, self.pos)
+	self.maxMove = dis
 
 end
 
@@ -162,6 +180,8 @@ function M:step(dt)
 			break
 		end
 	end
+
+	return dir
 
 end
 

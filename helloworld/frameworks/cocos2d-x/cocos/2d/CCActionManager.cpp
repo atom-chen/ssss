@@ -216,6 +216,7 @@ void ActionManager::removeAllActionsFromTarget(Node *target)
     HASH_FIND_PTR(_targets, &target, element);
     if (element)
     {
+//        CCLOG("remove target-%lu", (unsigned long)element->target);
         if (ccArrayContainsObject(element->actions, element->currentAction) && (! element->currentActionSalvaged))
         {
             element->currentAction->retain();

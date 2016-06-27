@@ -1,5 +1,6 @@
 
 require("app.fightNode.StateMachine")
+require("app.fightNode.Demolisher")
 require("app.fightNode.Building")
 require("app.fightNode.CampLabel")
 require("app.fightNode.General")

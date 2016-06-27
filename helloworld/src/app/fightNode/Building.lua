@@ -20,6 +20,15 @@ function B:ctor(cfg, owner, bedSize, ident, halo)
 	self.bedSize = bedSize
 
 	self.targetList = {}
+	local sq2 = math.sqrt(2)/2
+	self.siteList = {{id=1,ref=0, dir={x=0,y=-1}}, 
+					{id=2,ref=0, dir={x=-sq2, y=-sq2}}, 
+					{id=3,ref=0, dir={x=-1, y=0}}, 
+					{id=4,ref=0, dir={x=-sq2, y=sq2}}, 
+					{id=5,ref=0, dir={x=0, y=1}}, 
+					{id=6,ref=0, dir={x=sq2, y=sq2}}, 
+					{id=7,ref=0, dir={x=1, y=0}}, 
+					{id=8,ref=0, dir={x=sq2, y=-sq2}}}
 	
 	self.totalDamage = 0
 
@@ -28,7 +37,7 @@ function B:ctor(cfg, owner, bedSize, ident, halo)
 	local soldierCfg = soldiers[cfg.soldierId]
 	self.soldierCfg = soldierCfg
 	
-	self:createBuildIcon(cfg, bedSize)
+	self:createBuildIcon(cfg, bedSize, ident)
 	
 	self:createTopLbl(soldierCfg, owner)
 	
@@ -60,22 +69,29 @@ function B:createFSM()
 
 end
 
-function B:createBuildIcon(cfg, bedSize)
-
+function B:createBuildIcon(cfg, bedSize, ident)
+	
 	local cls = nil
 	local offY = 0
-	if self:isGuardTower(cfg.id) then
+	
+	local baseScale = 0.3 + cfg.size * 0.05
+	if cfg.id == 4 or cfg.id == 5 or cfg.id == 6 then
 		cls = GuardTower
 		offY = bedSize.height/4
+	elseif cfg.id == 7 or cfg.id == 8 or cfg.id == 9 then
+		cls = Demolisher
 	else
 		cls = NormalBuild
+		baseScale = 0.4 + cfg.size * 0.2
 	end
-
-	local icon = cls:create(cfg.icon, cfg.size)
+	self.baseScale = baseScale
+	self.halo:setScale(baseScale)
+	
+	local icon = cls:create(cfg.icon, cfg.size, ident)
 	icon:setOffY(offY)
 	icon:setAnchorPoint(cc.p(0, 0))
 	self.icon = icon
-	self:addChild(self.icon)	
+	self:addChild(self.icon)
 	
 end
 
@@ -134,6 +150,201 @@ end
 
 function B:bindPropCallback(callback)
 	self.propCallback = callback
+end
+
+function B:getStepAndIdx(pos)
+	local sp = self.fightProxy.standPos
+	local dir = cc.pSub(pos, sp)
+	local startIdx = 0
+	local angle = cc.pToAngleSelf(dir)
+
+	local r1 = math.pi * 0.125
+	local r2 = math.pi * 0.375
+	local r3 = math.pi * 0.625
+	local r4 = math.pi * 0.875
+	
+	-- print("dirx-", dir.x, "diry-", dir.y, "angle-", angle)
+	local mid = 0
+	if angle < r1 and angle >= -r1 then
+		startIdx = 7
+		mid = 0
+	elseif angle < -r1 and angle >= -r2 then
+		startIdx = 8
+		mid = (-r1-r2)/2
+	elseif angle < -r2 and angle >= -r3 then
+		startIdx = 1
+		mid = (-r2-r3)/2
+	elseif angle < -r3 and angle >= -r4 then
+		startIdx = 2
+		mid  =(-r3-r4)/2
+	elseif angle < -r4 or angle >= r4 then
+		startIdx = 3
+		mid = math.pi
+	elseif angle < r4 and angle >= r3 then
+		startIdx = 4
+		mid = (r4+r3)/2
+	elseif angle < r3 and angle >= r2 then
+		startIdx = 5
+		mid = (r3+r2)/2
+	elseif angle < r2 and angle >= r1 then
+		startIdx = 6
+		mid = (r2+r1)/2
+	end
+
+	local startStep = 1
+	if startIdx == 3 then
+		if angle > 0 then
+			startStep = 1
+		else
+			startStep = -1
+		end
+	else
+		if angle > mid then
+			startStep = -1
+		else
+			startStep = 1
+		end
+	end
+	return startIdx, startStep
+end
+
+function B:sortSiteList(pos)
+	local startIdx, startStep = self:getStepAndIdx(pos)
+	-- for _, v in pairs(self.siteList) do
+	-- 	print(v.ref)
+	-- end
+
+	table.sort(self.siteList, function(a,b)
+		-- if a.ref == b.ref then
+			local step1 = a.id-startIdx
+			if step1 < -4 then
+				step1 = step1 + 8
+			end
+			if step1 > 4 then
+				step1 = step1 - 8
+			end
+			local step2 = b.id-startIdx
+			if step2 < -4 then
+				step2 = step2 + 8
+			end
+			if step2 > 4 then
+				step2 = step2 - 8
+			end
+
+			local abs1 = math.abs(step1)
+			local abs2 = math.abs(step2)
+			-- print("a-", a.id, "b-", b.id, "step1-", step1, "step2-", step2)
+			if abs1 == abs2 then
+				if startStep < 0 then
+					-- print("step1 < step2 -", step1 < step2)
+					return step1 < step2
+				else
+					-- print("step1 > step2 -", step1 > step2)
+					return step1 > step2
+				end
+			else
+				-- print("-", abs1 < abs2)
+				return abs1 < abs2
+			end
+		-- else
+			-- return a.ref < b.ref
+		-- end
+	end)
+	return startIdx, startStep
+end
+
+function B:acceptSite(pos, acceptR)
+	
+	local startIdx, startStep = self:sortSiteList(pos)
+	-- print("startIdx-", startIdx, "startStep-", startStep)
+	local pl1 = {}
+	local pl2 = {}
+	local flag1 = true
+	local flag2 = true
+	local flag = true
+	local fidx = 0
+	for i, v in ipairs(self.siteList) do
+		local p = cc.pAdd(cc.pMul(v.dir, self.acceptR+acceptR), self.fightProxy.standPos)
+		if sgzj.RoleNode:isPointCanReach(p) then
+			-- print("can reach")
+			if v.ref == 0 then
+				fidx = v.id
+
+				if not flag1 then
+					flag = false
+				elseif not flag2 then
+					flag = true
+				else
+					if startStep < 0 then
+						flag = i % 2 == 0
+					else
+						flag = i % 2 == 1
+					end
+				end
+
+				if startStep < 0 then
+					if flag then
+						startIdx = self.siteList[2].id
+					end
+				else
+					if not flag then
+						startIdx = self.siteList[2].id
+					end
+				end
+
+				break
+			end
+		else
+			if i % 2 == 0 then
+				if startStep < 0 then
+					flag1 = false
+				else
+					flag2 = false
+				end
+			else
+				if startStep < 0 then
+					flag2 = false
+				else
+					flag1 = false
+				end
+			end
+		end
+	end
+
+	-- print("fidx-", fidx, "flag1-", flag1, "flag2-", flag2)
+	if fidx == 0 then
+		return
+	end
+
+	if not flag1 and not flag2 then
+		return
+	end
+
+	table.sort(self.siteList, function(a,b) return a.id < b.id end)
+	local fl = {}
+	fl[#fl + 1] = cc.pAdd(cc.pMul(self.siteList[startIdx].dir, self.acceptR+acceptR), self.fightProxy.standPos)
+	if flag then
+		while startIdx ~= fidx do
+			startIdx = startIdx - 1
+			if startIdx == 0 then
+				startIdx = 8
+			end
+			fl[#fl+1] = cc.pAdd(cc.pMul(self.siteList[startIdx].dir, self.acceptR+acceptR), self.fightProxy.standPos)
+		end
+	else
+		while startIdx ~= fidx do
+			startIdx = startIdx + 1
+			if startIdx > 8 then
+				startIdx = 1
+			end
+			fl[#fl+1] = cc.pAdd(cc.pMul(self.siteList[startIdx].dir, self.acceptR+acceptR), self.fightProxy.standPos)
+		end
+	end
+	return fl, self.siteList[fidx]
+end
+
+function B:siteIndex()
+
 end
 
 function B:setOwner(owner)
@@ -230,7 +441,7 @@ function B:select()
 	-- sp:setGLProgram(program)
 	self.icon:setHighLight()
 	self:setScale(1.3)
-	self.halo:setScale(1.3)
+	self.halo:setScale(1.3 * self.baseScale)
 	self.selected = true
 
 end
@@ -242,7 +453,7 @@ function B:unselect()
 	-- sp:setGLProgram(program)
 	self.icon:setNormalLight()
 	self:setScale(1)
-	self.halo:setScale(1)
+	self.halo:setScale(self.baseScale)
 	self.selected = false
 	self.targetHalo:setVisible(false)
 	self.halo:setVisible(false)
@@ -323,6 +534,14 @@ function B:checkAttack(callback)
 
 end
 
+function B:isNeedReinforce()
+	return self.soldierNum < self.cfg.capacity / 2
+end
+
+function B:isCanDispatch()
+	return self.soldierNum >= self.cfg.capacity * 0.75
+end
+
 function B:isTargetDead(target)
 	if not target then
 		return true
@@ -348,6 +567,10 @@ function B:updateTargetList()
 
 end
 
+function B:isAttackNeedTarget()
+	return self.cfg.id ~= 7 and self.cfg.id ~= 8 and self.cfg.id ~= 9
+end
+
 function B:updateAttack(dt)
 	-- self.fightProxy:updateAttackSkill(dt)
 	-- self.fightProxy:updateTargetStatus()
@@ -360,16 +583,12 @@ function B:updateAttack(dt)
 	local status, rate = self.fightProxy:checkAttack()
 
 	if status then
-		self.icon:actAttack(function()  
-			self:checkAttack(function(target)
-				if self.propCallback then
-					local skill = self.fightProxy:currentSkill()
-					-- print("build target-", target)
-					self.propCallback(skill, self:shootPos(), target, self.fightProxy:currentPhyAttack(), self:attackRatio())
-				end
-			end)
-			self.icon:actStand()
-		end, rate)
+		self:checkAttack(function(target1) 
+			local tp = target1:reachPos()
+			self.icon:updateFace(cc.pSub(tp, self.fightProxy.standPos))
+			self.targetPos = tp
+			self.icon:actAttack(rate, cc.pSub(tp, self.fightProxy.standPos))
+		end)
 	end
 
 end
@@ -441,10 +660,11 @@ function B:reachPos()
 end
 
 function B:shootPos()
-	-- return cc.pAdd(self.fightProxy.standPos, self.icon.shootPos)
-	local p = self.fightProxy.standPos
-	return cc.p(p.x-self.bedSize.width/2+self.icon.shootPos.x,
-		p.y+self.icon.shootPos.y)
+	return cc.pAdd(self.fightProxy.standPos, self.icon.shootPos)
+	-- local p = self.fightProxy.standPos
+	
+	-- return cc.p(p.x-self.bedSize.width/2+self.icon.shootPos.x,
+		-- p.y+self.icon.shootPos.y)
 end
 
 function B:fightNode()
@@ -547,7 +767,17 @@ end
 -- end
 
 function B:handleAttackBack(node)
-	self.fightProxy:handleAttackBack(node, self:attackRatio())
+
+	local count = 1
+	for _, v in pairs(self.siteList) do
+		if v.ref > 0 then
+			count = count + 1
+		end
+	end
+	
+	local l = {1, 0.75, 0.65, 0.55, 0.45, 0.4, 0.35, 0.35}
+
+	self.fightProxy:handleAttackBack(node, self:attackRatio() * l[count])
 end
 
 function B:handleGather(owner, num)
@@ -570,6 +800,34 @@ function B:handleBeAttacked(damage, dtype)
 	-- self.totalDamage = self.totalDamage + real
 
 	-- print("build handle be attacked -", real)
+
+end
+
+function B:handleAnimationFrameDisplayed(target, userInfo)
+	self.icon:handleAnimationFrameDisplayed(target, userInfo)
+
+	if userInfo.atype == kRoleAttack then
+		if self.fightProxy:isAttackNeedTarget() then
+			self:checkAttack(function(target)
+				if self.propCallback then
+					local skill = self.fightProxy:currentSkill()
+					local dir = cc.p(-32, 24)
+					if self.icon:currentFace() then
+						dir = cc.p(32, 24)
+					end
+
+					self.propCallback(skill, self:shootPos(), target, self.fightProxy:currentPhyAttack(), self:attackRatio(), nil, dir)
+				end
+			end)
+		else
+			if self.propCallback then
+				local skill = self.fightProxy:currentSkill()
+						-- print("build target-", target)
+				self.propCallback(skill, self:shootPos(), nil, self.fightProxy:currentPhyAttack(), self:attackRatio(), self.targetPos)
+			end
+		end
+
+	end
 
 end
 

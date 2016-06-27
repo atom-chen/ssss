@@ -103,81 +103,138 @@ function R:actWin(delay, rand)
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 
-function R:actOnceAction(path, callback, time, delay)
+function R:actOnceAction(path, callback, delay, userInfos, rate)
 
 	-- print("path--", path)
 	local actions = {}
-	local instance = cc.AnimationCache:getInstance()
-	local anim = instance:getAnimation(path)
-	if not anim then
-		anim = cc.Animation:createWithFile(path)
-		anim:setDelayPerUnit(delay or 1.0/60)
-		instance:addAnimation(anim,path)
+	local anim = nil
+
+	if userInfos then
+		anim = cc.Animation:createWithFile(path, rate or 0)
+		local delay1 = anim:getDelayPerUnit()
+		if delay1 == 0 or delay1 > delay then
+			anim:setDelayPerUnit(delay)
+		end
+
+		local frames = anim:getFrames()
+		for _, v in pairs(userInfos) do
+			local frame = nil
+			if v.index < 0 then
+				frame = frames[#frames+v.index+1]
+			else
+				frame = frames[v.index]
+			end
+			-- if not frame then
+			-- 	print("no frame- idx-", v.index, "atype-", v.atype, "id-", v.fightId)
+			-- end
+			frame:setUserInfo(v)
+		end
+
+	else
+		local instance = cc.AnimationCache:getInstance()
+		anim = instance:getAnimation(path)
+		if not anim then
+			anim = cc.Animation:createWithFile(path, rate or 0)
+			local delay1 = anim:getDelayPerUnit()
+			if delay1 == 0 or delay1 > delay then
+				anim:setDelayPerUnit(delay)
+			end
+
+			instance:addAnimation(anim,path)
+		end
 	end
 		
 	local animate = cc.Animate:create(anim)
-
-	actions[#actions + 1] = animate
-	
+	actions[#actions+1] = animate
 	if callback then
-		actions[#actions + 1] = cc.CallFunc:create(callback)
+		actions[#actions+1] = cc.CallFunc:create(callback)
 	end
-
-	self.role:stopActionByTag(kRoleActTag)
+	-- animate:setTag(kRoleActTag)
 	local seq = cc.Sequence:create(actions)
 	seq:setTag(kRoleActTag)
+	self.role:stopActionByTag(kRoleActTag)
 	self.role:runAction(seq)
 end
 
-function R:actAttack(callback, time, delay)
+-- function R:actCallbackAction(path, callback, rate, delay)
+-- 	local actions = {}
+-- 	local instance = cc.AnimationCache:getInstance()
+-- 	local anim = instance:getAnimation(path)
+-- 	if not anim then
+-- 		anim = cc.Animation:createWithFile(path, rate)
+-- 		local delay1 = anim:getDelayPerUnit()
+-- 		if delay1 == 0 or delay1 > delay then
+-- 			anim:setDelayPerUnit(delay)
+-- 		end
+
+-- 		instance:addAnimation(anim,path)
+-- 	end
+		
+-- 	local animate = cc.Animate:create(anim)
+-- 	actions[#actions+1] = animate
+-- 	actions[#actions+1] = cc.CallFunc:create(callback)
+-- 	-- animate:setTag(kRoleActTag)
+-- 	local seq = cc.Sequence:create(actions)
+-- 	seq:setTag(kRoleActTag)
+-- 	self.role:stopActionByTag(kRoleActTag)
+-- 	self.role:runAction(seq)
+-- end
+
+function R:actAttack(rate, delay, userInfos, callback)
 	if self.status == kRoleAttack then
 		return
 	end
 	
 	self.status = kRoleAttack
 	local path = self.baseName.."_3.plist"
-	self:actOnceAction(path, callback, time, delay)
+	self:actOnceAction(path, callback, delay, userInfos, rate)
 	
 	-- self.role:setTexture("icon/wj1001_1001.png")
 end
 
-function R:actDie(callback, time, delay)
+function R:actDie(rate, delay, userInfos, callback)
 	if self.status == kRoleDie then
 		return
 	end
-	
+
 	self.status = kRoleDie
 	local path = self.baseName.."_5.plist"
-	self:actOnceAction(path, callback, time, delay)
+
+	self:actOnceAction(path, callback, delay, userInfos, rate)
+
+	
+	-- self.status = kRoleDie
+	-- local path = self.baseName.."_5.plist"
+	-- self:actOnceAction(path, delay, userInfos, rate)
 	-- self.role:playAnimate(path, SRoleActTag, true)
 
 end
 
-function R:actSkill1(callback, time, delay)
+function R:actSkill1(rate, delay, userInfos, callback)
 	if self.status == kRoleSkill1 then
 		return
 	end
 	
 	self.status = kRoleSkill1
 	local path = self.baseName.."_6.plist"
-	self:actOnceAction(path, callback, time, delay)
+	self:actOnceAction(path, callback, delay, userInfos, rate)
 	-- self.role:playAnimate(path, SRoleActTag, true)
 end
 
-function R:actSkill2(callback, time, delay)
+function R:actSkill2(rate, delay, userInfos, callback)
 	if self.status == kRoleSkill2 then
 		return
 	end
 	
 	self.status = kRoleSkill2
 	local path = self.baseName.."_7.plist"
-	self:actOnceAction(path, callback, time, delay)
+	self:actOnceAction(path, callback, delay, userInfos, rate)
 	-- self.role:playAnimate(path, SRoleActTag, true)
 end
 
-function R:reset()
+function R:reset(delay)
 	self.status = kRoleNone
-	self:actStand()
+	self:actStand(delay)
 end
 
 return R

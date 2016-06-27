@@ -28,6 +28,10 @@ function B:setHealth(health)
 	self.bar:setBarNum(health)
 end
 
+function B:isLowHealth()
+	return self.bar.current/self.bar.total < 0.3
+end
+
 
 local G = class("General", sgzj.RoleNode)
 
@@ -92,6 +96,10 @@ end
 
 function G:onExit()
 	self:destroy()
+	if self.acceptSite then
+		self.acceptSite.ref = self.acceptSite.ref - 1 
+		self.acceptSite = nil
+	end
 end
 
 function G:destroy()
@@ -174,6 +182,8 @@ function G:actStand()
 
 	self:stopMove()
 	self:stopAttack()
+	-- print("act stand")
+	self:setTarget(nil)
 	self.role:actStand(kGeneralAnimDelay)
 
 end
@@ -207,12 +217,16 @@ function G:updateMove(dt)
 	-- 	self.status = kGeneralStatusReset
 	-- 	return
 	-- end
+	if self:isDead() then
+		return
+	end
 	
 	local proxy = self.moveProxy
 	if proxy:isInMove() then
 		proxy:step(dt)
 		-- print("x-", proxy.pos.x, "y-", proxy.pos.y)
 		self:setPosition(proxy.pos)
+		self:setLocalZOrder(math.floor(1546-proxy.pos.y))
 		self:face(proxy:currentFace())
 	else
 		-- print("set path")
@@ -265,6 +279,21 @@ function G:checkAttack(callback)
 	local moveProxy = self.moveProxy
 	local p = moveProxy.pos
 	local target = self.fightProxy.target
+
+	if target.type == kBuildType and not self.acceptSite then
+
+		local fl, site = target:acceptSite(p, self.acceptR)
+		-- print("fl", fl)
+		if fl then
+			self.acceptSite = site
+			moveProxy:addMovePath(fl)
+			self.acceptSite.ref = self.acceptSite.ref + 1
+			-- print("add move path")
+			return
+		end
+
+	end
+	
 	if self.fightProxy:attackStatus(p, self.acceptR) then
 		-- print("attack callback")
 		callback()
@@ -303,7 +332,18 @@ function G:stopAttack()
 end
 
 function G:updateAttack(dt)
-	if self.fightProxy:isTargetDead() then
+	if self:isDead() then
+		return
+	end
+
+	print("targetDead-", self.fightProxy:isTargetDead())
+	print("roleStatus-", self.role.status)
+	
+	if self.role.status ~= kRoleAttack and
+		 self.role.status ~= kRoleSkill1 and
+		 self.role.status ~= kRoleSkill2 and
+		 self.fightProxy:isTargetDead() then
+		 print("setStateStand")
 		self.FSM:setState(kRoleStateStand)
 		return
 	end
@@ -318,15 +358,7 @@ function G:updateAttack(dt)
 			local target = self.fightProxy.target
 			local tp = target:reachPos()
 			self:face(tp.x > self.moveProxy.pos.x)
-			self:doAttack(function()
-			-- self:handleFight()
-			if self.fightProxy:isTargetDead() then
-				self.FSM:setState(kRoleStateStand)
-			else
-				self:handleAttack()
-				self.role:actStand(kGeneralAnimDelay)
-			end
-			end, rate)
+			self:doAttack(rate)
 			end)
 		
 	-- elseif self.role.status == kRoleMove then
@@ -349,7 +381,8 @@ function G:actDead()
 
 	self:stopMove()
 	self:stopAttack()
-	self.role:actDie(function() self.FSM:setState(kRoleStateClear) end, 0, kGeneralAnimDelay)
+	-- local userInfo = {fightId=self.ident, index=-1, atype=kRoleDie}
+	self.role:actDie(0, kGeneralAnimDelay, nil, function() self.FSM:setState(kRoleStateClear) end)
 
 end
 
@@ -372,6 +405,10 @@ end
 
 function G:setTarget(target)
 	self.fightProxy:setTarget(target)
+	if self.acceptSite then
+		self.acceptSite.ref = self.acceptSite.ref - 1 
+		self.acceptSite = nil
+	end
 end
 
 function G:setTargetPos(pos)
@@ -382,6 +419,8 @@ function G:setStandPos(pos)
 	-- self.fightProxy:setStandPos(cc.p(pos.x ,pos.y))
 	self.moveProxy:setPos(pos)
 	self:setPosition(pos)
+	self:setLocalZOrder(math.floor(1546-pos.y))
+	-- print("posx-", pos.x, "posy-", pos.y, "generalz-", math.floor(1546-pos.y))
 end
 
 function G:select()
@@ -479,7 +518,7 @@ end
 
 function G:resetGeneral()
 	self.status = kGeneralStatusNormal
-	self.fightProxy:setTarget(nil)
+	self:setTarget(nil)
 	self.role:actStand(kGeneralAnimDelay)
 end
 
@@ -487,53 +526,69 @@ function G:attackRatio()
 	return math.random(75, 125)/100.0
 end
 
-function G:doAttack(callback, rate)
+function G:doAttack(rate)
 	local atype = self.fightProxy:currentAction()
+	local userInfo = {}
 	if atype == kNormalAttack then
-		self.role:actAttack(callback, rate, kGeneralAnimDelay)
+		for k, v in pairs(generalAttack[self.cfg.id]) do
+			userInfo[k] = v
+		end
+		userInfo.fightId = self.ident
+		self.role:actAttack(rate, kGeneralAnimDelay, {userInfo}, function() self.role:actStand(kGeneralAnimDelay) end)
 	elseif atype == kSkill1 then
-		self.role:actSkill1(callback, rate, kGeneralAnimDelay)
+		for k, v in pairs(generalSkill1[self.cfg.id]) do
+			userInfo[k] = v
+		end
+		userInfo.fightId = self.ident
+		self.role:actSkill1(rate, kGeneralAnimDelay, {userInfo}, function() self.role:actStand(kGeneralAnimDelay) end)
 	elseif atype == kSkill2 then
-		self.role:actSkill2(callback, rate, kGeneralAnimDelay)
+		for k, v in pairs(generalSkill2[self.cfg.id]) do
+			userInfo[k] = v
+		end
+		userInfo.fightId = self.ident
+		self.role:actSkill2(rate, kGeneralAnimDelay, {userInfo}, function() self.role:actStand(kGeneralAnimDelay) end)
 	end
 
 end
 
 function G:checkAutoAttack(node)
 	if self.fightProxy:isTargetDead() then
-		self.fightProxy:setTarget(node)
+		self:setTarget(node)
 		self.FSM:setState(kRoleStateAttack)
 	end
 	-- print("chek auto attack status ", self.fightProxy.targetStatus)
 end
 
-function G:handleDamage()
+-- function G:handleDamage()
 
-	-- local alive, num = self.fightProxy:handleHurt(damage)
+-- 	-- local alive, num = self.fightProxy:handleHurt(damage)
 
-	-- self:showNumEffect(num)
+-- 	-- self:showNumEffect(num)
 
-	-- return alive
+-- 	-- return alive
 
-	if self.totalDamage == 0 then
-		return 
-	end
+-- 	if self.totalDamage == 0 then
+-- 		return 
+-- 	end
 
-	self:showDamageEffect()
-	self.fightProxy:handleDamage(self.totalDamage)
-	self.bar:setHealth(self.fightProxy.health)
+-- 	self:showDamageEffect()
+-- 	self.fightProxy:handleDamage(self.totalDamage)
+-- 	self.bar:setHealth(self.fightProxy.health)
 
-	if self.fightProxy.health <= 0 then
-		-- self.fightProxy.status = kFightStatusNoTargetPos
-		self.status = kGeneralStatusDead
-		self.role:actDie(function() 
-			-- self.isDead = true
-			self:removeFromParent(true)
-			end, 0, kGeneralAnimDelay)
-	end
+-- 	if self.fightProxy.health <= 0 then
+-- 		-- self.fightProxy.status = kFightStatusNoTargetPos
+-- 		self.status = kGeneralStatusDead
+-- 		self.role:actDie(function() 
+-- 			-- self.isDead = true
+-- 			self:removeFromParent(true)
+-- 			end, 0, kGeneralAnimDelay)
+-- 	end
 
-	self.totalDamage = 0
+-- 	self.totalDamage = 0
 
+-- end
+function G:isLowHealth()
+	return self.bar:isLowHealth()
 end
 
 function G:showDamageEffect(damage)
@@ -594,6 +649,21 @@ function G:handleBuff(buff)
 
 	self.buffNode:addBuff(buff)
 
+end
+
+function G:handleAnimationFrameDisplayed(target, userInfo)
+	-- if userInfo.atype == kRoleDie then
+	-- 	self.FSM:setState(kRoleStateClear)
+	-- else
+	-- print("hanle anim")
+		if self.fightProxy:isTargetDead() then
+			-- print("handle act stand")
+			self.FSM:setState(kRoleStateStand)
+		else
+			-- print("handle attack")
+			self:handleAttack()
+		end
+	-- end
 end
 
 -- function G:handleAttackBack(ntype, damage, dtype)

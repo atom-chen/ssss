@@ -2433,6 +2433,7 @@ void Animate::update(float t)
                     _frameDisplayedEvent = new (std::nothrow) EventCustom(AnimationFrameDisplayedNotification);
                 
                 _frameDisplayedEventInfo.target = _target;
+//                CCLOG("target-%lu", (unsigned long)_target);
                 _frameDisplayedEventInfo.userInfo = &dict;
                 _frameDisplayedEvent->setUserData(&_frameDisplayedEventInfo);
                 Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);

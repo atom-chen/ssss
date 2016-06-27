@@ -8,6 +8,7 @@ require("configs.soldiers")
 require("configs.Type")
 require("configs.skills")
 require("configs.formations")
+require("configs.effectCPos")
 
 
 cc.exports.kFightScene = 1
@@ -85,14 +86,14 @@ cc.exports.kSoldierAnimDelay = 1.0/8
 cc.exports.kBuffAnimDelay = 1.0/8
 cc.exports.kEffectAnimDelay = 1.0/8
 
-cc.exports.kPropMoveSpeed = 100
+cc.exports.kPropMoveSpeed = 500
 
 cc.exports.kEffectTag = 100
 cc.exports.kRoleActTag = 101
 cc.exports.kRoleGatherTag = 102
 cc.exports.kBeAttackedTag = 103
 
-cc.exports.kGatherSpeed = 100
+cc.exports.kGatherSpeed = 30
 
 cc.exports.kSkillPointSpeed = 5
 cc.exports.kMaxSkillPoint = 10

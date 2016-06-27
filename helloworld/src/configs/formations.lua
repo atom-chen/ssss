@@ -1,5 +1,5 @@
 
-
+-- 士兵阵列间隔
 cc.exports.formations = {
 	
 	{id=1, off=30},
