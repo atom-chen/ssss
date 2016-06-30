@@ -92,11 +92,13 @@ bool AppDelegate::applicationDidFinishLaunching()
 #endif
 //    std::string p = cocos2d::FileUtils::getInstance()->getWritablePath();
 //    CCLOG("%s", p.c_str());
-//    std::string path = "configs/mapxml/3.xml";
+//    std::string path = "configs/mapxml/2.xml";
 //    sgzj::RouteData::getInstance()->generateConfig(path);
 //    sgzj::RouteFinder *fider = new sgzj::RouteFinder();
-//    cocos2d::Point s(1017.01392, 666.168274);
-//    cocos2d::Point e(762.433044, 923.743164);
+//    cocos2d::Point s(1106.849976, 1181.750000);
+//    cocos2d::Point e(1138.250000, 736.000000);
+//    cocos2d::Point s1(1106.84998, 1181.75);
+//    cocos2d::Point e1(1512.59998, 944.25);
 //    fider->setStartPoint(s);
 //    fider->findRoute(e);
     

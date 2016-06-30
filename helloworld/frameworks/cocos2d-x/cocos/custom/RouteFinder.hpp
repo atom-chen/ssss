@@ -65,13 +65,13 @@ namespace sgzj {
         
         void updateValueWithList21(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
         
-        void updateValueWithList22(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
+        void updateValueWithList22(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float *value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
         
         void updateValueWithList2(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
         
         void updateValueWithList41(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
         
-        void updateValueWithList42(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
+        void updateValueWithList42(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float *value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
         
         void updateValueWithList4(cocos2d::Point &end, std::vector<cocos2d::Point> &vec, cocos2d::Point &next, float value1, std::vector<std::shared_ptr<RouteNode>> &fromList, cocos2d::Point &tp1, cocos2d::Point &bp1, std::vector<cocos2d::Point> &inflexion);
         

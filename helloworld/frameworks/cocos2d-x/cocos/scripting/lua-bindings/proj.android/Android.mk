@@ -44,6 +44,7 @@ LOCAL_SRC_FILES := ../manual/CCLuaBridge.cpp \
           ../auto/lua_cocos2dx_auto.cpp \
           ../auto/lua_cocos2dx_physics_auto.cpp \
           ../auto/lua_cocos2dx_experimental_auto.cpp \
+	  ../auto/lua_cocos2dx_custom_auto.cpp \
           ../manual/cocos2d/lua_cocos2dx_deprecated.cpp \
           ../manual/cocos2d/lua_cocos2dx_experimental_manual.cpp \
           ../manual/cocos2d/lua_cocos2dx_manual.cpp \

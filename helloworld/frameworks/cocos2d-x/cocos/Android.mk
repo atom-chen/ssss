@@ -18,6 +18,13 @@ endif
 
 LOCAL_SRC_FILES := \
 cocos2d.cpp \
+custom/RouteFinder.cpp \
+custom/RoleNode.cpp \
+custom/Caculater.cpp \
+custom/Channel.cc \
+custom/EventChannel.cc \
+custom/Poller.cc \
+custom/EventLoop.cc \
 2d/CCAction.cpp \
 2d/CCActionCamera.cpp \
 2d/CCActionCatmullRom.cpp \
@@ -234,6 +241,7 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/.. \
                     $(LOCAL_PATH)/platform \
                     $(LOCAL_PATH)/base \
+		    $(LOCAL_PATH)/custom \
                     $(LOCAL_PATH)/../external \
                     $(LOCAL_PATH)/../external/tinyxml2 \
                     $(LOCAL_PATH)/../external/unzip \
@@ -247,6 +255,7 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH) \
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/platform \
+		    $(LOCAL_PATH)/custom \
                     $(LOCAL_PATH)/../external \
                     $(LOCAL_PATH)/../external/tinyxml2 \
                     $(LOCAL_PATH)/../external/unzip \
@@ -280,6 +289,7 @@ LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dxandroid_static
 LOCAL_CFLAGS   :=  -DUSE_FILE32API
 LOCAL_CFLAGS   +=  -fexceptions
 LOCAL_CPPFLAGS := -Wno-deprecated-declarations -Wno-extern-c-compat
+LOCAL_CPPFLAGS +=  -std=c++11
 LOCAL_EXPORT_CFLAGS   := -DUSE_FILE32API
 LOCAL_EXPORT_CPPFLAGS := -Wno-deprecated-declarations -Wno-extern-c-compat
 

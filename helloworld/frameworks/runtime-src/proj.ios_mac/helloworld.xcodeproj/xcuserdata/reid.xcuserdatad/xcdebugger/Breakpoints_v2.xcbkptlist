@@ -9,13 +9,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/2d/CCActionManager.cpp"
-            timestampString = "488426261.297004"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488795214.337421"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "422"
-            endingLineNumber = "422"
-            landmarkName = "ActionManager::update(float dt)"
+            startingLineNumber = "343"
+            endingLineNumber = "343"
+            landmarkName = "RouteNode::caculateValueWith4(std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;end, cocos2d::Point &amp;next, float *value, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +25,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382256.642682"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488859522.177417"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "831"
-            endingLineNumber = "831"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1117"
+            endingLineNumber = "1117"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,13 +41,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382257.457713"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488859522.177417"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "833"
-            endingLineNumber = "833"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1163"
+            endingLineNumber = "1163"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -57,13 +57,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382258.978429"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488860267.582066"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "835"
-            endingLineNumber = "835"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "435"
+            endingLineNumber = "435"
+            landmarkName = "RouteNode::updateValue1(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node, int idx)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -73,13 +73,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382261.730234"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488861837.286934"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "846"
-            endingLineNumber = "846"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1968"
+            endingLineNumber = "1968"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -89,13 +89,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382262.849408"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488861855.182669"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "848"
-            endingLineNumber = "848"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1439"
+            endingLineNumber = "1439"
+            landmarkName = "RouteNode::updateValueWithList42(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float *value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -105,13 +105,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382264.418424"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862020.931484"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "850"
-            endingLineNumber = "850"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1206"
+            endingLineNumber = "1206"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -121,13 +121,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382266.26616"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862062.15425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "855"
-            endingLineNumber = "855"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1820"
+            endingLineNumber = "1820"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -137,13 +137,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382267.402111"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862067.411137"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "857"
-            endingLineNumber = "857"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1879"
+            endingLineNumber = "1879"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -153,13 +153,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382268.610449"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862152.968748"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "859"
-            endingLineNumber = "859"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1109"
+            endingLineNumber = "1109"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -169,13 +169,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382271.009576"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862176.704796"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "864"
-            endingLineNumber = "864"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1260"
+            endingLineNumber = "1260"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -185,13 +185,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382272.130283"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862233.015332"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "866"
-            endingLineNumber = "866"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "2025"
+            endingLineNumber = "2025"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -201,13 +201,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382273.673955"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862328.878043"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "868"
-            endingLineNumber = "868"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1049"
+            endingLineNumber = "1049"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -217,13 +217,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382275.490338"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862355.269277"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "873"
-            endingLineNumber = "873"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1154"
+            endingLineNumber = "1154"
+            landmarkName = "RouteNode::updateValue2(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -233,13 +233,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382277.809598"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862390.492395"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "876"
-            endingLineNumber = "876"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "865"
+            endingLineNumber = "865"
+            landmarkName = "RouteNode::updateValueWithList22(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float *value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -249,13 +249,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382279.490093"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862497.77071"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "878"
-            endingLineNumber = "878"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1369"
+            endingLineNumber = "1369"
+            landmarkName = "RouteNode::updateValueWithList41(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -265,13 +265,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382280.593893"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862710.77626"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "881"
-            endingLineNumber = "881"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "934"
+            endingLineNumber = "934"
+            landmarkName = "RouteNode::updateValueWithList22(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float *value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -281,13 +281,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382282.202333"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488862865.90344"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "883"
-            endingLineNumber = "883"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "1835"
+            endingLineNumber = "1835"
+            landmarkName = "RouteNode::updateValue4(cocos2d::Point &amp;end, std::shared_ptr&lt;Line&gt; &amp;line, std::shared_ptr&lt;RouteNode&gt; &amp;node)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -297,13 +297,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382283.681222"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488863154.596536"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "888"
-            endingLineNumber = "888"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "647"
+            endingLineNumber = "647"
+            landmarkName = "RouteNode::updateValueWithList2(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -313,13 +313,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382285.321651"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488863158.709031"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "893"
-            endingLineNumber = "893"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "560"
+            endingLineNumber = "560"
+            landmarkName = "RouteNode::updateValueWithList2(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -329,13 +329,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382286.938218"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488863166.300086"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "896"
-            endingLineNumber = "896"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "615"
+            endingLineNumber = "615"
+            landmarkName = "RouteNode::updateValueWithList2(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -345,13 +345,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382288.377805"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488863254.163827"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "902"
-            endingLineNumber = "902"
-            landmarkName = "Scheduler::update(float dt)"
+            startingLineNumber = "693"
+            endingLineNumber = "693"
+            landmarkName = "RouteNode::updateValueWithList2(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -361,317 +361,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382289.882107"
+            filePath = "../../cocos2d-x/cocos/custom/RouteFinder.cpp"
+            timestampString = "488863890.405227"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "905"
-            endingLineNumber = "905"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382290.849975"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "907"
-            endingLineNumber = "907"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382292.649748"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "913"
-            endingLineNumber = "913"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382293.969284"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "915"
-            endingLineNumber = "915"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382295.169838"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "917"
-            endingLineNumber = "917"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382297.834178"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "922"
-            endingLineNumber = "922"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382299.585945"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "924"
-            endingLineNumber = "924"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382301.114234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "926"
-            endingLineNumber = "926"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382302.721658"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "931"
-            endingLineNumber = "931"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382303.929993"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "933"
-            endingLineNumber = "933"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382305.089572"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "935"
-            endingLineNumber = "935"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382307.593558"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "939"
-            endingLineNumber = "939"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382320.337727"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "970"
-            endingLineNumber = "970"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382321.560901"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "971"
-            endingLineNumber = "971"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382323.60876"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "976"
-            endingLineNumber = "976"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "cocos2d::Scheduler::update(float)"
-                  moduleName = "helloworld-mobile"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/reid/Documents/templates/helloworld/frameworks/cocos2d-x/cocos/base/CCScheduler.cpp"
-                  timestampString = "488382323.614099"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "976"
-                  endingLineNumber = "976"
-                  offsetFromSymbolStart = "1212">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "cocos2d::Scheduler::update(float)"
-                  moduleName = "helloworld-mobile"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/reid/Documents/templates/helloworld/frameworks/cocos2d-x/cocos/base/CCScheduler.cpp"
-                  timestampString = "488382323.614345"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "976"
-                  endingLineNumber = "976"
-                  offsetFromSymbolStart = "1360">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/base/CCScheduler.cpp"
-            timestampString = "488382324.593316"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "977"
-            endingLineNumber = "977"
-            landmarkName = "Scheduler::update(float dt)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/2d/CCActionInterval.cpp"
-            timestampString = "488382785.851337"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2432"
-            endingLineNumber = "2432"
-            landmarkName = "Animate::update(float t)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../cocos2d-x/cocos/2d/CCActionInterval.cpp"
-            timestampString = "488426261.297004"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2441"
-            endingLineNumber = "2441"
-            landmarkName = "Animate::update(float t)"
+            startingLineNumber = "1432"
+            endingLineNumber = "1432"
+            landmarkName = "RouteNode::updateValueWithList42(cocos2d::Point &amp;end, std::vector&lt;cocos2d::Point&gt; &amp;vec, cocos2d::Point &amp;next, float *value1, std::vector&lt;std::shared_ptr&lt;RouteNode&gt;&gt; &amp;fromList, cocos2d::Point &amp;tp1, cocos2d::Point &amp;bp1, std::vector&lt;cocos2d::Point&gt; &amp;inflexion)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
