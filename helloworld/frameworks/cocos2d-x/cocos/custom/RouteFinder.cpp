@@ -3332,8 +3332,14 @@ void RouteData::loadRouteData(std::string &path)
 //    CCLOG("43");
     clear();
     tinyxml2::XMLDocument tinyDoc;
-    std::string fullPath = cocos2d::FileUtils::getInstance()->fullPathForFilename(path);
-    tinyDoc.LoadFile(fullPath.c_str());
+//    std::string fullPath = cocos2d::FileUtils::getInstance()->fullPathForFilename(path);
+//    CCLOG("fullPath-%s", fullPath.c_str());
+//    tinyxml2::XMLError err = tinyDoc.LoadFile(fullPath.c_str());
+//    CCLOG("load err-%d", err);
+    
+    cocos2d::Data data = cocos2d::FileUtils::getInstance()->getDataFromFile(path);
+    tinyxml2::XMLError err = tinyDoc.Parse((const char *)data.getBytes(), data.getSize());
+    CCLOG("load err-%d", err);
     tinyxml2::XMLElement *root = tinyDoc.RootElement();
     tinyxml2::XMLElement *ele = root->FirstChildElement();
     while (ele) {

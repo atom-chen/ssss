@@ -1,2 +1,0 @@
-
-require("app.data.MapData")
