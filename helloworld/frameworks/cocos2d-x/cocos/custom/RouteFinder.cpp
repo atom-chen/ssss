@@ -3375,18 +3375,18 @@ void RouteData::loadRouteConfig(std::string &path)
     
     while(*ptr) {
         char c = *ptr;
-        if (c == 44) {  // 逗号
+        if (c == ',') {  // 逗号
             num[idx] = 0;
             cocos2d::Point p;
             p.x = strtof(num, 0);
             vec.push_back(std::move(p));
             idx = 0;
-        } else if (c == 124) { // 垂线
+        } else if (c == '|') { // 垂线
             num[idx] = 0;
             cocos2d::Point &p = vec.back();
             p.y = strtof(num, 0);
             idx = 0;
-        } else if (c == 59) { //分号
+        } else if (c == ';') { //分号
             num[idx] = 0;
             cocos2d::Point &p4 = vec.back();
             p4.y = strtof(num, 0);

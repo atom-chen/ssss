@@ -24,18 +24,22 @@ function M:ctor()
 end
 
 function M:currentPhyAttack()
+	print("phyAttack-", self.phyAtt+self.phyAttAdd)
 	return self.phyAtt + self.phyAttAdd
 end
 
 function M:currentPhyDefence()
+	print("phyDef-", self.phyDef + self.phyDefAdd)
 	return self.phyDef + self.phyDefAdd
 end
 
 function M:currentMagicAttack()
+	print("magicAtt-", self.magicAtt+self.magicAttAdd)
 	return self.magicAtt + self.magicAttAdd
 end
 
 function M:currentMagicDefence()
+	print("magicDef-", self.magicDef+self.magicDefAdd)
 	return self.magicDef + self.magicDefAdd
 end
 
@@ -429,6 +433,7 @@ end
 function M:currentAttack(skill)
 
 -- 等级加成
+	print("skillValue-", skill.value, "attackRatio-", self.attackRatio, "skillRatio-", skill.value)
 	if skill.damageType == kPhysicalType then
 		return (0 + self:currentPhyAttack() * skill.value) * self.attackRatio
 	else
@@ -548,15 +553,16 @@ function M:getRealDamage(damage, dtype)
 	local ratio = 1
 
 	if dtype == kPhysicalType then
-		ratio = 1/self.phyDef
+		ratio = 1/self:currentPhyDefence()
 	else
-		ratio = 1/self.magicDef
+		ratio = 1/self:currentMagicDefence()
 	end
 
 	local real = damage * ratio
 	-- if ntype == kGeneralType then
-		real = math.round(real)
+	real = math.round(real)
 	-- end
+	print("real damage-", real)
 
 	return math.max(real, 1)
 
@@ -588,6 +594,7 @@ function M:handleAttackBack(target, ratio)
 	-- local skill = self.skillNode:currentSkill()
 	-- sgzj.FightManager:getInstance():handleFight(node:fightNode(), target:fightNode(), skill.damageType, self.currentAttack() * ratio, true)
 	-- 反伤 直接取物理伤害
+	print("handle attack back")
 	target:handleBeAttacked(self:currentPhyAttack() * ratio, 1)	
 end
 
