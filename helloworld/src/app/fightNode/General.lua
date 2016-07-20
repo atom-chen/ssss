@@ -522,7 +522,7 @@ end
 
 function G:attackRatio()
 	local aratio = math.random(75, 125)/100.0
-	print("generalID -",self.cfg.id, "ident-", self.ident, "attack ratio X-", aratio)
+	-- print("generalID -",self.cfg.id, "ident-", self.ident, "attack ratio X-", aratio)
 	return aratio
 end
 
@@ -629,7 +629,7 @@ function G:handleBeAttacked(damage, dtype)
 	-- 				self.isDead = true
 	-- 			end)
 	-- end
-	print("general Be Attacked- generalId", self.cfg.id, "ident-", self.ident)
+	-- print("general Be Attacked- generalId", self.cfg.id, "ident-", self.ident)
 	local real = self.fightProxy:getRealDamage(damage, dtype)
 	self:showDamageEffect(real)
 

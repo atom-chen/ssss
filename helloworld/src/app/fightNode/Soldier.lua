@@ -452,9 +452,9 @@ function S:attackRatio()
 	if self.owner ~= kOwnerPlayer then
 		ratio = MapData:currentMapRank()/100.0
 	end
-	print("map rank-", ratio)
+	-- print("map rank-", ratio)
 	local aratio = math.max(self.soldierNum, 0)*0.25 * ratio
-	print("soldierNum-", self.soldierNum, "soldier ratio-", aratio)
+	-- print("soldierNum-", self.soldierNum, "soldier ratio-", aratio)
 	return  aratio
 end
 

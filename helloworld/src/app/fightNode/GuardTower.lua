@@ -88,11 +88,12 @@ function G:updateShootPos()
 		return
 	end
 
-	local ratio = -1
-	if self.man.faceLeft then
-		ratio = 1
-	end
-	self.shootPos = cc.p(75*ratio, 16+self.manPos.y)
+	-- local ratio = -1
+	-- if self.man.faceLeft then
+	-- 	ratio = 1
+	-- end
+	-- self.shootPos = cc.p(75*ratio, 16+self.manPos.y)
+	self.shootPos = cc.p(0, self.manPos.y-32)
 	-- print("manpx-", self.manPos.x, "manpy-", self.manPos.y, "shootx-", self.shootPos.x, "shooty-", self.shootPos.y)
 
 end

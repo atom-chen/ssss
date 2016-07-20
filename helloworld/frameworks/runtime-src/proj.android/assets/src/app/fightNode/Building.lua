@@ -677,9 +677,9 @@ function B:attackRatio()
 	if self.owner ~= kOwnerPlayer then
 		ratio = MapData:currentMapRank()/100.0
 	end
-	print("map rank-", ratio)
+	-- print("map rank-", ratio)
 	local aratio = math.max(self.soldierNum, 0)*0.25 * ratio
-	print("soldierNum-", self.soldierNum, "soldier ratio-", aratio)
+	-- print("soldierNum-", self.soldierNum, "soldier ratio-", aratio)
 	return  aratio
 end
 
@@ -804,7 +804,7 @@ function B:handleAttackBack(node)
 	end
 	
 	local l = {1, 0.75, 0.65, 0.55, 0.45, 0.4, 0.35, 0.35}
-	print("build attack backRatio-", l[count])
+	-- print("build attack backRatio-", l[count])
 	self.fightProxy:handleAttackBack(node, self:attackRatio() * l[count])
 end
 
@@ -816,7 +816,7 @@ end
 
 function B:handleBeAttacked(damage, dtype)
 
-	print("building Be Attacked- buildId", self.cfg.id, "ident-", self.ident)
+	-- print("building Be Attacked- buildId", self.cfg.id, "ident-", self.ident)
 	local real = self.fightProxy:getRealDamage(damage, dtype)
 	self:showDamageEffect(real)
 
@@ -840,10 +840,14 @@ function B:handleAnimationFrameDisplayed(target, userInfo)
 			self:checkAttack(function(target)
 				if self.propCallback then
 					local skill = self.fightProxy:currentSkill()
-					local dir = cc.p(-32, 24)
-					if self.icon:currentFace() then
-						dir = cc.p(32, 24)
-					end
+					-- local dir = cc.p(-32, 24)
+					-- if self.icon:currentFace() then
+						-- dir = cc.p(32, 24)
+					-- end
+					local rp = target:reachPos()
+					local sz = target:getContentSize()
+					local tp = cc.p(rp.x, rp.y+sz.height/2)
+					local dir = cc.pSub(tp, self:shootPos())
 
 					self.propCallback(skill, self:shootPos(), target, self.fightProxy:currentPhyAttack(), self:attackRatio(), nil, dir)
 				end
