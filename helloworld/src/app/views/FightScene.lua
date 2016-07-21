@@ -102,7 +102,6 @@ function FightScene:setBackGroundPos(ep)
 	local size = self.bg:getRealContentSize()
 	ep.x = math.max(math.min(size.width/2, ep.x), display.width-size.width/2)
 	ep.y = math.max(math.min(size.height/2, ep.y), display.height-size.height/2)
-
 	self.bg:setPosition(ep)
 end
 
@@ -121,10 +120,10 @@ function FightScene:startFight()
 end
 
 function FightScene:moveBackGround(point)
-	if not point then
-		print("no point")
-		return
-	end
+	-- if not point then
+	-- 	print("no point")
+	-- 	return
+	-- end
 	
 	local p2 = cc.p(self.points[0].x, self.points[0].y)
 	local px, py = self.bg:getPosition()
@@ -151,55 +150,97 @@ function FightScene:handleManualSkill(skill, pos)
 end
 
 function FightScene:handleTouchesBegan(points)
-	
-	for i, v in pairs(points) do
-		self.points[i] = v
+	-- local flag = 1
+	-- for i, v in pairs(points) do
+	-- 	-- self.points[i] = v
+	-- 	print("begin px-", v.x, "py-", v.y, "flag-", flag, "i-", i)
+	-- 	flag = flag + 1
+	-- end
+	-- self.points[0] = points[0]
+	-- self.points[1] = points[1]
+	if points[0] then
+		self.points[0] = points[0]
 	end
 
-	if self.points[0] and self.points[1] and self.touchDistance == -1 then
-		self.touchDistance = cc.pGetDistance(self.points[0], self.points[1])
+	if points[1] then
+		self.points[1] = points[1]
 	end
+
+	-- if self.touchDistance < 0 and self.points[0] and self.points[1] then
+	-- 	self.touchDistance = cc.pDistanceSQ(self.points[0], self.points[1])
+	-- 	self.baseScale = self.bg:getScale()
+	-- end
+
 end
 
 function FightScene:handleTouchesMoved(points)
-	
+	-- print("moved -", points[0], points[1])
+	-- print("p1-", self.points[1], "dis-", self.touchDistance)
 	if self.points[0] and self.points[1] then
-		local p0 = self.points[0]
-		local p1 = self.points[1]
-
 		if points[0] then
-			p0 = points[0]
+			self.points[0] = points[0]
 		end
+
 		if points[1] then
-			p1 = points[1]
+			self.points[1] = points[1]
 		end
 
-		local distance = cc.pGetDistance(p0, p1)
-		local delta = distance - self.touchDistance
+		local distance = cc.pDistanceSQ(self.points[0], self.points[1])
+		if self.touchDistance < 0 then
+			self.touchDistance = distance
+			self.baseScale = self.bg:getScale()
+			return
+		end
+		-- print("p0x-", p0.x, "p0y-", p0.y)
+		-- print("p1x-", p1.x, "p1y-", p1.y)
 
-		local scale = 1
+		local scale = self.baseScale * math.sqrt(distance / self.touchDistance)
+		-- print("scale -", scale)
 
-		scale =  math.max(math.min(1, self.bg:getScale() + delta/4096.0*0.5), 0.5)
+		scale =  math.max(math.min(1, scale), 0.5)
 
+		self.touchDistance = distance
+		self.baseScale = scale
+		-- print( "scale - ", scale)
 		self.bg:setScale(scale)
 		self.skillLayer:setFightSceneScale(scale)
 		local px, py = self.bg:getPosition()
 		self:setBackGroundPos(cc.p(px, py))
 
-	elseif self.points[0] then
-		self:moveBackGround(points[0])
-
+	else
+		local delta = nil
+		if points[0] then
+			delta = cc.pSub(points[0], self.points[0])
+			self.points[0] = points[0]
+		elseif points[1] then
+			delta = cc.pSub(points[1], self.points[1])
+			self.points[1] = points[1]
+		else
+			return
+		end
+		-- print("deltax-", delta.x, "deltay-", delta.y)
+		local px, py = self.bg:getPosition()
+		self:setBackGroundPos(cc.pAdd(cc.p(px, py), delta))
+		-- self:moveBackGround(points[0] or points[1])
 	end
 
-	for i, v in pairs(points) do
-		self.points[i] = v
-	end
+	-- for i, v in pairs(points) do
+		-- self.points[i] = v
+		-- print("moved px-", v.x, "py-", v.y)
+	-- end
 
 end
 
 function FightScene:handleTouchesEnded(points)
-	for i, v in pairs(points) do
-		self.points[i] = nil
+	-- for i, v in pairs(points) do
+		-- self.points[i] = nil
+		-- print("end px-", v.x, "py-", v.y, "i-", i)
+	-- end
+	if points[0] then
+		self.points[0] = nil
+	end
+	if points[1] then
+		self.points[1] = nil
 	end
 
 	if self.points[0] == nil or self.points[1] == nil then
